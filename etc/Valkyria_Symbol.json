@@ -1,0 +1,132 @@
+{
+    "game_title": "プレイ！プレイ！プレイ！ロック！ PKG",
+    "game_version": "1.0",
+    "game_engine": "Valkyria",
+    "export_time": "2023-12-13 01:17:00.382258",
+    "func_list": [
+        {
+            "name": "VAL::SetLocale",
+            "addr": "0x419090"
+        },
+        {
+            "name": "VAL::Init",
+            "addr": "0x4191b0"
+        },
+        {
+            "name": "VAL::CheckPackExist",
+            "addr": "0x41d6f0"
+        },
+        {
+            "name": "VAL::PackReadMedia",
+            "addr": "0x41d770"
+        },
+        {
+            "name": "VAL::ReadAudio",
+            "addr": "0x41def0"
+        },
+        {
+            "name": "VAL::PrintOpCode",
+            "addr": "0x42b6d0"
+        },
+        {
+            "name": "VAL::DebugView::42CAD0",
+            "addr": "0x42cad0"
+        },
+        {
+            "name": "VAL::DrawString",
+            "addr": "0x4329f0"
+        },
+        {
+            "name": "VAL::VM::GetSysModeNo",
+            "addr": "0x441b80"
+        },
+        {
+            "name": "VAL::VM::GetLabelTargetOffset",
+            "addr": "0x442030"
+        },
+        {
+            "name": "VAL::VM::GetInt",
+            "addr": "0x442080"
+        },
+        {
+            "name": "VAL::VM::GetStr",
+            "addr": "0x442500"
+        },
+        {
+            "name": "VAL::VM::GetTextBoxText",
+            "addr": "0x442740"
+        },
+        {
+            "name": "VAL::VM::BakLogText",
+            "addr": "0x4428d0"
+        },
+        {
+            "name": "VAL::VM::IsArrayEnd",
+            "addr": "0x445a00"
+        },
+        {
+            "name": "VAL::DecodeCG01_Via_File",
+            "addr": "0x447130"
+        },
+        {
+            "name": "VAL::DecodeCG01_Copy",
+            "addr": "0x447680"
+        },
+        {
+            "name": "VAL::DecodeCG01",
+            "addr": "0x447b60"
+        },
+        {
+            "name": "VAL::DecodeCG00_Via_File",
+            "addr": "0x448130"
+        },
+        {
+            "name": "VAL::DecodeCG00_Copy",
+            "addr": "0x448260"
+        },
+        {
+            "name": "VAL::DecodeCG00",
+            "addr": "0x448310"
+        },
+        {
+            "name": "VAL::VM::Run",
+            "addr": "0x44c1c0"
+        },
+        {
+            "name": "VAL::OpenMask",
+            "addr": "0x44cbe0"
+        },
+        {
+            "name": "VAL::Timer::Get",
+            "addr": "0x44ee10"
+        },
+        {
+            "name": "VAL::OpenIMG_2",
+            "addr": "0x450f70"
+        },
+        {
+            "name": "VAL::OpenIMG",
+            "addr": "0x451050"
+        },
+        {
+            "name": "VAL::VM::JmpScript",
+            "addr": "0x451ab0"
+        },
+        {
+            "name": "VAL::VM::CallProc",
+            "addr": "0x451dd0"
+        },
+        {
+            "name": "VAL::VM::GoLabel",
+            "addr": "0x452040"
+        },
+        {
+            "name": "VAL::VM::UnThread",
+            "addr": "0x453630"
+        },
+        {
+            "name": "VAL::VM::Dispatch",
+            "addr": "0x45be70"
+        }
+    ]
+}
