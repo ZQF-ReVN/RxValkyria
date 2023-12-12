@@ -10,9 +10,13 @@ link_libraries(Rut RxHook)
 
 # Set Source File Path
 list(APPEND SRC_FILE 
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/VFS_Hook.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Parser.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Text_Editor.cpp")
+
+# Source File Only x32
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+list(APPEND SRC_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/VFS_Hook.cpp")
+endif()
 
 # Set Library
 add_library(${PROJECT_NAME} "${SRC_FILE}")

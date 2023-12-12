@@ -144,7 +144,7 @@ public:
 private:
 	void AddEP(size_t nAdd)
 	{
-		m_uiEP += nAdd;
+		m_uiEP += (uint32_t)nAdd;
 	}
 
 	uint16_t GetOpen()

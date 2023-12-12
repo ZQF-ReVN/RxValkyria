@@ -28,5 +28,5 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_LIST_DIR}/.out/lib)
 
 # Project
     add_subdirectory("src/VFS_Hook")
-    add_subdirectory("src/SDTParser")
     add_subdirectory("src/SDT_Text_Editor")
+    # add_subdirectory("src/SDT_Parser") # abandonment of the plan

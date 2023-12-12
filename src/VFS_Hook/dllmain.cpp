@@ -1,20 +1,21 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 
-#include "../../lib/Rut/RxConsole.h"
 #include "../../lib/Valkyria/VFS.h"
-
-using namespace Rut;
+#include "../../lib/Rut/RxConsole.h"
 
 
 static DWORD g_dwExeBase = (DWORD)GetModuleHandleW(NULL);
 
 
-VOID StartHook()
+void StartHook()
 {
-	RxConsole::Alloc(L"Valkyria_FileHook");
+	Rut::RxConsole::Alloc(L"Valkyria_FileHook");
+
+	// プレイ！プレイ！プレイ！ロック！ PKG
 	Valkyria::VFS::HookScriptRead(0x0041DA10, true);
 	Valkyria::VFS::HookMediasRead(0x0041D770, true);
 }
+
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
@@ -33,4 +34,4 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 	return TRUE;
 }
 
-VOID __declspec(dllexport) DirA() {};
+void __declspec(dllexport) DirA() {};
