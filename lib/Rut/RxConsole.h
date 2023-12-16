@@ -5,7 +5,7 @@
 
 namespace Rut::RxConsole
 {
-	FILE* Alloc(const wchar_t* lpTitle, bool isEdit = false, bool isTop = true);
+	FILE* Alloc(const wchar_t* lpTitle, bool isEdit = false);
 }
 
 namespace Rut::RxConsole

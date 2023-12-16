@@ -6,22 +6,29 @@
 
 namespace Valkyria::SDT
 {
+	static std::wstring NumToStr(size_t nValue)
+	{
+		wchar_t tmp[0x10];
+		size_t len = (size_t)swprintf_s(tmp, 0x10, L"0x%08x", nValue);
+		return { tmp, len };
+	}
+
+	static std::string MakeUnicodeStrA(size_t wChar)
+	{
+		char buf[0x10];
+		size_t len = (size_t)sprintf_s(buf, 0x10, "\\u%04x", wChar);
+		return { buf, len };
+	}
+
+	static  std::wstring MakeUnicodeStrW(size_t wChar)
+	{
+		wchar_t buf[0x10];
+		size_t len = (size_t)swprintf_s(buf, 0x10, L"\\u%04x", wChar);
+		return { buf, len };
+	}
+
 	static std::string EncodeString(std::wstring_view wsText, size_t nCodePage)
 	{
-		auto fn_make_unicode_str_a = [](size_t wChar) -> std::string
-			{
-				char buf[0x10];
-				size_t len = (size_t)sprintf_s(buf, 0x10, "\\u%04x", wChar);
-				return { buf, len };
-			};
-
-		auto fn_make_unicode_str_w = [](size_t wChar) -> std::wstring
-			{
-				wchar_t buf[0x10];
-				size_t len = (size_t)swprintf_s(buf, 0x10, L"\\u%04x", wChar);
-				return { buf, len };
-			};
-
 		std::string str_bytes;
 
 		if (nCodePage == 1200)
@@ -41,7 +48,7 @@ namespace Valkyria::SDT
 					{
 						uint32_t code_point = 0;
 						swscanf_s(wsText.data() + ite_unit + 1, L"%04x", &code_point);
-						str_bytes.append(fn_make_unicode_str_a(code_point));
+						str_bytes.append(MakeUnicodeStrA(code_point));
 						ite_unit += 4;
 					}
 					break;
@@ -65,7 +72,7 @@ namespace Valkyria::SDT
 				}
 				else
 				{
-					str_bytes.append(fn_make_unicode_str_a(unit));
+					str_bytes.append(MakeUnicodeStrA(unit));
 				}
 			}
 		}
@@ -76,7 +83,7 @@ namespace Valkyria::SDT
 			{
 				switch (unit)
 				{
-				case L'・':case L'≪':case L'≫':case L'♪':format_text.append(fn_make_unicode_str_w(unit)); break;
+				case L'・':case L'≪':case L'≫':case L'♪':format_text.append(MakeUnicodeStrW(unit)); break;
 				default: format_text.append(1, unit);
 				}
 			}
@@ -173,15 +180,8 @@ namespace Valkyria::SDT
 
 			if (isDebug)
 			{
-				auto fn_num_to_str = [](size_t nValue) -> std::wstring
-					{
-						wchar_t tmp[0x10];
-						size_t len = (size_t)swprintf_s(tmp, 0x10, L"0x%08x", nValue);
-						return { tmp, len };
-					};
-
-				obj[L"Debug_BegFOA"] = fn_num_to_str(uiHdrSize + m_uiCodeBegOffset);
-				obj[L"Debug_EndFOA"] = fn_num_to_str(uiHdrSize + m_uiCodeEndOffset);
+				obj[L"Debug_BegFOA"] = NumToStr(uiHdrSize + m_uiCodeBegOffset);
+				obj[L"Debug_EndFOA"] = NumToStr(uiHdrSize + m_uiCodeEndOffset);
 			}
 
 			return json;
