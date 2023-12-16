@@ -3,11 +3,11 @@
 #include <memory>
 
 
-namespace Rut
+namespace Rut::RxMem
 {
 	constexpr size_t AUTO_MEM_AUTO_SIZE = -1;
 
-	class RxMem
+	class Auto
 	{
 	private:
 		size_t m_uiMemSize;
@@ -15,22 +15,23 @@ namespace Rut
 		std::unique_ptr<uint8_t[]> m_upMemData;
 
 	public:
-		RxMem();
-		RxMem(size_t nSize);
-		RxMem(const RxMem& buffer);
-		RxMem(RxMem&& buffer) noexcept;
-		RxMem(const std::string_view msPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
-		RxMem(const std::wstring_view wsPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
-		~RxMem();
+		Auto();
+		Auto(std::initializer_list<Auto> lsOBJ);
+		Auto(size_t nSize);
+		Auto(const Auto& buffer);
+		Auto(Auto&& buffer) noexcept;
+		Auto(const std::string_view msPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
+		Auto(const std::wstring_view wsPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
+		~Auto();
 
-		RxMem& Copy(const RxMem& buffer);
-		RxMem& Move(RxMem&& buffer) noexcept;
-		RxMem& Append(const RxMem& rfMem);
+		Auto& Copy(const Auto& buffer);
+		Auto& Move(Auto&& buffer) noexcept;
+		Auto& Append(const Auto& rfMem);
 
 		uint8_t operator[] (size_t tSize) noexcept;
-		RxMem& operator=(RxMem&& rfAutoMem) noexcept;
-		RxMem& operator=(const RxMem& rfAutoMem);
-		RxMem& operator+(const RxMem& rfAutoMem);
+		Auto& operator=(Auto&& rfAutoMem) noexcept;
+		Auto& operator=(const Auto& rfAutoMem);
+		Auto& operator+(const Auto& rfAutoMem);
 
 	public:
 		void SaveData(const std::string_view msPath);

@@ -2,6 +2,7 @@
 
 #include "../../lib/Valkyria/VFS.h"
 #include "../../lib/Rut/RxConsole.h"
+#include "../../lib/RxHook/RxHook.h"
 
 
 static DWORD g_dwExeBase = (DWORD)GetModuleHandleW(NULL);
@@ -14,6 +15,7 @@ void StartHook()
 	// プレイ！プレイ！プレイ！ロック！ PKG
 	Valkyria::VFS::HookScriptRead(0x0041DA10, true);
 	Valkyria::VFS::HookMediasRead(0x0041D770, true);
+	Rut::RxHook::HookCreateFontIndirectA(0x86, "SimHei");
 }
 
 

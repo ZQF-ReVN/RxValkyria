@@ -1,21 +1,22 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include <unordered_map>
 
 
 namespace Rut::RxJson
 {
-	class Value;
+	class JValue;
 
 	using JBool = bool;
 	using JInt = int;
 	using JDouble = double;
 	using JString = std::wstring;
-	using JArray = std::vector<Value>;
-	using JObject = std::unordered_map<std::wstring, Value>;
+	using JArray = std::vector<JValue>;
+	using JObject = std::unordered_map<std::wstring, JValue>;
 
-	enum JValue_Type
+	enum Value_Type_T
 	{
 		JVALUE_NUL,
 		JVALUE_BOL,
@@ -26,75 +27,78 @@ namespace Rut::RxJson
 		JVALUE_OBJ
 	};
 
-	typedef union
-	{
-		JBool Bool;
-		JInt Int;
-		JDouble Double;
-		JString* pStr;
-		JArray* pAry;
-		JObject* pObj;
-	}JValue_Value;
 
-
-	class Value
+	class JValue
 	{
 	private:
-		JValue_Type m_Type;
-		JValue_Value m_Value;
+		typedef union
+		{
+			JBool Bool;
+			JInt Int;
+			JDouble Double;
+			JString* pStr;
+			JArray* pAry;
+			JObject* pObj;
+		}Value_Union_T;
+
+		Value_Type_T m_Type;
+		Value_Union_T m_Value;
+
 
 	public:
-		Value();
-		Value(bool bValue);
-		Value(int iValue);
-		Value(double dValue);
-		Value(const wchar_t* sValue);
-		Value(std::wstring_view sValue);
-		Value(const std::wstring& sValue);
-		Value(std::wstring&& sValue);
-		Value(const JArray& aValue);
-		Value(JArray&& aValue);
-		Value(const JObject& oValue);
-		Value(JObject&& oValue);
-		Value(const Value& rfJValue);
-		Value(Value&& rfJValue) noexcept;
-		~Value();
+		JValue();
+		JValue(bool bValue);
+		JValue(int iValue);
+		JValue(double dValue);
+		JValue(const wchar_t* sValue);
+		JValue(std::wstring_view sValue);
+		JValue(const std::wstring& sValue);
+		JValue(std::wstring&& sValue);
+		JValue(const JArray& aValue);
+		JValue(JArray&& aValue);
+		JValue(const JObject& oValue);
+		JValue(JObject&& oValue);
+		JValue(const JValue& rfJValue);
+		JValue(JValue&& rfJValue) noexcept;
+		~JValue();
 
-		Value& Copy(const Value& rfJValue);
-		Value& Move(Value& rfJValue);
-		Value& operator = (const Value& rfJValue);
-		Value& operator = (Value&& rfJValue) noexcept;
+		JValue& Copy(const JValue& rfJValue);
+		JValue& Move(JValue& rfJValue);
+		JValue& operator = (const JValue& rfJValue);
+		JValue& operator = (JValue&& rfJValue) noexcept;
 
 		//Array
 		void SureArray();
-		void Append(const Value& rfJValue);
-		void Append(Value&& rfJValue);
+		void Append(const JValue& rfJValue);
+		void Append(JValue&& rfJValue);
 
 		// Obj
-		Value& operator[](const wchar_t* wpKey);
+		JValue& operator[](const wchar_t* wpKey);
 		void SureObject();
 		void AddKey(std::wstring_view wsKey);
-		void AddKey(std::wstring_view wsKey, const Value& rfJValue);
-		void AddKey(std::wstring_view wsKey, Value&& rfJValue);
-		bool HasKey(std::wstring_view wsKey);
+		void AddKey(std::wstring_view wsKey, const JValue& rfJValue);
+		void AddKey(std::wstring_view wsKey, JValue&& rfJValue);
+		JObject::iterator FindKey(std::wstring_view wsKey);
+		JObject::iterator EndKey();
+		JValue& GetValue(JObject::iterator itObj);
 
-		JValue_Type GetType();
+		Value_Type_T GetType() const noexcept;
 
-		operator bool();
-		operator int();
-		operator double();
-		operator JString& ();
-		operator JArray& ();
-		operator JObject& ();
-		operator std::wstring_view();
+		operator bool() const;
+		operator int() const;
+		operator double() const;
+		operator JString& () const;
+		operator JArray& () const;
+		operator JObject& () const;
+		operator std::wstring_view() const;
 
 		JArray& ToAry();
 		JObject& ToOBJ();
-		int ToInt();
-		bool ToBool();
-		double ToDouble();
-		const wchar_t* ToStringPtr();
-		std::wstring_view ToStringView();
+		int ToInt() const;
+		bool ToBool() const;
+		double ToDouble() const;
+		const wchar_t* ToStringPtr() const;
+		std::wstring_view ToStringView() const;
 
 		void Dump(std::wstring& wsText, bool isFormat = true, bool isOrder = false) const;
 	};
@@ -106,14 +110,14 @@ namespace Rut::RxJson
 	class Parser
 	{
 	private:
-		wchar_t* m_wpJson;
+		std::unique_ptr<wchar_t[]> m_uqJson;
 		size_t m_nJsonCCH;
 		size_t m_nReadCCH;
 
 	public:
 		Parser();
 		Parser(std::wstring_view wsJson);
-		Parser(std::wstring_view wsJson, Value& rfJValue);
+		Parser(std::wstring_view wsJson, JValue& rfJValue);
 		~Parser();
 
 	private:
@@ -126,20 +130,20 @@ namespace Rut::RxJson
 		size_t GeReadCCH() const;
 		size_t GetJsonCCH() const;
 
-		void ParseArray(Value& rfJValue);
-		void ParseObject(Value& rfJValue);
-		void ParseNumber(Value& rfJValue);
-		void ParseString(Value& rfJValue);
-		void ParseTrue(Value& rfJValue);
-		void ParseFalse(Value& rfJValue);
-		void ParseNull(Value& rfJValue);
+		void ParseArray(JValue& rfJValue);
+		void ParseObject(JValue& rfJValue);
+		void ParseNumber(JValue& rfJValue);
+		void ParseString(JValue& rfJValue);
+		void ParseTrue(JValue& rfJValue);
+		void ParseFalse(JValue& rfJValue);
+		void ParseNull(JValue& rfJValue);
 
-		void ParseValue(Value& rfJValue);
+		void ParseValue(JValue& rfJValue);
 
 	public:
 		void Open(std::wstring_view wsJson);
-		bool Read(Value& rfJValue);
-		bool Load(std::wstring_view wsJson, Value& rfJValue);
-		static void Save(Value& rfJVaue, std::wstring_view wsFileName, bool isFormat = false, bool isOrder = false);
+		bool Read(JValue& rfJValue);
+		bool Load(std::wstring_view wsJson, JValue& rfJValue);
+		static void Save(JValue& rfJVaue, std::wstring_view wsFileName, bool isFormat = false, bool isOrder = false);
 	};
 }

@@ -10,26 +10,6 @@
 
 namespace Rut::RxConsole
 {
-	static void SetConsoleTop()
-	{
-		HWND consoleHWND = NULL;
-		WCHAR consoleTitle[MAX_PATH] = { 0 };
-
-		for (size_t ite = 20; ite-- > 0;)
-		{
-			::GetConsoleTitleW(consoleTitle, MAX_PATH);
-			consoleHWND = FindWindowW(NULL, (LPWSTR)consoleTitle);
-			if (consoleHWND != NULL)
-			{
-				::SetWindowPos(consoleHWND, HWND_TOPMOST, NULL, NULL, NULL, NULL, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-			}
-
-			Sleep(1000);
-		}
-
-		::MessageBoxW(NULL, L"Topmost Console Window Failed!", NULL, NULL);
-	}
-
 	static void SetConsoleNoQuickEdit()
 	{
 		DWORD mode = 0;
@@ -54,13 +34,11 @@ namespace Rut::RxConsole
 	}
 
 
-	FILE* Alloc(const wchar_t* lpTitle, bool isEdit, bool isTop)
+	FILE* Alloc(const wchar_t* lpTitle, bool isEdit)
 	{
 		Platform::AllocConsole(lpTitle);
-		if (isTop == true) { Platform::CreateThread(SetConsoleTop); }
-		if (isEdit == false) { SetConsoleNoQuickEdit(); }
 		SetConsoleLocale();
-
+		isEdit == false ? SetConsoleNoQuickEdit() : (void)(0);
 		return SetConsoleSTDIO();
 	}
 }

@@ -119,7 +119,7 @@ public:
 		return m_vcLabels;
 	}
 
-	uint8_t* EndPtr()
+	uint8_t* EndPtr() const
 	{
 		return m_Script.GetPtr() + m_Script.GetSize();
 	}

@@ -4,112 +4,111 @@
 #include <map>
 #include <cassert>
 #include <stdexcept>
-#include <filesystem>
 
 
 namespace Rut::RxJson
 {
-	Value::Value()
+	JValue::JValue()
 	{
 		m_Type = JVALUE_NUL;
 		m_Value = { 0 };
 	}
 
-	Value::Value(bool bValue)
+	JValue::JValue(bool bValue)
 	{
 		m_Type = JVALUE_BOL;
 		m_Value.Bool = bValue;
 	}
 
-	Value::Value(int iValue)
+	JValue::JValue(int iValue)
 	{
 		m_Type = JVALUE_INT;
 		m_Value.Int = iValue;
 	}
 
-	Value::Value(double dValue)
+	JValue::JValue(double dValue)
 	{
 		m_Type = JVALUE_DBL;
 		m_Value.Double = dValue;
 	}
 
-	Value::Value(const wchar_t* sValue)
+	JValue::JValue(const wchar_t* sValue)
 	{
 		m_Type = JVALUE_STR;
 		m_Value.pStr = new JString(sValue);
 	}
 
-	Value::Value(std::wstring_view sValue)
+	JValue::JValue(std::wstring_view sValue)
 	{
 		m_Type = JVALUE_STR;
 		m_Value.pStr = new JString(sValue);
 	}
 
-	Value::Value(const std::wstring& sValue)
+	JValue::JValue(const std::wstring& sValue)
 	{
 		m_Type = JVALUE_STR;
 		m_Value.pStr = new JString(sValue);
 	}
 
-	Value::Value(std::wstring&& sValue)
+	JValue::JValue(std::wstring&& sValue)
 	{
 		m_Type = JVALUE_STR;
 		m_Value.pStr = new JString(std::move(sValue));
 	}
 
-	Value::Value(const JArray& aValue)
+	JValue::JValue(const JArray& aValue)
 	{
 		m_Type = JVALUE_ARY;
 		m_Value.pAry = new JArray(aValue);
 	}
 
-	Value::Value(JArray&& aValue)
+	JValue::JValue(JArray&& aValue)
 	{
 		m_Type = JVALUE_ARY;
 		m_Value.pAry = new JArray(std::move(aValue));
 	}
 
-	Value::Value(const JObject& oValue)
+	JValue::JValue(const JObject& oValue)
 	{
 		m_Type = JVALUE_OBJ;
 		m_Value.pObj = new JObject(oValue);
 	}
 
-	Value::Value(JObject&& oValue)
+	JValue::JValue(JObject&& oValue)
 	{
 		m_Type = JVALUE_OBJ;
 		m_Value.pObj = new JObject(std::move(oValue));
 	}
 
-	Value::Value(const Value& rfJValue)
+	JValue::JValue(const JValue& rfJValue)
 	{
 		m_Type = JVALUE_NUL;
 		Copy(rfJValue);
 	}
 
-	Value::Value(Value&& rfJValue) noexcept
+	JValue::JValue(JValue&& rfJValue) noexcept
 	{
 		m_Type = JVALUE_NUL;
 		Move(rfJValue);
 	}
 
-	Value::~Value()
+	JValue::~JValue()
 	{
 		switch (m_Type)
 		{
-		case JValue_Type::JVALUE_STR:
+		case Value_Type_T::JVALUE_STR:
 		{
 			delete m_Value.pStr;
 		}
 		break;
 
-		case JValue_Type::JVALUE_ARY:
+		case Value_Type_T::JVALUE_ARY:
 		{
 			delete m_Value.pAry;
 		}
 		break;
 
-		case JValue_Type::JVALUE_OBJ:
+		case Value_Type_T::JVALUE_OBJ:
 		{
 			delete m_Value.pObj;
 		}
@@ -118,25 +117,25 @@ namespace Rut::RxJson
 	}
 
 
-	Value& Value::Copy(const Value& rfJValue)
+	JValue& JValue::Copy(const JValue& rfJValue)
 	{
 		this->m_Type = rfJValue.m_Type;
 		this->m_Value = rfJValue.m_Value;
 
 		switch (m_Type)
 		{
-		case JValue_Type::JVALUE_STR:
+		case Value_Type_T::JVALUE_STR:
 			this->m_Value.pStr = new JString(*(rfJValue.m_Value.pStr)); break;
-		case JValue_Type::JVALUE_ARY:
+		case Value_Type_T::JVALUE_ARY:
 			this->m_Value.pAry = new JArray(*(rfJValue.m_Value.pAry)); break;
-		case JValue_Type::JVALUE_OBJ:
+		case Value_Type_T::JVALUE_OBJ:
 			this->m_Value.pObj = new JObject(*(rfJValue.m_Value.pObj)); break;
 		}
 
 		return *this;
 	}
 
-	Value& Value::Move(Value& rfJValue)
+	JValue& JValue::Move(JValue& rfJValue)
 	{
 		this->m_Type = rfJValue.m_Type;
 		this->m_Value = rfJValue.m_Value;
@@ -146,20 +145,20 @@ namespace Rut::RxJson
 	}
 
 
-	Value& Value::operator = (const Value& rfJValue)
+	JValue& JValue::operator = (const JValue& rfJValue)
 	{
-		this->~Value();
+		this->~JValue();
 		return this->Copy(rfJValue);
 	}
 
-	Value& Value::operator = (Value&& rfJValue) noexcept
+	JValue& JValue::operator = (JValue&& rfJValue) noexcept
 	{
-		this->~Value();
+		this->~JValue();
 		return this->Move(rfJValue);
 	}
 
 	//Array
-	void Value::SureArray()
+	void JValue::SureArray()
 	{
 		if (m_Type == JVALUE_NUL)
 		{
@@ -167,19 +166,16 @@ namespace Rut::RxJson
 			m_Value.pAry = new JArray();
 		}
 
-		if (m_Type != JVALUE_ARY)
-		{
-			throw std::runtime_error("Error Json Value Not Array!");
-		}
+		if (m_Type != JVALUE_ARY) { throw std::runtime_error("Error Json Value Not Array!"); }
 	}
 
-	void Value::Append(const Value& rfJValue)
+	void JValue::Append(const JValue& rfJValue)
 	{
 		this->SureArray();
 		m_Value.pAry->push_back(rfJValue);
 	}
 
-	void Value::Append(Value&& rfJValue)
+	void JValue::Append(JValue&& rfJValue)
 	{
 		this->SureArray();
 		m_Value.pAry->emplace_back(std::move(rfJValue));
@@ -187,13 +183,13 @@ namespace Rut::RxJson
 
 
 	// Obj
-	Value& Value::operator[](const wchar_t* wpKey)
+	JValue& JValue::operator[](const wchar_t* wpKey)
 	{
 		JObject& obj = this->ToOBJ();
 		return (*this->m_Value.pObj)[wpKey];
 	}
 
-	void Value::SureObject()
+	void JValue::SureObject()
 	{
 		if (m_Type == JVALUE_NUL)
 		{
@@ -201,154 +197,158 @@ namespace Rut::RxJson
 			m_Value.pObj = new JObject();
 		}
 
-		if (m_Type != JVALUE_OBJ)
-		{
-			throw std::runtime_error("Error Json Value Not Object!");
-		}
+		if (m_Type != JVALUE_OBJ) { throw std::runtime_error("Error Json Value Not Object!"); }
 	}
 
-	void Value::AddKey(std::wstring_view wsKey)
+	void JValue::AddKey(std::wstring_view wsKey)
 	{
 		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))];
 	}
 
-	void Value::AddKey(std::wstring_view wsKey, const Value& rfJValue)
+	void JValue::AddKey(std::wstring_view wsKey, const JValue& rfJValue)
 	{
 		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))] = rfJValue;
 	}
 
-	void Value::AddKey(std::wstring_view wsKey, Value&& rfJValue)
+	void JValue::AddKey(std::wstring_view wsKey, JValue&& rfJValue)
 	{
 		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))] = std::move(rfJValue);
 	}
 
-	bool Value::HasKey(std::wstring_view wsKey)
+	JObject::iterator JValue::FindKey(std::wstring_view wsKey)
 	{
-		auto ite = m_Value.pObj->find(std::wstring(wsKey));
-		return ite == m_Value.pObj->end() ? false : true;
+		return m_Value.pObj->find(std::wstring(wsKey));
 	}
 
+	JObject::iterator JValue::EndKey()
+	{
+		return m_Value.pObj->end();
+	}
 
-	JValue_Type Value::GetType()
+	JValue& JValue::GetValue(JObject::iterator itObj)
+	{
+		return (*itObj).second;
+	}
+
+	Value_Type_T JValue::GetType() const noexcept
 	{
 		return m_Type;
 	}
 
-	Value::operator bool()
+	JValue::operator bool() const
 	{
 		if (m_Type == JVALUE_BOL) { return m_Value.Bool; }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator int()
+	JValue::operator int() const
 	{
 		if (m_Type == JVALUE_INT) { return m_Value.Int; }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator double()
+	JValue::operator double() const
 	{
 		if (m_Type == JVALUE_DBL) { return m_Value.Double; }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator JString& ()
+	JValue::operator JString& () const
 	{
 		if (m_Type == JVALUE_STR) { return *(m_Value.pStr); }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator JArray& ()
+	JValue::operator JArray& () const
 	{
-		return this->ToAry();
+		if (m_Type == JVALUE_ARY) { return *(m_Value.pAry); }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator JObject& ()
+	JValue::operator JObject& () const
 	{
-		return this->ToOBJ();
+		if (m_Type == JVALUE_OBJ) { return *(m_Value.pObj); }
 		throw std::runtime_error("Error Json Type!");
 	}
 
-	Value::operator std::wstring_view()
+	JValue::operator std::wstring_view() const
 	{
-		const std::wstring& str = this->operator JString & ();
-		return str;
+		return this->operator JString & ();
 	}
 
 
-	JArray& Value::ToAry()
+	JArray& JValue::ToAry()
 	{
 		this->SureArray();
 		return *m_Value.pAry;
 	}
 
-	JObject& Value::ToOBJ()
+	JObject& JValue::ToOBJ()
 	{
 		this->SureObject();
 		return *(m_Value.pObj);
 	}
 
-	int Value::ToInt()
+	int JValue::ToInt() const
 	{
 		return this->operator int();
 	}
 
-	bool Value::ToBool()
+	bool JValue::ToBool() const
 	{
 		return this->operator bool();
 	}
 
-	double Value::ToDouble()
+	double JValue::ToDouble() const
 	{
 		return this->operator double();
 	}
 
-	const wchar_t* Value::ToStringPtr()
+	const wchar_t* JValue::ToStringPtr() const
 	{
 		return this->operator std::wstring_view().data();
 	}
 
-	std::wstring_view Value::ToStringView()
+	std::wstring_view JValue::ToStringView() const
 	{
 		return this->operator std::wstring_view();
 	}
 
 
-	void Value::Dump(std::wstring& wsText, bool isFormat, bool isOrder) const
+	void JValue::Dump(std::wstring& wsText, bool isFormat, bool isOrder) const
 	{
 		static size_t count = 0;
 
 		switch (m_Type)
 		{
-		case JValue_Type::JVALUE_NUL:
+		case Value_Type_T::JVALUE_NUL:
 		{
 			wsText.append(L"null");
 		}
 		break;
 
-		case JValue_Type::JVALUE_BOL:
+		case Value_Type_T::JVALUE_BOL:
 		{
 			wsText.append((m_Value.Bool) ? L"true" : L"false");
 		}
 		break;
 
-		case JValue_Type::JVALUE_INT:
+		case Value_Type_T::JVALUE_INT:
 		{
 			wsText.append(std::to_wstring(m_Value.Int));
 		}
 		break;
 
-		case JValue_Type::JVALUE_DBL:
+		case Value_Type_T::JVALUE_DBL:
 		{
 			wsText.append(std::to_wstring(m_Value.Double));
 		}
 		break;
 
-		case JValue_Type::JVALUE_STR:
+		case Value_Type_T::JVALUE_STR:
 		{
 			wsText.append(1, L'\"');
 			for (auto ch : *(m_Value.pStr))
@@ -376,7 +376,7 @@ namespace Rut::RxJson
 		}
 		break;
 
-		case JValue_Type::JVALUE_ARY:
+		case Value_Type_T::JVALUE_ARY:
 		{
 			wsText.append(1, L'[');
 
@@ -410,13 +410,13 @@ namespace Rut::RxJson
 		}
 		break;
 
-		case JValue_Type::JVALUE_OBJ:
+		case Value_Type_T::JVALUE_OBJ:
 		{
 			wsText.append(1, L'{');
 
 			count++;
 			{
-				auto fn_proce_one = [&wsText,&isFormat](const std::pair<const std::wstring, Value>& rfKV)
+				auto fn_proce_one = [&wsText, &isFormat](const std::pair<const std::wstring, JValue>& rfKV)
 					{
 						if (isFormat)
 						{
@@ -435,11 +435,11 @@ namespace Rut::RxJson
 						wsText.append(1, L',');
 					};
 
-				const std::unordered_map<std::wstring, Value>& unorder_map = *(m_Value.pObj);
+				const std::unordered_map<std::wstring, JValue>& unorder_map = *(m_Value.pObj);
 
 				if (isOrder)
 				{
-					std::map<std::wstring, Value> map;
+					std::map<std::wstring, JValue> map;
 					for (auto& value : unorder_map)
 					{
 						map.insert(value);
@@ -484,7 +484,6 @@ namespace Rut::RxJson
 {
 	Parser::Parser()
 	{
-		m_wpJson = nullptr;
 		m_nJsonCCH = 0;
 		m_nReadCCH = 0;
 	}
@@ -494,17 +493,14 @@ namespace Rut::RxJson
 		this->Open(wsJson);
 	}
 
-	Parser::Parser(std::wstring_view wsJson, Value& rfJValue) : Parser(wsJson)
+	Parser::Parser(std::wstring_view wsJson, JValue& rfJValue) : Parser(wsJson)
 	{
 		this->Read(rfJValue);
 	}
 
 	Parser::~Parser()
 	{
-		if (m_wpJson)
-		{
-			delete[] m_wpJson;
-		}
+
 	}
 
 
@@ -515,12 +511,12 @@ namespace Rut::RxJson
 
 	wchar_t Parser::GetCurChar()
 	{
-		return m_wpJson[m_nReadCCH];
+		return m_uqJson[m_nReadCCH];
 	}
 
 	wchar_t* Parser::GetCurPtr()
 	{
-		return m_wpJson + m_nReadCCH;
+		return m_uqJson.get() + m_nReadCCH;
 	}
 
 	size_t Parser::GeReadCCH() const
@@ -568,7 +564,7 @@ namespace Rut::RxJson
 	}
 
 
-	void Parser::ParseArray(Value& rfJValue)
+	void Parser::ParseArray(JValue& rfJValue)
 	{
 		assert(this->GetCurChar() == L'[');
 
@@ -576,7 +572,7 @@ namespace Rut::RxJson
 
 		while (this->GetToken() != L']')
 		{
-			Value value;
+			JValue value;
 			this->ParseValue(value);
 			rfJValue.Append(std::move(value));
 		}
@@ -587,7 +583,7 @@ namespace Rut::RxJson
 		return;
 	}
 
-	void Parser::ParseObject(Value& rfJValue)
+	void Parser::ParseObject(JValue& rfJValue)
 	{
 		assert(this->GetCurChar() == L'{');
 
@@ -615,7 +611,7 @@ namespace Rut::RxJson
 				this->AddReadCCH();
 				this->SkipWhite();
 
-				Value value;
+				JValue value;
 				this->ParseValue(value);
 				rfJValue.AddKey(key, std::move(value));
 			}
@@ -634,7 +630,7 @@ namespace Rut::RxJson
 		}
 	}
 
-	void Parser::ParseNumber(Value& rfJValue)
+	void Parser::ParseNumber(JValue& rfJValue)
 	{
 		wchar_t* end = nullptr;
 		wchar_t* beg = this->GetCurPtr();
@@ -648,7 +644,7 @@ namespace Rut::RxJson
 		num_org == num_loss ? (rfJValue = (int)num_int) : (rfJValue = num_org);
 	}
 
-	void Parser::ParseString(Value& rfJValue)
+	void Parser::ParseString(JValue& rfJValue)
 	{
 		auto fn_make_unicode = [](const wchar_t* wpStr) -> uint32_t
 			{
@@ -718,11 +714,11 @@ namespace Rut::RxJson
 			this->AddReadCCH(); // netx char
 		}
 
-		Value value(std::move(text));
+		JValue value(std::move(text));
 		rfJValue = std::move(value);
 	}
 
-	void Parser::ParseTrue(Value& rfJValue)
+	void Parser::ParseTrue(JValue& rfJValue)
 	{
 		assert(this->GetCurChar() == L't');
 
@@ -730,7 +726,7 @@ namespace Rut::RxJson
 		rfJValue = true;
 	}
 
-	void Parser::ParseFalse(Value& rfJValue)
+	void Parser::ParseFalse(JValue& rfJValue)
 	{
 		assert(this->GetCurChar() == L'f');
 
@@ -738,15 +734,15 @@ namespace Rut::RxJson
 		rfJValue = false;
 	}
 
-	void Parser::ParseNull(Value& rfJValue)
+	void Parser::ParseNull(JValue& rfJValue)
 	{
 		assert(this->GetCurChar() == L'n');
 
 		this->AddReadCCH(4);
-		rfJValue = Value();
+		rfJValue = JValue();
 	}
 
-	void Parser::ParseValue(Value& rfJValue)
+	void Parser::ParseValue(JValue& rfJValue)
 	{
 		switch (this->GetCurChar())
 		{
@@ -771,12 +767,12 @@ namespace Rut::RxJson
 		RxFile::Text{ wsJson, RIO_READ, RFM_UTF8 }.ReadRawText(json_text);
 
 		this->m_nJsonCCH = json_text.size();
-		this->m_wpJson = new wchar_t[m_nJsonCCH + 1];
-		wcsncpy_s(this->m_wpJson, m_nJsonCCH + 1, json_text.data(), this->m_nJsonCCH);
-		this->m_wpJson[this->m_nJsonCCH] = L'\0';
+		this->m_uqJson = std::make_unique_for_overwrite<wchar_t[]>(m_nJsonCCH + 1);
+		wcsncpy_s(this->m_uqJson.get(), m_nJsonCCH + 1, json_text.data(), this->m_nJsonCCH);
+		this->m_uqJson[this->m_nJsonCCH] = L'\0';
 	}
 
-	bool Parser::Read(Value& rfJValue)
+	bool Parser::Read(JValue& rfJValue)
 	{
 		this->ParseValue(rfJValue);
 
@@ -784,13 +780,13 @@ namespace Rut::RxJson
 		return (this->GeReadCCH() >= this->GetJsonCCH()) ? (true) : (false);
 	}
 
-	bool Parser::Load(std::wstring_view wsJson, Value& rfJValue)
+	bool Parser::Load(std::wstring_view wsJson, JValue& rfJValue)
 	{
 		this->Open(wsJson);
 		return this->Read(rfJValue);
 	}
 
-	void Parser::Save(Value& rfJVaue, std::wstring_view wsFileName, bool isFormat, bool isOrder)
+	void Parser::Save(JValue& rfJVaue, std::wstring_view wsFileName, bool isFormat, bool isOrder)
 	{
 		std::wstring text;
 		rfJVaue.Dump(text, isFormat, isOrder);

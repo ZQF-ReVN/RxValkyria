@@ -76,11 +76,17 @@ namespace Rut::RxStr
 
 		const char* mstr_ptr = msStr.data();
 		size_t wstr_len = Platform::StrToWStr(mstr_ptr, mstr_len, nullptr, 0, uCodePage);
-		if (wstr_len == 0) { throw std::runtime_error("RxCvt::ToWCS Error!"); }
+		if (wstr_len == 0) 
+		{ 
+			throw std::runtime_error("RxCvt::ToWCS Error!");
+		}
 
 		wsStr.resize(wstr_len);
 		wstr_len = Platform::StrToWStr(mstr_ptr, mstr_len, wsStr.data(), wstr_len, uCodePage);
-		if (wstr_len == 0) { throw std::runtime_error("RxCvt::ToWCS Error!"); }
+		if (wstr_len == 0) 
+		{ 
+			throw std::runtime_error("RxCvt::ToWCS Error!");
+		}
 
 		return wstr_len;
 	}
@@ -92,13 +98,19 @@ namespace Rut::RxStr
 
 		const wchar_t* wstr_ptr = wsStr.data();
 		size_t mstr_bytes = Platform::WStrToStr(wstr_ptr, wstr_len, nullptr, 0, uCodePage, nullptr, nullptr);
-		if (mstr_bytes == 0) { throw std::runtime_error("RxCvt::ToMBCS Error!"); }
+		if (mstr_bytes == 0) 
+		{
+			throw std::runtime_error("RxCvt::ToMBCS Error!");
+		}
 
 		bool is_error = false;
 
 		msStr.resize(mstr_bytes);
 		mstr_bytes = Platform::WStrToStr(wstr_ptr, wstr_len, msStr.data(), mstr_bytes, uCodePage, &is_error, "?");
-		if (is_error || (mstr_bytes == 0)) { throw std::runtime_error("RxCvt::ToMBCS Error!"); }
+		if (is_error || (mstr_bytes == 0)) 
+		{ 
+			throw std::runtime_error("RxCvt::ToMBCS Error!");
+		}
 
 		return mstr_bytes;
 	}

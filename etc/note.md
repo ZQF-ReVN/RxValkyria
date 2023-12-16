@@ -108,7 +108,7 @@ OP: 0x0A42
 Name: GOTO
 Address: 0x0046886D
 Formate: [word:op][dword:label_index_offset]
-Example: 0A42 61000000
+Example: 420A 61000000
 
 OP: 0x0A43
 Name: Call

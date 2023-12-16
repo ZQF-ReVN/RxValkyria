@@ -32,6 +32,16 @@ namespace Valkyria::SDT
 		}
 	}
 
+	template<typename SDT_OBJ_T>
+	static void CheckMakeData(uint8_t* pOrg, SDT_OBJ_T& rfOBJ)
+	{
+		Rut::RxMem::Auto mem = rfOBJ.Make();
+		if (memcmp(pOrg, mem.GetPtr(), mem.GetSize()))
+		{
+			throw std::runtime_error("Dump Data Mismatched!");
+		}
+	}
+
 
 	class SDT_HDR_Info
 	{
@@ -56,6 +66,21 @@ namespace Valkyria::SDT
 			m_uiUnValue1 = tmp_ptr[2];
 			m_uiLabelCount = tmp_ptr[3];
 			m_uiCheckDataRva = tmp_ptr[4];
+		}
+
+		Rut::RxMem::Auto Make() const
+		{
+			Rut::RxMem::Auto mem_data;
+			mem_data.SetSize(this->GetSize());
+			uint32_t* cur_ptr = (uint32_t*)mem_data.GetPtr();
+			{
+				cur_ptr[0] = m_uiHeaderSize;
+				cur_ptr[1] = m_uiUnValue0;
+				cur_ptr[2] = m_uiUnValue1;
+				cur_ptr[3] = m_uiLabelCount;
+				cur_ptr[4] = m_uiCheckDataRva;
+			}
+			return mem_data;
 		}
 
 	public:
@@ -93,6 +118,20 @@ namespace Valkyria::SDT
 			m_uiLableInCodeOffset = *(uint32_t*)(pData + m_msLabelName.size() + 1);
 		}
 
+		Rut::RxMem::Auto Make() const
+		{
+			Rut::RxMem::Auto mem_data;
+			mem_data.SetSize(this->GetSize());
+			uint8_t* cur_ptr = mem_data.GetPtr();
+			{
+				memcpy(cur_ptr, m_msLabelName.data(), m_msLabelName.size() + 1);
+				ValkyriaStringEncode(cur_ptr);
+				cur_ptr += m_msLabelName.size() + 1;
+				*(uint32_t*)cur_ptr = m_uiLableInCodeOffset;
+			}
+			return mem_data;
+		}
+
 	public:
 		size_t GetSize() const
 		{
@@ -122,6 +161,22 @@ namespace Valkyria::SDT
 				cur_ptr += label.GetSize();
 				m_vcLabels.emplace_back(std::move(label));
 			}
+		}
+
+		Rut::RxMem::Auto Make() const
+		{
+			Rut::RxMem::Auto mem_data;
+			mem_data.SetSize(this->GetSize());
+			uint8_t* cur_ptr = mem_data.GetPtr();
+			{
+				for (auto& label : m_vcLabels)
+				{
+					Rut::RxMem::Auto label_mem = label.Make();
+					memcpy(cur_ptr, label_mem.GetPtr(), label_mem.GetSize());
+					cur_ptr += label_mem.GetSize();
+				}
+			}
+			return mem_data;
 		}
 
 	public:
@@ -162,10 +217,34 @@ namespace Valkyria::SDT
 			memcpy(m_aCheckData, cur_ptr, sizeof(m_aCheckData));
 		}
 
+		Rut::RxMem::Auto Make() const
+		{
+			Rut::RxMem::Auto mem_data;
+			mem_data.SetSize(this->GetSize());
+			uint8_t* cur_ptr = mem_data.GetPtr();
+
+			Rut::RxMem::Auto info_mem = m_Info.Make();
+			memcpy(cur_ptr, info_mem.GetPtr(), info_mem.GetSize());
+			cur_ptr += info_mem.GetSize();
+
+			Rut::RxMem::Auto labels_mem = m_Labels.Make();
+			memcpy(cur_ptr, labels_mem.GetPtr(), labels_mem.GetSize());
+			cur_ptr += labels_mem.GetSize();
+
+			memcpy(cur_ptr, m_aCheckData, sizeof(m_aCheckData));
+			
+			return mem_data;
+		}
+
 	public:
 		size_t GetSize() const
 		{
 			return m_Info.GetHeaderSize();
+		}
+
+		const SDT_HDR_Info& GetInfo() const
+		{
+			return m_Info;
 		}
 	};
 
@@ -179,7 +258,11 @@ namespace Valkyria::SDT
 		SDT_Code_MsgName()
 		{
 
+		}
 
+		SDT_Code_MsgName(uint8_t* pData)
+		{
+			this->Parse(pData);
 		}
 
 		void Parse(uint8_t* pData)
@@ -191,9 +274,9 @@ namespace Valkyria::SDT
 			check != 0x11110E01 ? (throw std::runtime_error("SDT_Code_MsgName::Parse Error!")) : (void)(0);
 		}
 
-		Rut::RxMem Make() const
+		Rut::RxMem::Auto Make() const
 		{
-			Rut::RxMem mem_data;
+			Rut::RxMem::Auto mem_data;
 			size_t mem_size = this->GetSize();
 			if (mem_size)
 			{
@@ -245,6 +328,11 @@ namespace Valkyria::SDT
 
 		}
 
+		SDT_Code_MsgText(uint8_t* pData)
+		{
+			this->Parse(pData);
+		}
+
 		void Parse(uint8_t* pData)
 		{
 			m_usOPCode = *((uint16_t*)pData + 0);
@@ -255,9 +343,9 @@ namespace Valkyria::SDT
 			m_msText = ValkyriaStringDecode(pData + 8);
 		}
 
-		Rut::RxMem Make() const
+		Rut::RxMem::Auto Make() const
 		{
-			Rut::RxMem mem_data;
+			Rut::RxMem::Auto mem_data;
 			size_t mem_size = this->GetSize();
 			if (mem_size)
 			{
@@ -314,6 +402,11 @@ namespace Valkyria::SDT
 
 		}
 
+		SDT_Code_MsgNewLine(uint8_t* pData)
+		{
+			this->Parse(pData);
+		}
+
 		void Parse(uint8_t* pData)
 		{
 			m_usOPCode = *((uint16_t*)pData + 0);
@@ -323,9 +416,9 @@ namespace Valkyria::SDT
 			m_uiLineNumer = *((uint32_t*)pData + 1);
 		}
 
-		Rut::RxMem Make() const
+		Rut::RxMem::Auto Make() const
 		{
-			Rut::RxMem mem_data;
+			Rut::RxMem::Auto mem_data;
 			size_t mem_size = this->GetSize();
 			if (mem_size)
 			{
@@ -369,6 +462,11 @@ namespace Valkyria::SDT
 
 		}
 
+		SDT_Code_SelectText(uint8_t* pData)
+		{
+			this->Parse(pData);
+		}
+
 		void Parse(uint8_t* pData)
 		{
 			m_usOPCode = *((uint16_t*)pData + 0);
@@ -397,9 +495,9 @@ namespace Valkyria::SDT
 			}
 		}
 
-		Rut::RxMem Make() const
+		Rut::RxMem::Auto Make() const
 		{
-			Rut::RxMem mem_data;
+			Rut::RxMem::Auto mem_data;
 			size_t mem_size = this->GetSize();
 			if (mem_size)
 			{
@@ -466,7 +564,7 @@ namespace Valkyria::SDT
 	{
 	private:
 		SDT_HDR m_HDR;
-		Rut::RxMem m_amCode;
+		Rut::RxMem::Auto m_amCode;
 
 	public:
 		SDT_Parser()
@@ -481,11 +579,11 @@ namespace Valkyria::SDT
 
 		void Parse(std::wstring_view wsPath)
 		{
-			Rut::RxMem sdt_buffer(wsPath);
+			Rut::RxMem::Auto sdt_buffer(wsPath);
 			this->Parse(sdt_buffer);
 		}
 
-		void Parse(Rut::RxMem& amSDT)
+		void Parse(Rut::RxMem::Auto& amSDT)
 		{
 			m_HDR.Parse(amSDT.GetPtr());
 
@@ -496,11 +594,97 @@ namespace Valkyria::SDT
 			memcpy(m_amCode.GetPtr(), code_seg_ptr, code_seg_size);
 		}
 
+		Rut::RxMem::Auto Make() const
+		{
+			return { m_HDR.Make(), m_amCode };
+		}
+
 	public:
-		Rut::RxMem& GetCodeMem()
+		Rut::RxMem::Auto& GetCodeMem()
 		{
 			return m_amCode;
 		}
+
+		const SDT_HDR& GetHDR()
+		{
+			return m_HDR;
+		}
 	};
 
+
+	class STD_Text_Test
+	{
+	private:
+		std::vector<SDT_Code_MsgName> m_vcMsgNameCodes;
+		std::vector<SDT_Code_MsgText> m_vcMsgTextCodes;
+		std::vector<SDT_Code_MsgNewLine> m_vcMsgNewLineCodes;
+		std::vector<SDT_Code_SelectText> m_vcSelectTextCode;
+
+	public:
+		STD_Text_Test()
+		{
+
+		}
+
+		void Parse(Rut::RxMem::Auto& amCode)
+		{
+			if (amCode.GetSize() < 0x10) { return; }
+
+			uint8_t search_msg_text_code[4] = { 0x01, 0x0E, 0x11, 0x11 };
+			uint8_t search_msg_name_code[4] = { 0x00, 0x0E, 0x7E, 0x86 };
+			uint8_t search_select_text_code[6] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 };
+			uint8_t* code_ptr = amCode.GetPtr();
+			size_t max_search_size = amCode.GetSize() - sizeof(search_select_text_code);
+
+			for (size_t ite_byte = 0; ite_byte < max_search_size;)
+			{
+				uint8_t* cur_ptr = code_ptr + ite_byte;
+				if (memcmp(code_ptr + ite_byte, search_msg_name_code, sizeof(search_msg_name_code)) == 0)
+				{
+					SDT_Code_MsgName msg_name_code;
+					msg_name_code.Parse(code_ptr + ite_byte);
+					{
+						CheckMakeData(code_ptr + ite_byte, msg_name_code);
+					}
+					ite_byte += msg_name_code.GetSize();
+					m_vcMsgNameCodes.push_back(std::move(msg_name_code));
+				}
+				else if (memcmp(code_ptr + ite_byte, search_msg_text_code, sizeof(search_msg_text_code)) == 0)
+				{
+					SDT_Code_MsgText msg_text_code;
+					msg_text_code.Parse(code_ptr + ite_byte);
+					{
+						CheckMakeData(code_ptr + ite_byte, msg_text_code);
+					}
+					ite_byte += msg_text_code.GetSize();
+					m_vcMsgTextCodes.emplace_back(std::move(msg_text_code));
+
+					if (*(uint16_t*)(code_ptr + ite_byte) == 0x0E04)
+					{
+						SDT_Code_MsgNewLine msg_newline_code;
+						msg_newline_code.Parse(code_ptr + ite_byte);
+						{
+							CheckMakeData(code_ptr + ite_byte, msg_newline_code);
+						}
+						ite_byte += msg_newline_code.GetSize();
+						m_vcMsgNewLineCodes.push_back(std::move(msg_newline_code));
+					}
+				}
+				else if (memcmp(code_ptr + ite_byte, search_select_text_code, sizeof(search_select_text_code)) == 0)
+				{
+					SDT_Code_SelectText select_text_code;
+					select_text_code.Parse(code_ptr + ite_byte);
+					{
+						CheckMakeData(code_ptr + ite_byte, select_text_code);
+					}
+					ite_byte += select_text_code.GetSize();
+					m_vcSelectTextCode.push_back(std::move(select_text_code));
+				}
+				else
+				{
+					ite_byte++;
+				}
+			}
+		}
+	};
 }
