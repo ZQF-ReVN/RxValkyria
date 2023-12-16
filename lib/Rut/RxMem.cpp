@@ -1,52 +1,51 @@
 ﻿#include "RxMem.h"
 #include "RxFile.h"
 
+#include <cassert>
 
-namespace Rut::RxMem
+
+namespace Rut
 {
-	Auto::Auto() : m_uiMemSize(0), m_uiMaxSize(0)
+	RxMem::RxMem() : m_uiMemSize(0), m_uiMaxSize(0)
 	{
 
 	}
 
-	Auto::Auto(const Auto& buffer) :Auto()
-	{ 
+	RxMem::RxMem(size_t nSize) :RxMem()
+	{
+		this->SetSize(nSize);
+	}
+
+	RxMem::RxMem(const RxMem& buffer) :RxMem()
+	{
 		this->Copy(buffer);
 	}
 
-	Auto::Auto(Auto&& buffer)noexcept :Auto()
-	{ 
-		this->Move(buffer);
-	}
-
-	Auto::Auto(std::string_view msPath) : Auto() 
-	{ 
-		this->LoadFile(msPath);
-	}
-
-	Auto::Auto(std::wstring_view wsPath) : Auto() 
+	RxMem::RxMem(RxMem&& buffer) noexcept :RxMem()
 	{
-		this->LoadFile(wsPath);
+		this->Move(std::move(buffer));
 	}
 
-	Auto::Auto(std::string_view msPath, size_t szFile) : Auto() 
-	{ 
+	RxMem::RxMem(const std::string_view msPath, size_t szFile) : RxMem()
+	{
 		this->LoadFile(msPath, szFile);
 	}
 
-	Auto::Auto(std::wstring_view wsPath, size_t szFile) : Auto() 
-	{ 
+	RxMem::RxMem(const std::wstring_view wsPath, size_t szFile) : RxMem()
+	{
 		this->LoadFile(wsPath, szFile);
 	}
 
-	Auto::~Auto()
+	RxMem::~RxMem()
 	{
 		m_uiMemSize = 0;
 		m_uiMaxSize = 0;
 	}
 
-	Auto& Auto::Copy(const Auto& buffer)
+	RxMem& RxMem::Copy(const RxMem& buffer)
 	{
+		assert(this != &buffer);
+
 		if (buffer.m_upMemData != nullptr)
 		{
 			this->m_uiMaxSize = buffer.m_uiMaxSize;
@@ -63,108 +62,106 @@ namespace Rut::RxMem
 		return *this;
 	}
 
-	Auto& Auto::Move(Auto& buffer)
+	RxMem& RxMem::Move(RxMem&& buffer) noexcept
 	{
-		this->m_upMemData = std::move(buffer.m_upMemData);
+		assert(this != &buffer);
 
-		this->m_uiMemSize = buffer.m_uiMemSize;
-		this->m_uiMaxSize = buffer.m_uiMaxSize;
+		m_upMemData = std::move(buffer.m_upMemData);
+
+		m_uiMemSize = buffer.m_uiMemSize;
+		m_uiMaxSize = buffer.m_uiMaxSize;
+
 		buffer.m_uiMemSize = 0;
 		buffer.m_uiMaxSize = 0;
 
 		return *this;
 	}
 
-	Auto& Auto::Append(Auto& rfAutoMem)
+	RxMem& RxMem::Append(const RxMem& rfMem)
 	{
 		size_t cur_size = this->GetSize();
-		size_t append_size = rfAutoMem.GetSize();
+		size_t append_size = rfMem.GetSize();
 		if (append_size)
 		{
 			this->SetSize(cur_size + append_size, true);
-			memcpy(this->GetPtr() + cur_size, rfAutoMem.GetPtr(), append_size);
+			memcpy(this->GetPtr() + cur_size, rfMem.GetPtr(), append_size);
 		}
 		return *this;
 	}
 
-	Auto& Auto::operator[] (size_t tSize)
+	uint8_t RxMem::operator[] (size_t nIndex) noexcept
 	{
-		this->SetSize(tSize);
-		return *this;
+		assert(nIndex < m_uiMemSize);
+		return this->GetPtr()[nIndex];
 	}
 
-	Auto& Auto::operator=(Auto&& rfAutoMem) noexcept
+	RxMem& RxMem::operator=(RxMem&& rfAutoMem) noexcept
 	{
-		this->~Auto();
-		return this->Move(rfAutoMem);
+		return this->Move(std::move(rfAutoMem));
 	}
 
-	Auto& Auto::operator=(const Auto& rfAutoMem)
+	RxMem& RxMem::operator=(const RxMem& rfAutoMem)
 	{
-		this->~Auto();
 		return this->Copy(rfAutoMem);
 	}
 
-	void Auto::SaveData(std::string_view msPath)
+	RxMem& RxMem::operator+(const RxMem& rfAutoMem)
+	{
+		this->Append(rfAutoMem);
+		return *this;
+	}
+
+	void RxMem::SaveData(const std::string_view msPath)
 	{
 		RxFile::SaveFileViaPath(msPath, m_upMemData.get(), m_uiMemSize);
 	}
 
-	void Auto::SaveData(std::wstring_view wsPath)
+	void RxMem::SaveData(const std::wstring_view wsPath)
 	{
 		RxFile::SaveFileViaPath(wsPath, m_upMemData.get(), m_uiMemSize);
 	}
 
-	uint8_t* Auto::LoadFile(std::string_view msPath, size_t nSize)
+	void RxMem::LoadFile(const std::string_view msPath, size_t nSize)
 	{
 		RxFile::Binary ifs{ msPath, RIO_READ };
-		if (nSize == AutoMem_AutoSize) { nSize = ifs.GetSize(); }
-		ifs.Read(SetSize(nSize), nSize);
-		return m_upMemData.get();
+		nSize == AUTO_MEM_AUTO_SIZE ? (void)(nSize = ifs.GetSize()) : (void)(0);
+		this->SetSize(nSize);
+		ifs.Read(this->GetPtr(), nSize);
 	}
 
-	uint8_t* Auto::LoadFile(std::wstring_view wsPath, size_t nSize)
+	void RxMem::LoadFile(const std::wstring_view wsPath, size_t nSize)
 	{
 		RxFile::Binary ifs{ wsPath, RIO_READ };
-		if (nSize == AutoMem_AutoSize) { nSize = ifs.GetSize(); }
-		ifs.Read(SetSize(nSize), nSize);
-		return m_upMemData.get();
+		nSize == AUTO_MEM_AUTO_SIZE ? (void)(nSize = ifs.GetSize()) : (void)(0);
+		this->SetSize(nSize);
+		ifs.Read(this->GetPtr(), nSize);
 	}
 
-	uint8_t* Auto::GetPtr()
+	uint8_t* RxMem::GetPtr() const noexcept
 	{
 		return m_upMemData.get();
 	}
 
-	size_t Auto::GetSize() const
+	constexpr size_t RxMem::GetSize() const noexcept
 	{
 		return m_uiMemSize;
 	}
 
-	uint8_t* Auto::SetSize(size_t uiNewSize, bool isCopy)
+	void RxMem::SetSize(size_t uiNewSize, bool isCopy)
 	{
-		if (this->m_uiMemSize == 0)
+		if (m_uiMemSize == 0)
 		{
-			this->m_upMemData = std::make_unique_for_overwrite<uint8_t[]>(uiNewSize);
-			this->m_uiMemSize = uiNewSize;
-			this->m_uiMaxSize = uiNewSize;
+			m_upMemData = std::make_unique_for_overwrite<uint8_t[]>(uiNewSize);
+			m_uiMaxSize = uiNewSize;
 		}
-		else if (uiNewSize > this->m_uiMaxSize)
+		else if (uiNewSize > m_uiMaxSize)
 		{
 			std::unique_ptr<uint8_t[]> tmp = std::make_unique_for_overwrite<uint8_t[]>(uiNewSize);
-
-			if (isCopy) { memcpy(tmp.get(), this->m_upMemData.get(), this->m_uiMemSize); }
-			m_upMemData.release();
-
-			this->m_upMemData = std::move(tmp);
-			this->m_uiMemSize = uiNewSize;
-			this->m_uiMaxSize = uiNewSize;
-		}
-		else
-		{
-			this->m_uiMemSize = uiNewSize;
+			isCopy ? (void)(memcpy(tmp.get(), m_upMemData.get(), m_uiMemSize)) : (void)(0);
+			m_upMemData = std::move(tmp);
+			m_uiMaxSize = uiNewSize;
 		}
 
-		return GetPtr();
+		m_uiMemSize = uiNewSize;
 	}
 }

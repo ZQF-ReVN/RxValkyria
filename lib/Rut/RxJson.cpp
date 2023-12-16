@@ -1,9 +1,11 @@
 #include "RxJson.h"
 #include "RxFile.h"
 
-#include <assert.h>
-#include <stdexcept>
 #include <map>
+#include <cassert>
+#include <stdexcept>
+#include <filesystem>
+
 
 namespace Rut::RxJson
 {
@@ -147,13 +149,13 @@ namespace Rut::RxJson
 	Value& Value::operator = (const Value& rfJValue)
 	{
 		this->~Value();
-		return Copy(rfJValue);
+		return this->Copy(rfJValue);
 	}
 
 	Value& Value::operator = (Value&& rfJValue) noexcept
 	{
 		this->~Value();
-		return Move(rfJValue);
+		return this->Move(rfJValue);
 	}
 
 	//Array
@@ -173,13 +175,13 @@ namespace Rut::RxJson
 
 	void Value::Append(const Value& rfJValue)
 	{
-		SureArray();
+		this->SureArray();
 		m_Value.pAry->push_back(rfJValue);
 	}
 
 	void Value::Append(Value&& rfJValue)
 	{
-		SureArray();
+		this->SureArray();
 		m_Value.pAry->emplace_back(std::move(rfJValue));
 	}
 
@@ -207,19 +209,19 @@ namespace Rut::RxJson
 
 	void Value::AddKey(std::wstring_view wsKey)
 	{
-		SureObject();
+		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))];
 	}
 
 	void Value::AddKey(std::wstring_view wsKey, const Value& rfJValue)
 	{
-		SureObject();
+		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))] = rfJValue;
 	}
 
 	void Value::AddKey(std::wstring_view wsKey, Value&& rfJValue)
 	{
-		SureObject();
+		this->SureObject();
 		(*this->m_Value.pObj)[std::move(std::wstring(wsKey))] = std::move(rfJValue);
 	}
 
@@ -280,13 +282,13 @@ namespace Rut::RxJson
 
 	JArray& Value::ToAry()
 	{
-		SureArray();
+		this->SureArray();
 		return *m_Value.pAry;
 	}
 
 	JObject& Value::ToOBJ()
 	{
-		SureObject();
+		this->SureObject();
 		return *(m_Value.pObj);
 	}
 

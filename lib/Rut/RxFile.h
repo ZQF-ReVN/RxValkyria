@@ -53,9 +53,6 @@ namespace Rut::RxFile
 
 namespace Rut::RxFile
 {
-	void SaveFileViaPath(std::wstring_view wsPath, void* pData, size_t nBytes);
-	void SaveFileViaPath(std::string_view msPath, void* pData, size_t nBytes);
-
 	class Binary : public Basic
 	{
 	public:
@@ -85,6 +82,8 @@ namespace Rut::RxFile
 		}
 	};
 
+	void SaveFileViaPath(std::wstring_view wsPath, void* pData, size_t nBytes);
+	void SaveFileViaPath(std::string_view msPath, void* pData, size_t nBytes);
 }
 
 

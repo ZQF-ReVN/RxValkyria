@@ -25,10 +25,10 @@ namespace Rut::RxPath
 	std::string RemoveSuffix(std::string msPath);
 	std::wstring RemoveSuffix(std::wstring wsPath);
 
-	char* FormatSlash(char* cpPath, char cSlash);
-	wchar_t* FormatSlash(wchar_t* wpPath, wchar_t wcSlash);
-	std::string FormatSlash(std::string msPath, char cSlash);
-	std::wstring FormatSlash(std::wstring wsPath, wchar_t wcSlash);
+	char* Format(char* cpPath, char cSlash);
+	wchar_t* Format(wchar_t* wpPath, wchar_t wcSlash);
+	std::string Format(std::string msPath, char cSlash);
+	std::wstring Format(std::wstring wsPath, wchar_t wcSlash);
 
 	bool Exist(std::string_view msPath);
 	bool Exist(std::wstring_view wsPath);
@@ -56,16 +56,4 @@ namespace Rut::RxPath
 
 	std::string ModuleNameA(void* pBase = nullptr);
 	std::wstring ModuleNameW(void* pBase = nullptr);
-}
-
-namespace Rut::RxPath
-{
-	bool AllFilePaths(std::string msBasePath, std::vector<std::string>& vecList);
-	bool AllFilePaths(std::wstring wsBasePath, std::vector<std::wstring>& vecList);
-
-	bool CurFileNames(std::string msBasePath, std::vector<std::string>& vecList, bool isAddBasePath = false);
-	bool CurFileNames(std::wstring wsBasePath, std::vector<std::wstring>& vecList, bool isAddBasePath = false);
-
-	bool CurFolderNames(std::string msFolder, std::vector<std::string>& vecList, bool isAddBasePath = false);
-	bool CurFolderNames(std::wstring wsFolder, std::vector<std::wstring>& vecList, bool isAddBasePath = false);
 }

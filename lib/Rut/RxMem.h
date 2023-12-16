@@ -3,11 +3,11 @@
 #include <memory>
 
 
-namespace Rut::RxMem
+namespace Rut
 {
-	constexpr size_t AutoMem_AutoSize = -1;
+	constexpr size_t AUTO_MEM_AUTO_SIZE = -1;
 
-	class Auto
+	class RxMem
 	{
 	private:
 		size_t m_uiMemSize;
@@ -15,32 +15,32 @@ namespace Rut::RxMem
 		std::unique_ptr<uint8_t[]> m_upMemData;
 
 	public:
-		Auto();
-		Auto(const Auto& buffer);
-		Auto(Auto&& buffer) noexcept;
-		Auto(std::string_view msPath);
-		Auto(std::wstring_view wsPath);
-		Auto(std::string_view msPath, size_t szFile);
-		Auto(std::wstring_view wsPath, size_t szFile);
-		~Auto();
+		RxMem();
+		RxMem(size_t nSize);
+		RxMem(const RxMem& buffer);
+		RxMem(RxMem&& buffer) noexcept;
+		RxMem(const std::string_view msPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
+		RxMem(const std::wstring_view wsPath, size_t szFile = AUTO_MEM_AUTO_SIZE);
+		~RxMem();
 
-		Auto& Copy(const Auto& buffer);
-		Auto& Move(Auto& buffer);
-		Auto& Append(Auto& rfAutoMem);
+		RxMem& Copy(const RxMem& buffer);
+		RxMem& Move(RxMem&& buffer) noexcept;
+		RxMem& Append(const RxMem& rfMem);
 
-		Auto& operator[] (size_t tSize);
-		Auto& operator=(Auto&& rfAutoMem) noexcept;
-		Auto& operator=(const Auto& rfAutoMem);
-
-	public:
-		void SaveData(std::string_view msPath);
-		void SaveData(std::wstring_view wsPath);
-		uint8_t* LoadFile(std::string_view msPath, size_t nSize = AutoMem_AutoSize);
-		uint8_t* LoadFile(std::wstring_view wsPath, size_t nSize = AutoMem_AutoSize);
+		uint8_t operator[] (size_t tSize) noexcept;
+		RxMem& operator=(RxMem&& rfAutoMem) noexcept;
+		RxMem& operator=(const RxMem& rfAutoMem);
+		RxMem& operator+(const RxMem& rfAutoMem);
 
 	public:
-		size_t GetSize() const;
-		uint8_t* GetPtr();
-		uint8_t* SetSize(size_t uiNewSize, bool isCopy = false);
+		void SaveData(const std::string_view msPath);
+		void SaveData(const std::wstring_view wsPath);
+		void LoadFile(const std::string_view msPath, size_t nSize = AUTO_MEM_AUTO_SIZE);
+		void LoadFile(const std::wstring_view wsPath, size_t nSize = AUTO_MEM_AUTO_SIZE);
+
+	public:
+		uint8_t* GetPtr() const noexcept;
+		constexpr size_t GetSize() const noexcept;
+		void SetSize(size_t uiNewSize, bool isCopy = false);
 	};
 }
