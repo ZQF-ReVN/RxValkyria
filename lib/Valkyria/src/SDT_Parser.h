@@ -47,8 +47,8 @@ namespace Valkyria::SDT
 	{
 	private:
 		uint32_t m_uiHeaderSize = 0;
-		uint32_t m_uiUnValue0 = 0;
-		uint32_t m_uiUnValue1 = 0;
+		uint32_t m_uiMsgCount = 0;
+		uint32_t m_uiSelectCount = 0;
 		uint32_t m_uiLabelCount = 0;
 		uint32_t m_uiCheckDataRva = 0;
 
@@ -62,8 +62,8 @@ namespace Valkyria::SDT
 		{
 			uint32_t* tmp_ptr = (uint32_t*)pData;
 			m_uiHeaderSize = tmp_ptr[0];
-			m_uiUnValue0 = tmp_ptr[1];
-			m_uiUnValue1 = tmp_ptr[2];
+			m_uiMsgCount = tmp_ptr[1];
+			m_uiSelectCount = tmp_ptr[2];
 			m_uiLabelCount = tmp_ptr[3];
 			m_uiCheckDataRva = tmp_ptr[4];
 		}
@@ -75,8 +75,8 @@ namespace Valkyria::SDT
 			uint32_t* cur_ptr = (uint32_t*)mem_data.GetPtr();
 			{
 				cur_ptr[0] = m_uiHeaderSize;
-				cur_ptr[1] = m_uiUnValue0;
-				cur_ptr[2] = m_uiUnValue1;
+				cur_ptr[1] = m_uiMsgCount;
+				cur_ptr[2] = m_uiSelectCount;
 				cur_ptr[3] = m_uiLabelCount;
 				cur_ptr[4] = m_uiCheckDataRva;
 			}
@@ -84,19 +84,29 @@ namespace Valkyria::SDT
 		}
 
 	public:
-		size_t GetSize() const
+		constexpr size_t GetSize() const
 		{
-			return sizeof(m_uiHeaderSize) + sizeof(m_uiUnValue0) + sizeof(m_uiUnValue1) + sizeof(m_uiLabelCount) + sizeof(m_uiCheckDataRva);
+			return sizeof(m_uiHeaderSize) + sizeof(m_uiMsgCount) + sizeof(m_uiSelectCount) + sizeof(m_uiLabelCount) + sizeof(m_uiCheckDataRva);
 		}
 
-		size_t GetHeaderSize() const
+		constexpr size_t GetHeaderSize() const
 		{
 			return m_uiHeaderSize;
 		}
 
-		size_t GetLabelCount() const
+		constexpr size_t GetLabelCount() const
 		{
 			return m_uiLabelCount;
+		}
+
+		constexpr size_t GetMsgCount() const
+		{
+			return m_uiMsgCount;
+		}
+
+		constexpr size_t GetSelectCount() const
+		{
+			return m_uiSelectCount;
 		}
 	};
 

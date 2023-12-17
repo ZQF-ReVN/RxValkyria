@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "SDT_Parser.h"
+#include "Valkyria_Types.h"
 
 
 namespace Valkyria::SDT
@@ -230,21 +231,20 @@ namespace Valkyria::SDT
 
 
 
-	class STD_Text
+	class SDT_Text
 	{
 	private:
-		size_t m_uiHdrSize = 0;
-		size_t m_uiInfoSize = 0;
+		VAL_SDT_HDR_Info* m_pInfo = nullptr;
 		Rut::RxMem::Auto m_amSDT;
 		std::vector<SDT_Custom_Msg> m_vcMsg;
 
 	public:
-		STD_Text()
+		SDT_Text()
 		{
 
 		}
 
-		STD_Text(std::wstring_view wsPath)
+		SDT_Text(std::wstring_view wsPath)
 		{
 			this->Init(wsPath);
 			this->Parse();
@@ -253,8 +253,7 @@ namespace Valkyria::SDT
 		void Init(std::wstring_view wsPath)
 		{
 			m_amSDT.LoadFile(wsPath);
-			m_uiHdrSize = *(uint32_t*)m_amSDT.GetPtr();
-			m_uiInfoSize = 0x14;
+			m_pInfo = (VAL_SDT_HDR_Info*)m_amSDT.GetPtr();
 		}
 
 		void Parse()
@@ -266,8 +265,8 @@ namespace Valkyria::SDT
 			uint8_t search_msg_name_code[4] = { 0x00, 0x0E, 0x7E, 0x86 };
 			uint8_t search_select_text_code[6] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 };
 
-			uint8_t* code_ptr = m_amSDT.GetPtr() + m_uiHdrSize;
-			size_t code_size = m_amSDT.GetSize() - m_uiHdrSize;
+			uint8_t* code_ptr = m_amSDT.GetPtr() + m_pInfo->uiHDRSize;
+			size_t code_size = m_amSDT.GetSize() - m_pInfo->uiHDRSize;
 			size_t max_search_size = code_size - sizeof(search_select_text_code);
 
 			for (size_t ite_byte = 0; ite_byte < max_search_size;)
@@ -316,8 +315,8 @@ namespace Valkyria::SDT
 			Rut::RxMem::Auto append_mem;
 			append_mem.SetSize(fn_count_append_size());
 
-			size_t code_size = m_amSDT.GetSize() - m_uiHdrSize;
-			uint8_t* code_ptr = m_amSDT.GetPtr() + m_uiHdrSize;
+			size_t code_size = m_amSDT.GetSize() - m_pInfo->uiHDRSize;
+			uint8_t* code_ptr = m_amSDT.GetPtr() + m_pInfo->uiHDRSize;
 			size_t append_size = 0;
 			uint8_t* append_ptr = append_mem.GetPtr();
 			uint8_t goto_command[] = { 0x42, 0x0A, 0x00, 0x00, 0x00, 0x00 };
@@ -329,7 +328,7 @@ namespace Valkyria::SDT
 				free_space < sizeof(goto_command) ? (throw std::runtime_error("Not enough space to write goto commnad")) : (void)(0);
 
 				// write jmp [goto command]
-				uint32_t target_code_offset_ptr_vale = m_uiHdrSize + code_size + append_size - m_uiInfoSize;
+				uint32_t target_code_offset_ptr_vale = m_pInfo->uiHDRSize + code_size + append_size - sizeof(VAL_SDT_HDR_Info);
 				memcpy(goto_command + 2, &target_code_offset_ptr_vale, sizeof(uint32_t));
 				memcpy(code_ptr + msg.GetCodeBegOffset(), goto_command, sizeof(goto_command));
 
@@ -346,7 +345,7 @@ namespace Valkyria::SDT
 				append_size += msg_data.GetSize();
 
 				// write ret [goto command]
-				uint32_t code_offset_ptr_vale_ret = m_uiHdrSize + code_size + append_size + sizeof(goto_command) - m_uiInfoSize;
+				uint32_t code_offset_ptr_vale_ret = m_pInfo->uiHDRSize + code_size + append_size + sizeof(goto_command) - sizeof(VAL_SDT_HDR_Info);
 				memcpy(goto_command + 2, &code_offset_ptr_vale_ret, sizeof(uint32_t));
 				memcpy(append_ptr, goto_command, sizeof(goto_command));
 				append_ptr += sizeof(goto_command);
@@ -367,16 +366,21 @@ namespace Valkyria::SDT
 
 			for (auto& msg : m_vcMsg)
 			{
-				json.Append(msg.ToJson(nCodePage, isDebug, m_uiHdrSize));
+				json.Append(msg.ToJson(nCodePage, isDebug, m_pInfo->uiHDRSize));
 			}
 
 			return json;
 		}
 
 	public:
-		constexpr size_t GetMsgCount() const
+		constexpr size_t GetMsgCountViaScan() const
 		{
 			return m_vcMsg.size();
+		}
+
+		constexpr size_t GetMsgCountViaInfo() const
+		{
+			return m_pInfo->uiMsgCount;
 		}
 	};
 }

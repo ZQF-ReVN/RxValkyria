@@ -9,8 +9,8 @@ struct SDT_Label
 struct SDT_HDR_Info
 {
 	uint32_t uiHDRSize;
-	uint32_t uiUn0;
-	uint32_t uiUn1;
+	uint32_t uiMsgCount;
+	uint32_t uiSelectCount;
 	uint32_t uiLabelCount;
 	uint32_t uiCheckDataFOA;
 };
@@ -31,33 +31,29 @@ struct SDT
 
 entry_ptr = [this + 4] -> the first sdt entry
 
-#pragma pack(push, 1)
-struct VAL_Script
+struct VAL_Script_Entry
 {
-  uint32_t *pNextSDT;
-  uint16_t usScriptID;
-  uint16_t usUn0;
+  VAL_Script_Entry *pNext;
+  uint16_t uiID;
+  uint16_t uiAlign;
   uint32_t *pData;
   uint32_t uiSize;
   uint32_t *pHdrSize;
   uint32_t *pLabelCount;
   uint32_t *pLabelIndex;
-  uint32_t *pUn0;
-  uint32_t *pUnThis0;
-  uint32_t *pUn1;
-  uint32_t *pUnThis1;
-  uint32_t uiNull;
-  uint32_t uiUnThis2;
-  uint32_t uiUnThis3;
+  uint32_t *pMsgCount;
+  uint32_t *pMsgBuffer;
+  uint32_t *pSeletCount;
+  uint32_t *pSelectBuffer;
 };
-#pragma pack(pop)
+
 
 #pragma pack(push, 1)
 struct VAL_Context
 {
   uint16_t usScriptID;
   uint16_t usUn0;
-  VAL_Script *pScript;
+  VAL_Script_Entry *pScript;
   uint32_t uiPC;
   uint32_t uiLine;
   uint32_t uiUn0;
@@ -74,12 +70,82 @@ struct VAL_Context_Ptr
 struct VAL_VM
 {
   uint32_t uiUn0;
-  VAL_Script *pScriptList;
-  uint8_t aUn1[4188];
+  VAL_Script_Entry *pScriptList;
+  uint8_t aUn1[1464];
+  char aScriptPath[260];
+  char aDataXXPath[260];
+  uint8_t aUn1_[2204];
   uint16_t uiContextPtrIndex;
   uint8_t aUn2[262];
   VAL_Context_Ptr aContextPtr[255];
 };
+
+
+struct VAL_SysData_Seg_0
+{
+  uint8_t ucUn0;
+  uint8_t ucUn1;
+  uint8_t ucUn2;
+  uint8_t ucUn3;
+  uint32_t uiSysMode;
+  uint8_t ucDisplayFlag;
+  uint8_t ucLanguageFlag; // 1 = jp, 0 = en
+  char aWindowTitle[260];
+  char aGameTitle[260];
+  uint16_t usWindowWide;
+  uint16_t usWindowHigh;
+  uint16_t uiUn4;
+  uint32_t uiDICount;
+  uint32_t uiDGCount;
+  uint32_t uiDTCount;
+  uint32_t uiSICount;
+  uint32_t uiSGCount;
+  uint32_t uiSTCount;
+  uint32_t aUn5[8];
+  char aData06Path[260];
+  char aData00Path[260];
+  char aData02Path[260];
+  char aData05Path[260];
+  char aData03Path[260];
+  char aData04Path[260];
+  char aData01Path[260];
+  char aDataxxPath[260];
+  char aDataName[260];
+  char aFlagodnName[260];
+  uint32_t uiGameEndLabelValue;
+  char aGameEndLabelName[260];
+  uint32_t uiSysMenu0LabelValue;
+  char aSysMenu0LabelName[260];
+  uint32_t uiSysMenu1LabelValue;
+  char aSysMenu1LabelName[260];
+  char aFontName[260];
+  uint8_t aUn1[4092];
+  uint8_t aDebugKey[260];
+};
+
+
+
+struct VAL_Pack_Entry
+{
+  char aFileName[260];
+  uint32_t uiOffset; // after index
+  uint32_t uiSize;
+}
+
+struct VAL_VFS_Entry
+{
+  char aFilePath[260];
+  uint32_t uiFOA;
+  uint32_t uiSize;
+  char aFileName[260];
+}
+
+struct VAL_Pack
+{
+  uint32_t uiIndexSize;
+  VAL_Pack_Entry[uiIndexSize / sizeof(VAL_Pack_Entry)]
+  // data..
+}
 
 ```
 
@@ -156,3 +222,41 @@ Example: 040E 1111 D2000000
 
 
 
+```
+
+// count pack entry matching suffiix
+entry_count = 0
+for ifs : match(data06-*)[data06-01,data06-02,data06-03,data06-04....]
+{
+  pack_index = ifs.read(ifs.read(4,beg),cur)
+  for pack_entry in pack_index
+  {
+    for if suffix == '.sdt'
+    {
+      entry_count++
+    }
+  }
+}
+
+// make vfs index
+vfs_index = new(entry_count * sizef(vfs_entry))
+for ifs : match(data06-*)[data06-01,data06-02,data06-03,data06-04....]
+{
+  pack_index = ifs.read(ifs.read(4,beg),cur)
+  for pak_entry in pack_index
+  {
+    for if suffix == '.sdt'
+    {
+      cur_vfs_entry = vfs_entry.back()
+      for vfs_entry in vfs_index
+      {
+        if pak_entry.flename == vfs_entry.filename
+        {
+          cur_vfs_entry(vfs_entry)
+        }
+      }
+      cur_vfs_entry(pack_entry)
+    }
+  }
+}
+```
