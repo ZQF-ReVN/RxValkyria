@@ -1,12 +1,9 @@
 #include "Path.h"
 
 #include <Windows.h>
-#include <Shlwapi.h>
-
-#pragma comment(lib, "shlwapi.lib")
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
 	size_t GetModuleDir(char* pBuffer, size_t nMaxBytes)
 	{
@@ -47,30 +44,20 @@ namespace Rut::Platform
 
 	bool DirExist(const char* cpPath)
 	{
-		return ::PathIsDirectoryA(cpPath);
+		return (::GetFileAttributesA(cpPath) & FILE_ATTRIBUTE_DIRECTORY) ? false : true;
 	}
 
 	bool DirExist(const wchar_t* wpPath)
 	{
-		return ::PathIsDirectoryW(wpPath);
+		return (::GetFileAttributesW(wpPath) & FILE_ATTRIBUTE_DIRECTORY) ? false : true;
 	}
 
 	bool FileExist(const char* cpPath)
 	{
-		return ::PathFileExistsA(cpPath);
-	}
-
-	bool FileExist(const wchar_t* wpPath)
-	{
-		return ::PathFileExistsW(wpPath);
-	}
-
-	bool Exist(const char* cpPath)
-	{
 		return (::GetFileAttributesA(cpPath) == INVALID_FILE_ATTRIBUTES) ? false : true;
 	}
 
-	bool Exist(const wchar_t* wpPath)
+	bool FileExist(const wchar_t* wpPath)
 	{
 		return (::GetFileAttributesW(wpPath) == INVALID_FILE_ATTRIBUTES) ? false : true;
 	}

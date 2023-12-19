@@ -27,17 +27,6 @@ namespace Rut::RxPath
 
 	char* Format(char* cpPath, char cSlash);
 	wchar_t* Format(wchar_t* wpPath, wchar_t wcSlash);
-	std::string Format(std::string msPath, char cSlash);
-	std::wstring Format(std::wstring wsPath, wchar_t wcSlash);
-
-	bool Exist(std::string_view msPath);
-	bool Exist(std::wstring_view wsPath);
-
-	bool DirExist(std::string_view msPath);
-	bool DirExist(std::wstring_view wsPath);
-
-	bool FileExist(std::string_view msPath);
-	bool FileExist(std::wstring_view wsPath);
 
 	bool MakeDir(std::string_view msPath);
 	bool MakeDir(std::wstring_view wsPath);

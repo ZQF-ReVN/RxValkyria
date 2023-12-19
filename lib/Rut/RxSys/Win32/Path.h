@@ -1,8 +1,10 @@
 #pragma once
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
+	constexpr size_t PLATFORM_MAX_PATH = 260;
+
 	size_t GetModuleDir(char* pBuffer, size_t nMaxBytes);
 	size_t GetModuleDir(wchar_t* pBuffer, size_t nMaxChar);
 
@@ -17,7 +19,4 @@ namespace Rut::Platform
 
 	bool FileExist(const char* cpPath);
 	bool FileExist(const wchar_t* wpPath);
-
-	bool Exist(const char* cpPath);
-	bool Exist(const wchar_t* wpPath);
 }

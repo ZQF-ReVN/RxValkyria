@@ -19,7 +19,7 @@ struct SDT_HDR
 {
 	SDT_HDR_Info
 	SDT_Label[SDT_HDR_Info.uiLabelCount]
-	uint8_t aCheckData[9]; // end with '\0'
+	uint8_t aCheckData[uiHDRSize - sizeof(SDT_Label[SDT_HDR_Info.uiLabelCount])]; // end with '\0'
 };
 
 struct SDT
@@ -83,10 +83,7 @@ struct VAL_VM
 
 struct VAL_SysData_Seg_0
 {
-  uint8_t ucUn0;
-  uint8_t ucUn1;
-  uint8_t ucUn2;
-  uint8_t ucUn3;
+  uint32_t uiTimestamp;
   uint32_t uiSysMode;
   uint8_t ucDisplayFlag;
   uint8_t ucLanguageFlag; // 1 = jp, 0 = en

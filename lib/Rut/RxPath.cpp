@@ -1,7 +1,7 @@
 ﻿#include "RxPath.h"
 #include "RxStr.h"
 #include "RxFile.h"
-#include "Platform/Platform.h"
+#include "RxSys.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -342,75 +342,17 @@ namespace Rut::RxPath
 
 		return wpPath;
 	}
-
-	std::string Format(std::string msPath, char cSlash)
-	{
-		Format(msPath.data(), cSlash);
-		return msPath;
-	}
-
-	std::wstring Format(std::wstring wsPath, wchar_t wcSlash)
-	{
-		Format(wsPath.data(), wcSlash);
-		return wsPath;
-	}
-
 }
 
 namespace Rut::RxPath
 {
-
-	bool Exist(std::string_view msPath)
-	{
-		return Platform::Exist(msPath.data());
-	}
-
-	bool Exist(std::wstring_view wsPath)
-	{
-		return Platform::Exist(wsPath.data());
-	}
-
-
-	bool DirExist(std::string_view msPath)
-	{
-		return Platform::DirExist(msPath.data());
-	}
-
-	bool DirExist(std::wstring_view wsPath)
-	{
-		return Platform::DirExist(wsPath.data());
-	}
-
-
-	bool FileExist(std::string_view msPath)
-	{
-		return Platform::FileExist(msPath.data());
-	}
-
-	bool FileExist(std::wstring_view wsPath)
-	{
-		return Platform::FileExist(wsPath.data());
-	}
-
-
-	bool MakeDir(std::string_view msPath)
-	{
-		return Platform::MakeDir(msPath.data());
-	}
-
-	bool MakeDir(std::wstring_view wsPath)
-	{
-		return Platform::MakeDir(wsPath.data());
-	}
-
-
 	static bool MakeDirViaPath(const char* cpPath)
 	{
-		const size_t len = Platform::StrLen(cpPath);
-		assert(len <= Platform::PLATFORM_MAX_PATH);
+		const size_t len = RxSys::StrLen(cpPath);
+		assert(len <= RxSys::PLATFORM_MAX_PATH);
 
-		char path[Platform::PLATFORM_MAX_PATH];
-		Platform::StrCpy(path, Platform::PLATFORM_MAX_PATH, cpPath);
+		char path[RxSys::PLATFORM_MAX_PATH];
+		RxSys::StrCpy(path, RxSys::PLATFORM_MAX_PATH, cpPath);
 
 		for (size_t ite_unit = 0; ite_unit < len; ite_unit++)
 		{
@@ -421,7 +363,7 @@ namespace Rut::RxPath
 			{
 				if ((ite_unit > 0) && ((uint8_t)path[ite_unit - 1] > 0x7F)) { continue; } // check is dbcs char
 				path[ite_unit] = '\0';
-				Platform::MakeDir(path);
+				RxSys::MakeDir(path);
 				path[ite_unit] = '\\';
 			}
 			break;
@@ -436,11 +378,11 @@ namespace Rut::RxPath
 
 	static bool MakeDirViaPath(const wchar_t* wpPath)
 	{
-		const size_t len = Platform::StrLen(wpPath);
-		assert(len <= Platform::PLATFORM_MAX_PATH);
+		const size_t len = RxSys::StrLen(wpPath);
+		assert(len <= RxSys::PLATFORM_MAX_PATH);
 
-		wchar_t path[Platform::PLATFORM_MAX_PATH];
-		Platform::StrCpy(path, Platform::PLATFORM_MAX_PATH, wpPath);
+		wchar_t path[RxSys::PLATFORM_MAX_PATH];
+		RxSys::StrCpy(path, RxSys::PLATFORM_MAX_PATH, wpPath);
 
 		for (size_t ite_char = 0; ite_char < len; ite_char++)
 		{
@@ -450,7 +392,7 @@ namespace Rut::RxPath
 			case L'\\':
 			{
 				path[ite_char] = L'\0';
-				Platform::MakeDir(path);
+				RxSys::MakeDir(path);
 				path[ite_char] = L'\\';
 			}
 			break;
@@ -473,31 +415,19 @@ namespace Rut::RxPath
 		return MakeDirViaPath(wsPath.data());
 	}
 
-
-	std::uintmax_t GetFileSize(std::string_view msPath)
-	{
-		return Platform::GetFileSize(msPath.data());
-	}
-
-	std::uintmax_t GetFileSize(std::wstring_view wsPath)
-	{
-		return Platform::GetFileSize(wsPath.data());
-	}
-
-
 	std::string ModulePathA(void* pBase)
 	{
 		std::string path;
-		path.resize(Platform::PLATFORM_MAX_PATH);
-		path.resize(Platform::GetModulePath(path.data(), Platform::PLATFORM_MAX_PATH, pBase));
+		path.resize(RxSys::PLATFORM_MAX_PATH);
+		path.resize(RxSys::GetModulePath(path.data(), RxSys::PLATFORM_MAX_PATH, pBase));
 		return path;
 	}
 
 	std::wstring ModulePathW(void* pBase)
 	{
 		std::wstring path;
-		path.resize(Platform::PLATFORM_MAX_PATH);
-		path.resize(Platform::GetModulePath(path.data(), Platform::PLATFORM_MAX_PATH, pBase));
+		path.resize(RxSys::PLATFORM_MAX_PATH);
+		path.resize(RxSys::GetModulePath(path.data(), RxSys::PLATFORM_MAX_PATH, pBase));
 		return path;
 	}
 
@@ -522,16 +452,16 @@ namespace Rut::RxPath
 	std::string ModuleDirA()
 	{
 		std::string path;
-		path.resize(Platform::PLATFORM_MAX_PATH);
-		path.resize(Platform::GetModuleDir(path.data(), Platform::PLATFORM_MAX_PATH));
+		path.resize(RxSys::PLATFORM_MAX_PATH);
+		path.resize(RxSys::GetModuleDir(path.data(), RxSys::PLATFORM_MAX_PATH));
 		return path;
 	}
 
 	std::wstring ModuleDirW()
 	{
 		std::wstring path;
-		path.resize(Platform::PLATFORM_MAX_PATH);
-		path.resize(Platform::GetModuleDir(path.data(), Platform::PLATFORM_MAX_PATH));
+		path.resize(RxSys::PLATFORM_MAX_PATH);
+		path.resize(RxSys::GetModuleDir(path.data(), RxSys::PLATFORM_MAX_PATH));
 		return path;
 	}
 

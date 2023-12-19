@@ -3,34 +3,74 @@
 #include <Windows.h>
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
-	std::uintmax_t GetFileSize(const char* cpPath)
+	size_t GetFileSize(const char* cpPath)
 	{
-		const HANDLE hfile = ::CreateFileA(cpPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (hfile == INVALID_HANDLE_VALUE) { return 0; }
+		WIN32_FIND_DATAA find_data;
+		HANDLE hfind = ::FindFirstFileA(cpPath, &find_data);
+		if (hfind == INVALID_HANDLE_VALUE) { return 0; }
+		::CloseHandle(hfind);
 
-		LARGE_INTEGER file_size = { 0 };
-		::GetFileSizeEx(hfile, &file_size);
-		::CloseHandle(hfile);
+		if (sizeof(size_t) == 4)
+		{
+			return (size_t)find_data.nFileSizeLow;
+		}
+		else if (sizeof(size_t) == 8)
+		{
+			uint64_t size_h = (uint64_t)find_data.nFileSizeHigh;
+			uint64_t size = (uint64_t)find_data.nFileSizeLow;
+			size |= (size_h << 32);
+			return (size_t)size;
+		}
 
-		std::uintmax_t size_h = file_size.HighPart;
-		std::uintmax_t size = file_size.LowPart;
+		return 0;
+	}
+
+	size_t GetFileSize(const wchar_t* wpPath)
+	{
+		WIN32_FIND_DATAW find_data;
+		HANDLE hfind = ::FindFirstFileW(wpPath, &find_data);
+		if (hfind == INVALID_HANDLE_VALUE) { return 0; }
+		::CloseHandle(hfind);
+
+		if (sizeof(size_t) == 4)
+		{
+			return (size_t)find_data.nFileSizeLow;
+		}
+		else if (sizeof(size_t) == 8)
+		{
+			uint64_t size_h = (uint64_t)find_data.nFileSizeHigh;
+			uint64_t size = (uint64_t)find_data.nFileSizeLow;
+			size |= (size_h << 32);
+			return (size_t)size;
+		}
+
+		return 0;
+	}
+
+	uint64_t GetFileSize64(const char* cpPath)
+	{
+		WIN32_FIND_DATAA find_data;
+		HANDLE hfind = ::FindFirstFileA(cpPath, &find_data);
+		if (hfind == INVALID_HANDLE_VALUE) { return 0; }
+		::CloseHandle(hfind);
+
+		uint64_t size_h = (uint64_t)find_data.nFileSizeHigh;
+		uint64_t size = (uint64_t)find_data.nFileSizeLow;
 		size |= (size_h << 32);
 		return size;
 	}
 
-	std::uintmax_t GetFileSize(const wchar_t* wpPath)
+	uint64_t GetFileSize64(const wchar_t* wpPath)
 	{
-		const HANDLE hfile = ::CreateFileW(wpPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (hfile == INVALID_HANDLE_VALUE) { return 0; }
+		WIN32_FIND_DATAW find_data;
+		HANDLE hfind = ::FindFirstFileW(wpPath, &find_data);
+		if (hfind == INVALID_HANDLE_VALUE) { return 0; }
+		::CloseHandle(hfind);
 
-		LARGE_INTEGER file_size = { 0 };
-		::GetFileSizeEx(hfile, &file_size);
-		::CloseHandle(hfile);
-
-		std::uintmax_t size_h = file_size.HighPart;
-		std::uintmax_t size = file_size.LowPart;
+		uint64_t size_h = (uint64_t)find_data.nFileSizeHigh;
+		uint64_t size = (uint64_t)find_data.nFileSizeLow;
 		size |= (size_h << 32);
 		return size;
 	}
@@ -72,8 +112,7 @@ namespace Rut::Platform
 		DWORD flag_access = 0, flag_attributes = 0;
 		GetFlag(nMode, &flag_access, &flag_attributes);
 		const HANDLE hfile = ::CreateFileA(cpPath, flag_access, FILE_SHARE_READ, nullptr, flag_attributes, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (hfile == INVALID_HANDLE_VALUE) { return nullptr; }
-		return (void*)hfile;
+		return (hfile == INVALID_HANDLE_VALUE) ? (nullptr) : (void*)hfile;
 	}
 
 	void* FileOpen(const wchar_t* wpPath, size_t nMode)
@@ -81,8 +120,7 @@ namespace Rut::Platform
 		DWORD flag_access = 0, flag_attributes = 0;
 		GetFlag(nMode, &flag_access, &flag_attributes);
 		const HANDLE hfile = ::CreateFileW(wpPath, flag_access, FILE_SHARE_READ, nullptr, flag_attributes, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (hfile == INVALID_HANDLE_VALUE) { return nullptr; }
-		return (void*)hfile;
+		return (hfile == INVALID_HANDLE_VALUE) ? (nullptr) : (void*)hfile;
 	}
 
 	bool FileClose(void* hFile)

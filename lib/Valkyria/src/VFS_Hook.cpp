@@ -1,5 +1,5 @@
 #include "VFS_Hook.h"
-#include "../../Rut/RxPath.h"
+#include "../../Rut/RxSys.h"
 #include "../../Rut/RxConsole.h"
 #include "../../RxHook/RxHook.h"
 
@@ -19,19 +19,19 @@ namespace Valkyria::VFS
 
     bool __cdecl PackReadScript_Hook(char* cpPackPrefix, uint8_t* pInfoBuffer, uint32_t* pScriptCount, char* cpScriptSuffix, uint32_t nReadMod)
     {
-        if (RxPath::FileExist(cpPackPrefix)) { return false; }
+        if (RxSys::FileExist(cpPackPrefix)) { return false; }
         return sg_fnPackReadScript(cpPackPrefix, pInfoBuffer, pScriptCount, cpScriptSuffix, nReadMod);
     }
 
     bool __cdecl PackReadMedias_Hook(char* cpFilePath0, char* cpFilePath1, uint32_t* pResFOA, uint32_t* pResSize, uint32_t nReadMod)
     {
-        if (RxPath::FileExist(cpFilePath0)) { return false; }
+        if (RxSys::FileExist(cpFilePath0)) { return false; }
         return sg_fnPackReadMedias(cpFilePath0, cpFilePath1, pResFOA, pResSize, nReadMod);
     }
 
     bool __cdecl PackReadScript_Hook_Debug(char* cpPackPrefix, uint8_t* pInfoBuffer, uint32_t* pScriptCount, char* cpScriptSuffix, uint32_t nReadMod)
     {
-        if (RxPath::FileExist(cpPackPrefix))
+        if (RxSys::FileExist(cpPackPrefix))
         {
             RxConsole::PutFormat("ReadScript:%s [Hooked]\n", cpPackPrefix);
             return false;
@@ -44,7 +44,7 @@ namespace Valkyria::VFS
 
     bool __cdecl PackReadMedias_Hook_Debug(char* cpFilePath0, char* cpFilePath1, uint32_t* pResFOA, uint32_t* pResSize, uint32_t nReadMod)
     {
-        if (RxPath::FileExist(cpFilePath0))
+        if (RxSys::FileExist(cpFilePath0))
         {
             RxConsole::PutFormat("ReadMedia:%s [Hooked]\n", cpFilePath0);
             return false;

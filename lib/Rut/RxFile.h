@@ -62,20 +62,20 @@ namespace Rut::RxFile
 		Binary(const Binary& refStream) = delete;
 
 	public:
-		template <typename T_TYPE> operator T_TYPE()
+		template <typename TYPE_T> operator TYPE_T()
 		{
-			T_TYPE tmp{ 0 };
-			this->Read((T_TYPE*)&tmp, sizeof(T_TYPE));
+			TYPE_T tmp{ 0 };
+			this->Read((TYPE_T*)&tmp, sizeof(TYPE_T));
 			return tmp;
 		}
 
-		template <typename T_TYPE> Binary& operator >>(T_TYPE& TYPE)
+		template <typename TYPE_T> Binary& operator >>(TYPE_T& TYPE)
 		{
 			this->Read((void*)&TYPE, sizeof(TYPE));
 			return *this;
 		}
 
-		template <typename T_TYPE> Binary& operator <<(T_TYPE& TPYE)
+		template <typename TYPE_T> Binary& operator <<(TYPE_T& TPYE)
 		{
 			this->Write((void*)&TPYE, sizeof(TPYE));
 			return *this;

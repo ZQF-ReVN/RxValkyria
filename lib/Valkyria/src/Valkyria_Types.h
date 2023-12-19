@@ -6,10 +6,7 @@ namespace Valkyria
 {
 	struct VAL_SysData_Seg_0
 	{
-		uint8_t ucUn0;
-		uint8_t ucUn1;
-		uint8_t ucUn2;
-		uint8_t ucUn3;
+		uint32_t uiTimestamp;
 		uint32_t uiSysMode;
 		uint8_t ucDisplayFlag;
 		uint8_t ucLanguageFlag; // 1 = jp, 0 = en

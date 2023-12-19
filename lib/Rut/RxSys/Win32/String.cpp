@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
 	size_t StrLen(const char* cpStr)
 	{
@@ -17,18 +17,14 @@ namespace Rut::Platform
 	}
 
 
-	size_t StrCpy(char* cpDes, size_t nMaxBytes, const char* cpSrc)
+	bool StrCpy(char* cpDes, size_t nMaxBytes, const char* cpSrc)
 	{
-		errno_t err = ::strcpy_s(cpDes, nMaxBytes, cpSrc);
-		if (err) { return 0; }
-		return nMaxBytes;
+		return ::strcpy_s(cpDes, nMaxBytes, cpSrc) ? (false) : (true);
 	}
 
-	size_t StrCpy(wchar_t* wpDes, size_t nMaxChars, const wchar_t* wpSrc)
+	bool StrCpy(wchar_t* wpDes, size_t nMaxChars, const wchar_t* wpSrc)
 	{
-		errno_t err = ::wcscpy_s(wpDes, nMaxChars, wpSrc);
-		if (err) { return 0; }
-		return nMaxChars;
+		return ::wcscpy_s(wpDes, nMaxChars, wpSrc) ? (false) : (true);
 	}
 
 

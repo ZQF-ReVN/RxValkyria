@@ -2,15 +2,13 @@
 #include <cstdarg>
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
-	constexpr size_t PLATFORM_MAX_PATH = 260;
-
 	size_t StrLen(const char* cpStr);
 	size_t StrLen(const wchar_t* wpStr);
 
-	size_t StrCpy(char* cpDes, size_t nMaxBytes, const char* cpSrc);
-	size_t StrCpy(wchar_t* wpDes, size_t nMaxChars, const wchar_t* wpSrc);
+	bool StrCpy(char* cpDes, size_t nMaxBytes, const char* cpSrc);
+	bool StrCpy(wchar_t* wpDes, size_t nMaxChars, const wchar_t* wpSrc);
 
 	size_t Sprintf_V(char* cpBuffer, size_t nMaxBytes, const char* cpFormat, va_list ArgList);
 	size_t Sprintf_V(wchar_t* cpBuffer, size_t nMaxChar, const wchar_t* cpFormat, va_list ArgList);

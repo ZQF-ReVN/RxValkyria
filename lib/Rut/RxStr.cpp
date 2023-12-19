@@ -1,36 +1,16 @@
 ﻿#include "RxStr.h"
-#include "Platform/Platform.h"
+#include "RxSys.h"
 
 #include <stdexcept>
 
 
 namespace Rut::RxStr
 {
-	size_t StrLen(const char* cpStr)
-	{
-		return Platform::StrLen(cpStr);
-	}
-
-	size_t StrLen(const wchar_t* wpStr)
-	{
-		return Platform::StrLen(wpStr);
-	}
-
-	size_t StrCpy(char* cpDes, size_t nMaxBytes, const char* cpSrc)
-	{
-		return Platform::StrCpy(cpDes, nMaxBytes, cpSrc);
-	}
-
-	size_t StrCpy(wchar_t* wpDes, size_t nMaxChars, const wchar_t* wpSrc)
-	{
-		return Platform::StrCpy(wpDes, nMaxChars, wpSrc);
-	}
-
 	size_t Sprintf(char* cpBuffer, size_t nMaxBytes, const char* cpFormat, ...)
 	{
 		va_list args = nullptr;
 		va_start(args, cpFormat);
-		size_t cch = Sprintf_V(cpBuffer, nMaxBytes, cpFormat, args);
+		size_t cch = RxSys::Sprintf_V(cpBuffer, nMaxBytes, cpFormat, args);
 		va_end(args);
 		return cch;
 	}
@@ -39,19 +19,9 @@ namespace Rut::RxStr
 	{
 		va_list args = nullptr;
 		va_start(args, wpFormat);
-		size_t cch = Sprintf_V(wpBuffer, nMaxBytes, wpFormat, args);
+		size_t cch = RxSys::Sprintf_V(wpBuffer, nMaxBytes, wpFormat, args);
 		va_end(args);
 		return cch;
-	}
-
-	size_t Sprintf_V(char* cpBuffer, size_t nMaxBytes, const char* cpFormat, va_list ArgList)
-	{
-		return Platform::Sprintf_V(cpBuffer, nMaxBytes, cpFormat, ArgList);
-	}
-
-	size_t Sprintf_V(wchar_t* cpBuffer, size_t nMaxChar, const wchar_t* cpFormat, va_list ArgList)
-	{
-		return Platform::Sprintf_V(cpBuffer, nMaxChar, cpFormat, ArgList);
 	}
 
 
@@ -75,14 +45,14 @@ namespace Rut::RxStr
 		if (mstr_len == 0) { wsStr.clear(); return 0; }
 
 		const char* mstr_ptr = msStr.data();
-		size_t wstr_len = Platform::StrToWStr(mstr_ptr, mstr_len, nullptr, 0, uCodePage);
+		size_t wstr_len = RxSys::StrToWStr(mstr_ptr, mstr_len, nullptr, 0, uCodePage);
 		if (wstr_len == 0) 
-		{ 
+		{
 			throw std::runtime_error("RxCvt::ToWCS Error!");
 		}
 
 		wsStr.resize(wstr_len);
-		wstr_len = Platform::StrToWStr(mstr_ptr, mstr_len, wsStr.data(), wstr_len, uCodePage);
+		wstr_len = RxSys::StrToWStr(mstr_ptr, mstr_len, wsStr.data(), wstr_len, uCodePage);
 		if (wstr_len == 0) 
 		{ 
 			throw std::runtime_error("RxCvt::ToWCS Error!");
@@ -97,7 +67,7 @@ namespace Rut::RxStr
 		if (wstr_len == 0) { msStr.clear(); return 0; }
 
 		const wchar_t* wstr_ptr = wsStr.data();
-		size_t mstr_bytes = Platform::WStrToStr(wstr_ptr, wstr_len, nullptr, 0, uCodePage, nullptr, nullptr);
+		size_t mstr_bytes = RxSys::WStrToStr(wstr_ptr, wstr_len, nullptr, 0, uCodePage, nullptr, nullptr);
 		if (mstr_bytes == 0) 
 		{
 			throw std::runtime_error("RxCvt::ToMBCS Error!");
@@ -106,7 +76,7 @@ namespace Rut::RxStr
 		bool is_error = false;
 
 		msStr.resize(mstr_bytes);
-		mstr_bytes = Platform::WStrToStr(wstr_ptr, wstr_len, msStr.data(), mstr_bytes, uCodePage, &is_error, "?");
+		mstr_bytes = RxSys::WStrToStr(wstr_ptr, wstr_len, msStr.data(), mstr_bytes, uCodePage, &is_error, "?");
 		if (is_error || (mstr_bytes == 0)) 
 		{ 
 			throw std::runtime_error("RxCvt::ToMBCS Error!");

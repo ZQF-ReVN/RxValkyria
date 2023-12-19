@@ -1,5 +1,5 @@
 ﻿# Value Define
-set(PROJECT_NAME SDT_Text_Editor)
+set(PROJECT_NAME SDT_TextEditor)
 
 # Cpp Standard
 set(CMAKE_CXX_STANDARD 20)

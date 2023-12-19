@@ -1,62 +1,37 @@
 #include "RxConsole.h"
 #include "RxStr.h"
-#include "Platform/Platform.h"
+#include "RxSys.h"
 
 #include <string>
-#include <cstdio>
-#include <locale.h>
-#include <Windows.h>
+#include <clocale>
 
 
 namespace Rut::RxConsole
 {
-	static void SetConsoleNoQuickEdit()
+	bool Alloc(const wchar_t* lpTitle, bool isEdit)
 	{
-		DWORD mode = 0;
-		::GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode);
-		::SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), mode & ~ENABLE_QUICK_EDIT_MODE);
-	}
+		Rut::RxSys::ConsoleAlloc(lpTitle);
+		Rut::RxSys::ConsoleQuickEditMode(isEdit);
+		Rut::RxSys::ConsoleRedirectionSTDIO();
 
-	static void SetConsoleLocale()
-	{
 		//system("chcp 65001");
 		//system("chcp 936");
-		setlocale(LC_ALL, "chs");
+		::setlocale(LC_ALL, "chs");
 		//std::locale::global(std::locale(""));
-	}
 
-	static FILE* SetConsoleSTDIO()
-	{
-		FILE* fp_console = nullptr;
-		freopen_s(&fp_console, "CONIN$", "r+t", stdin);
-		freopen_s(&fp_console, "CONOUT$", "w+t", stdout);
-		return fp_console;
-	}
-
-
-	FILE* Alloc(const wchar_t* lpTitle, bool isEdit)
-	{
-		Platform::AllocConsole(lpTitle);
-		SetConsoleLocale();
-		isEdit == false ? SetConsoleNoQuickEdit() : (void)(0);
-		return SetConsoleSTDIO();
+		return true;
 	}
 }
 
 
 namespace Rut::RxConsole
 {
-	static constexpr size_t sg_uiBufferCount = 1024;
+	static constexpr size_t PUT_BUFFER_MAX = 1024;
 
-
-	bool Put(const char* cpStr)
-	{
-		return Put(cpStr, strlen(cpStr));
-	}
 
 	bool Put(const char* cpStr, size_t nChar)
 	{
-		return Platform::PutConsole(cpStr, nChar);
+		return Rut::RxSys::PutConsole(cpStr, nChar);
 	}
 
 	bool Put(std::string_view msStr)
@@ -64,14 +39,9 @@ namespace Rut::RxConsole
 		return Put(msStr.data(), msStr.size());
 	}
 
-	bool Put(const wchar_t* wpStr)
-	{
-		return Put(wpStr, wcslen(wpStr));
-	}
-
 	bool Put(const wchar_t* wpStr, size_t nChar)
 	{
-		return Platform::PutConsole(wpStr, nChar);
+		return Rut::RxSys::PutConsole(wpStr, nChar);
 	}
 
 	bool Put(std::wstring_view wsStr)
@@ -93,11 +63,11 @@ namespace Rut::RxConsole
 
 	bool PutFormat(const char* cpFormat, ...)
 	{
-		char buffer[sg_uiBufferCount];
+		char buffer[PUT_BUFFER_MAX];
 
 		va_list args = nullptr;
 		va_start(args, cpFormat);
-		size_t cch = Platform::Sprintf_V(buffer, sg_uiBufferCount, cpFormat, args);
+		size_t cch = RxSys::Sprintf_V(buffer, PUT_BUFFER_MAX, cpFormat, args);
 		va_end(args);
 
 		return (cch <= 0) ? (false) : (Put(buffer, cch));
@@ -105,11 +75,11 @@ namespace Rut::RxConsole
 
 	bool PutFormat(const wchar_t* cpFormat, ...)
 	{
-		wchar_t buffer[sg_uiBufferCount];
+		wchar_t buffer[PUT_BUFFER_MAX];
 
 		va_list args = nullptr;
 		va_start(args, cpFormat);
-		size_t cch = Platform::Sprintf_V(buffer, sg_uiBufferCount, cpFormat, args);
+		size_t cch = RxSys::Sprintf_V(buffer, PUT_BUFFER_MAX, cpFormat, args);
 		va_end(args);
 
 		return (cch <= 0) ? (false) : (Put(buffer, cch));

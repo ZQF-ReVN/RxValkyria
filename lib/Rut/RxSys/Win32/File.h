@@ -2,10 +2,12 @@
 #include <cstdint>
 
 
-namespace Rut::Platform
+namespace Rut::RxSys
 {
-	std::uintmax_t GetFileSize(const char* cpPath);
-	std::uintmax_t GetFileSize(const wchar_t* wpPath);
+	size_t GetFileSize(const char* cpPath);
+	size_t GetFileSize(const wchar_t* wpPath);
+	uint64_t GetFileSize64(const char* cpPath);
+	uint64_t GetFileSize64(const wchar_t* wpPath);
 
 	void* FileOpen(const char* cpPath, size_t nMode);
 	void* FileOpen(const wchar_t* wpPath, size_t nMode);

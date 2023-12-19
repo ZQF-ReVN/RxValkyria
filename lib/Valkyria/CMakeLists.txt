@@ -10,9 +10,9 @@ link_libraries(Rut RxHook)
 
 # Set Source File Path
 list(APPEND SRC_FILE 
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Checker.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Signer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Text_Editor.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Text_Parser.cpp")
 
 # Source File Only x32
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)

@@ -1,7 +1,7 @@
 #include "RxFile.h"
 #include "RxPath.h"
 #include "RxStr.h"
-#include "Platform/Platform.h"
+#include "RxSys.h"
 
 #include <stdexcept>
 
@@ -27,27 +27,27 @@ namespace Rut::RxFile
 
 	void Basic::Create(std::string_view msPath, size_t nMode)
 	{
-		m_hFile = Platform::FileOpen(msPath.data(), nMode);
+		m_hFile = RxSys::FileOpen(msPath.data(), nMode);
 		if (m_hFile == nullptr) { throw std::runtime_error("Create File Error!"); }
 	}
 
 	void Basic::Create(std::wstring_view wsPath, size_t nMode)
 	{
-		m_hFile = Platform::FileOpen(wsPath.data(), nMode);
+		m_hFile = RxSys::FileOpen(wsPath.data(), nMode);
 		if (m_hFile == nullptr) { throw std::runtime_error("Create File Error!"); }
 	}
 
 
 	bool Basic::Close()
 	{
-		bool is_close = Platform::FileClose(m_hFile);
+		bool is_close = RxSys::FileClose(m_hFile);
 		m_hFile = nullptr;
 		return is_close;
 	}
 
 	bool Basic::Flush()
 	{
-		return Platform::FileFlush(m_hFile);
+		return RxSys::FileFlush(m_hFile);
 	}
 
 	bool Basic::IsEnd()
@@ -59,27 +59,27 @@ namespace Rut::RxFile
 
 	size_t Basic::SetPos(size_t nOffset, size_t nWay)
 	{
-		return Platform::FileSetPtr(m_hFile, nOffset, nWay);
+		return RxSys::FileSetPtr(m_hFile, nOffset, nWay);
 	}
 
 	size_t Basic::GetPos()
 	{
-		return Platform::FileGetPtr(m_hFile);
+		return RxSys::FileGetPtr(m_hFile);
 	}
 
 	size_t Basic::GetSize()
 	{
-		return Platform::FileGetSize(m_hFile);
+		return RxSys::FileGetSize(m_hFile);
 	}
 
 	size_t Basic::Read(void* pBuffer, size_t nSize)
 	{
-		return Platform::FileRead(m_hFile, pBuffer, nSize);
+		return RxSys::FileRead(m_hFile, pBuffer, nSize);
 	}
 
 	size_t Basic::Write(void* pData, size_t nSize)
 	{
-		return Platform::FileWrite(m_hFile, pData, nSize);
+		return RxSys::FileWrite(m_hFile, pData, nSize);
 	}
 }
 
