@@ -68,7 +68,6 @@ namespace Valkyria::VFS
         {
             RxHook::Detours::AttrachDirectly(&sg_fnPackReadScript, PackReadScript_Hook);
         }
-
     }
 
     void HookMediasRead(uint32_t fnPackReadMedias, bool isDebugInfo)

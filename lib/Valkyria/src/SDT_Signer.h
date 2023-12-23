@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+
 #include "../../Rut/RxMem.h"
 
 
@@ -22,12 +23,14 @@ namespace Valkyria::SDT
 		void InitViaSysData(std::wstring wsSysDataPath);
 
 	public:
-		std::string EncodeKey() const;
-		std::string DecodeKey(std::string msEncodeDebugKeyStr) const;
-		std::string MakeCheckData(size_t nScriptSize) const;
-		static std::string MakeCheckData(std::string msOrgCheckData, size_t nOrgSize, size_t nNewSize);
-		static void MakeCheckData(uint8_t* pCheckData, size_t nOrgSize, size_t nNewSize);
-		const std::string& GetKey() const;
+		Rut::RxMem::Auto EncodeKey() const;
+		Rut::RxMem::Auto MakeCheckData(size_t nScriptSize) const;
 		void Sign(Rut::RxMem::Auto& amSDT) const;
+		static std::string DecodeKey(const uint8_t* pKeyData, size_t nKeySize, size_t nGameTitleLen);
+		static void Sign(uint8_t* pOrgCheckData, size_t nOrgCheckDataSize, size_t nOrgFileSize, size_t nNewFileSize);
+
+	public:
+		const std::string& GetKeyStr() const;
+
 	};
 }

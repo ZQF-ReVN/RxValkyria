@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 
-#include "SDT_Parser.h"
+#include "SDT_Code.h"
 #include "Valkyria_Types.h"
 
 
@@ -10,10 +10,10 @@ namespace Valkyria::SDT
 	class Custom_Msg
 	{
 	private:
-		Code_MsgName m_Name;
-		Code_MsgText m_Text;
-		Code_MsgNewLine m_NewLine;
-		Code_SelectText m_Select;
+		SDT::Code::MsgName m_Name;
+		SDT::Code::MsgText m_Text;
+		SDT::Code::MsgNewLine m_NewLine;
+		SDT::Code::SelectText m_Select;
 
 		size_t m_uiCodeBegOffset = 0;
 		size_t m_uiCodeEndOffset = 0;
@@ -53,5 +53,28 @@ namespace Valkyria::SDT
 	public:
 		size_t GetMsgCountViaScan() const;
 		size_t GetMsgCountViaInfo() const;
+	};
+
+	template<typename SDT_OBJ_T>
+	static void CheckMakeData(uint8_t* pOrg, SDT_OBJ_T& rfOBJ)
+	{
+		Rut::RxMem::Auto mem = rfOBJ.Make();
+		if (memcmp(pOrg, mem.GetPtr(), mem.GetSize()))
+		{
+			throw std::runtime_error("Dump Data Mismatched!");
+		}
+	}
+
+	class Text_Test
+	{
+	private:
+		std::vector<SDT::Code::MsgName> m_vcMsgNameCodes;
+		std::vector<SDT::Code::MsgText> m_vcMsgTextCodes;
+		std::vector<SDT::Code::MsgNewLine> m_vcMsgNewLineCodes;
+		std::vector<SDT::Code::SelectText> m_vcSelectTextCode;
+
+	public:
+		Text_Test();
+		void Parse(Rut::RxMem::Auto& amCode);
 	};
 }

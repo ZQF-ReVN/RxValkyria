@@ -1,4 +1,6 @@
-﻿#include "SDT_Text_Parser.h"
+﻿#include "SDT_Text_Editor.h"
+#include "SDT_String.h"
+#include "SDT_Signer.h"
 #include "../../Rut/RxStr.h"
 
 
@@ -9,100 +11,6 @@ namespace Valkyria::SDT
 		wchar_t tmp[0x10];
 		size_t len = (size_t)swprintf_s(tmp, 0x10, L"0x%08x", nValue);
 		return { tmp, len };
-	}
-
-	static std::string MakeUnicodeStrA(size_t wChar)
-	{
-		char buf[0x10];
-		size_t len = (size_t)sprintf_s(buf, 0x10, "\\u%04x", wChar);
-		return { buf, len };
-	}
-
-	static  std::wstring MakeUnicodeStrW(size_t wChar)
-	{
-		wchar_t buf[0x10];
-		size_t len = (size_t)swprintf_s(buf, 0x10, L"\\u%04x", wChar);
-		return { buf, len };
-	}
-
-	static std::string EncodeString(std::wstring_view wsText, size_t nCodePage)
-	{
-		std::string str_bytes;
-
-		if (nCodePage == 1200)
-		{
-
-			for (size_t ite_unit = 0; ite_unit < wsText.size(); ite_unit++)
-			{
-				wchar_t unit = wsText[ite_unit];
-				if (unit == L'\\')
-				{
-					ite_unit++;
-					unit = wsText[ite_unit];
-					switch (unit)
-					{
-					case L'U':
-					case L'u':
-					{
-						uint32_t code_point = 0;
-						swscanf_s(wsText.data() + ite_unit + 1, L"%04x", &code_point);
-						str_bytes.append(MakeUnicodeStrA(code_point));
-						ite_unit += 4;
-					}
-					break;
-
-					case L'R':
-					case L'r':
-					{
-						str_bytes.append(1, '\\');
-						str_bytes.append(1, 'r');
-					}
-					break;
-
-					case L'\\':
-					{
-						throw std::runtime_error("Unknow Format");
-					}
-					break;
-
-					default: throw std::runtime_error("Unknow Format");
-					}
-				}
-				else
-				{
-					str_bytes.append(MakeUnicodeStrA(unit));
-				}
-			}
-		}
-		else
-		{
-			std::wstring format_text;
-			for (auto& unit : wsText)
-			{
-				switch (unit)
-				{
-				case L'・':case L'≪':case L'≫':case L'♪':format_text.append(MakeUnicodeStrW(unit)); break;
-				default: format_text.append(1, unit);
-				}
-			}
-			str_bytes = Rut::RxStr::ToMBCS(format_text, nCodePage);
-		}
-
-		if (str_bytes.size() >= 260) { throw std::runtime_error("EncodeString: exceeds buffer size limit"); }
-		return str_bytes;
-	}
-
-	static void SignSDT(uint8_t* pCheckData, size_t nCheckDataBytes, size_t nOrgSize, size_t nNewSize)
-	{
-		for (size_t ite_byte = 0; ite_byte < nCheckDataBytes; ite_byte++)
-		{
-			pCheckData[ite_byte] -= (uint8_t)nOrgSize;
-		}
-
-		for (size_t ite_byte = 0; ite_byte < nCheckDataBytes; ite_byte++)
-		{
-			pCheckData[ite_byte] += (uint8_t)nNewSize;
-		}
 	}
 
 
@@ -191,11 +99,11 @@ namespace Valkyria::SDT
 		Rut::RxJson::JObject::iterator ite_name = rfJson.FindKey(L"Name");
 		if (ite_name != rfJson.EndKey())
 		{
-			m_Name.SetText(EncodeString(rfJson.GetValue(ite_name).ToStringView(), nCodePage));
+			m_Name.SetText(SDT::String::MakeText(rfJson.GetValue(ite_name).ToStringView(), nCodePage));
 		}
 
 		Rut::RxJson::JObject::iterator ite_text = rfJson.FindKey(L"Text");
-		if (ite_text != rfJson.EndKey()) { m_Text.SetText(EncodeString(rfJson.GetValue(ite_text).ToStringView(), nCodePage)); }
+		if (ite_text != rfJson.EndKey()) { m_Text.SetText(SDT::String::MakeText(rfJson.GetValue(ite_text).ToStringView(), nCodePage)); }
 
 		Rut::RxJson::JObject::iterator ite_select = rfJson.FindKey(L"Select");
 		if (ite_select != rfJson.EndKey())
@@ -204,7 +112,7 @@ namespace Valkyria::SDT
 			const Rut::RxJson::JArray& selects_json = rfJson.GetValue(ite_select).ToAry();
 			for (auto& select : selects_json)
 			{
-				select_texts.push_back(EncodeString(select.ToStringView(), nCodePage));
+				select_texts.push_back(SDT::String::MakeText(select.ToStringView(), nCodePage));
 			}
 			m_Select.SetTexts(select_texts);
 		}
@@ -349,7 +257,7 @@ namespace Valkyria::SDT
 		size_t check_data_bytes = m_pInfo->uiHDRSize - m_pInfo->uiCheckDataFOA - 1;
 		size_t sdt_org_size = m_amSDT.GetSize();
 		size_t sdt_new_size = m_amSDT.GetSize() + append_mem.GetSize();
-		SignSDT(check_data_ptr, check_data_bytes, sdt_org_size, sdt_new_size);
+		SDT::Signer::Sign(check_data_ptr, check_data_bytes, sdt_org_size, sdt_new_size);
 
 		return { m_amSDT, append_mem };
 	}
@@ -374,5 +282,71 @@ namespace Valkyria::SDT
 	size_t Text_Parser::GetMsgCountViaInfo() const
 	{
 		return m_pInfo->uiMsgCount;
+	}
+
+	Text_Test::Text_Test()
+	{
+
+	}
+
+	void Text_Test::Parse(Rut::RxMem::Auto& amCode)
+	{
+		if (amCode.GetSize() < 0x10) { return; }
+
+		uint8_t search_msg_text_code[4] = { 0x01, 0x0E, 0x11, 0x11 };
+		uint8_t search_msg_name_code[4] = { 0x00, 0x0E, 0x7E, 0x86 };
+		uint8_t search_select_text_code[6] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 };
+		uint8_t* code_ptr = amCode.GetPtr();
+		size_t max_search_size = amCode.GetSize() - sizeof(search_select_text_code);
+
+		for (size_t ite_byte = 0; ite_byte < max_search_size;)
+		{
+			uint8_t* cur_ptr = code_ptr + ite_byte;
+			if (memcmp(code_ptr + ite_byte, search_msg_name_code, sizeof(search_msg_name_code)) == 0)
+			{
+				SDT::Code::MsgName msg_name_code;
+				msg_name_code.Parse(code_ptr + ite_byte);
+				{
+					CheckMakeData(code_ptr + ite_byte, msg_name_code);
+				}
+				ite_byte += msg_name_code.GetSize();
+				m_vcMsgNameCodes.push_back(std::move(msg_name_code));
+			}
+			else if (memcmp(code_ptr + ite_byte, search_msg_text_code, sizeof(search_msg_text_code)) == 0)
+			{
+				SDT::Code::MsgText msg_text_code;
+				msg_text_code.Parse(code_ptr + ite_byte);
+				{
+					CheckMakeData(code_ptr + ite_byte, msg_text_code);
+				}
+				ite_byte += msg_text_code.GetSize();
+				m_vcMsgTextCodes.emplace_back(std::move(msg_text_code));
+
+				if (*(uint16_t*)(code_ptr + ite_byte) == 0x0E04)
+				{
+					SDT::Code::MsgNewLine msg_newline_code;
+					msg_newline_code.Parse(code_ptr + ite_byte);
+					{
+						CheckMakeData(code_ptr + ite_byte, msg_newline_code);
+					}
+					ite_byte += msg_newline_code.GetSize();
+					m_vcMsgNewLineCodes.push_back(std::move(msg_newline_code));
+				}
+			}
+			else if (memcmp(code_ptr + ite_byte, search_select_text_code, sizeof(search_select_text_code)) == 0)
+			{
+				SDT::Code::SelectText select_text_code;
+				select_text_code.Parse(code_ptr + ite_byte);
+				{
+					CheckMakeData(code_ptr + ite_byte, select_text_code);
+				}
+				ite_byte += select_text_code.GetSize();
+				m_vcSelectTextCode.push_back(std::move(select_text_code));
+			}
+			else
+			{
+				ite_byte++;
+			}
+		}
 	}
 }

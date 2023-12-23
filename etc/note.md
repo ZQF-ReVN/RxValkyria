@@ -268,15 +268,15 @@ Tested:VAL-0039 VAH-0001 VAL-0040 VAL-0064 VAL-0017Re VAL-0065 VAL-0066(DL)
 
 
 
-## Encoding Key
+## Encrypt The Key
 
 **Param**: Game Title Shit-Jis Encoding String    : `プレイ！プレイ！プレイ！ロック！`
 
 **Param**: Game Title Shit-Jis Encoding Length  : `0x20 ` (bytes count)
 
-**Param**: Key String ASCII: `VAL-0064`
+**Param**: Key String ASCII : `VAL-0064`
 
-**Param**: Key String Hex  : `56 41 4C 2D 30 30 36 34`
+**Param**: Key String Hex   : `56 41 4C 2D 30 30 36 34`
 
 **Algorithm**:
 
@@ -286,16 +286,16 @@ Tested:VAL-0039 VAH-0001 VAL-0040 VAL-0064 VAL-0017Re VAL-0065 VAL-0066(DL)
 
   - `65 14 C4 D2 03 03 63 43`
 
-- Encode Both Ends Via `Game Title Shit-Jis Encoding Length` : 
+- Encrypt Both Ends Via `Game Title Shit-Jis Encoding Length` : 
 
   - first byte add title len, last byte sub (0x2F * (nTitleLen / 0x2F) - nTitleLen)
   - `85 14 C4 D2 03 03 63 63`
 
-**Encode Key Hex**: `85 14 C4 D2 03 03 63 63`
+**Encrypted Key Hex**: `85 14 C4 D2 03 03 63 63`
 
 
 
-## Make SDT Check Data
+## Create SDT Check Data
 
 **Param**: Game Title Shit-Jis Encoding String    : `プレイ！プレイ！プレイ！ロック！`
 
@@ -309,7 +309,7 @@ Tested:VAL-0039 VAH-0001 VAL-0040 VAL-0064 VAL-0017Re VAL-0065 VAL-0066(DL)
 
 **Algorithm**:
 
-- Make Encode Key Hex: 
+- Get  Encrypted Key Hex: 
 
   - `85 14 C4 D2 03 03 63 63`
 

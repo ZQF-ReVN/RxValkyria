@@ -12,8 +12,11 @@ link_libraries(Rut RxHook)
 list(APPEND SRC_FILE 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/DAT_Editor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Signer.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Parser.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Text_Parser.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_File.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_HDR.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Code.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_String.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SDT_Text_Editor.cpp")
 
 # Source File Only x32
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
