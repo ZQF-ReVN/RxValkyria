@@ -3,6 +3,7 @@
 #include <sstream>
 #include <functional>
 
+#include "RxMem.h"
 
 namespace Rut
 {
@@ -44,7 +45,7 @@ namespace Rut::RxFile
 
 		size_t GetPos();
 		size_t GetSize();
-		size_t SetPos(size_t nOffset, size_t nMode);
+		size_t SetPos(size_t nOffset, size_t nMode = RIO_BEGIN);
 		size_t Read(void* pBuffer, size_t nSize);
 		size_t Write(void* pData, size_t nSize);
 
@@ -78,6 +79,18 @@ namespace Rut::RxFile
 		template <typename TYPE_T> Binary& operator <<(TYPE_T& TPYE)
 		{
 			this->Write((void*)&TPYE, sizeof(TPYE));
+			return *this;
+		}
+
+		template <> Binary& operator << (RxMem::Auto& amMem)
+		{
+			this->Write(amMem.GetPtr(), amMem.GetSize());
+			return *this;
+		}
+
+		template <> Binary& operator >> (RxMem::Auto& amMem)
+		{
+			this->Read(amMem.GetPtr(), amMem.GetSize());
 			return *this;
 		}
 	};

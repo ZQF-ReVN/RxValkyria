@@ -1,5 +1,4 @@
 #include "SDT_Signer.h"
-#include "SDT_Parser.h"
 #include "Valkyria_Types.h"
 #include "../../Rut/RxMem.h"
 
@@ -74,10 +73,6 @@ namespace Valkyria::SDT
 		if (m_msKey.empty()) { return ""; }
 
 		std::string check_data = this->EncodeKey();
-		this->DecodeBothEnds(check_data.data(), check_data.size(), m_uiGameTitleLen);
-
-		check_data.front() += (uint8_t)m_uiGameTitleLen;
-		check_data.back() -= (uint8_t)(0x2F * (m_uiGameTitleLen / 0x2F) - m_uiGameTitleLen);
 
 		for (auto& byte : check_data)
 		{
@@ -85,6 +80,34 @@ namespace Valkyria::SDT
 		}
 
 		return check_data;
+	}
+
+	std::string Signer::MakeCheckData(std::string msOrgCheckData, size_t nOrgSize, size_t nNewSize)
+	{
+		for (auto& byte : msOrgCheckData)
+		{
+			byte -= (uint8_t)nOrgSize;
+		}
+
+		for (auto& byte : msOrgCheckData)
+		{
+			byte += (uint8_t)nNewSize;
+		}
+
+		return msOrgCheckData;
+	}
+
+	void Signer::MakeCheckData(uint8_t* pCheckData, size_t nOrgSize, size_t nNewSize)
+	{
+		for (size_t ite_byte = 0; pCheckData[ite_byte] != 0; ite_byte++)
+		{
+			pCheckData[ite_byte] -= (uint8_t)nOrgSize;
+		}
+
+		for (size_t ite_byte = 0; pCheckData[ite_byte] != 0; ite_byte++)
+		{
+			pCheckData[ite_byte] += (uint8_t)nNewSize;
+		}
 	}
 
 	const std::string& Signer::GetKey() const
@@ -96,15 +119,11 @@ namespace Valkyria::SDT
 	{
 		std::string sig_data = this->MakeCheckData(amSDT.GetSize());
 
-		SDT::HDR hdr;
-		hdr.Parse(amSDT.GetPtr());
-
-		size_t check_data_size = hdr.GetCheckDataSize();
+		VAL_SDT_HDR_Info* info_ptr = (VAL_SDT_HDR_Info*)amSDT.GetPtr();
+		size_t check_data_size = info_ptr->uiHDRSize - info_ptr->uiCheckDataFOA;
 		if ((check_data_size - 1) != sig_data.size()) { throw std::runtime_error("Signer::Sign: check data size mismatched!"); }
 
-		hdr.SetCheckData(sig_data);
-
-		Rut::RxMem::Auto hdr_mem = hdr.Make();
-		memcpy(amSDT.GetPtr(), hdr_mem.GetPtr(), hdr_mem.GetSize());
+		uint8_t* check_data_ptr = amSDT.GetPtr() + info_ptr->uiCheckDataFOA;
+		memcpy(check_data_ptr, sig_data.data(), check_data_size);
 	}
 }

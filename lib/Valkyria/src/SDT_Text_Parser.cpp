@@ -92,6 +92,18 @@ namespace Valkyria::SDT
 		return str_bytes;
 	}
 
+	static void SignSDT(uint8_t* pCheckData, size_t nCheckDataBytes, size_t nOrgSize, size_t nNewSize)
+	{
+		for (size_t ite_byte = 0; ite_byte < nCheckDataBytes; ite_byte++)
+		{
+			pCheckData[ite_byte] -= (uint8_t)nOrgSize;
+		}
+
+		for (size_t ite_byte = 0; ite_byte < nCheckDataBytes; ite_byte++)
+		{
+			pCheckData[ite_byte] += (uint8_t)nNewSize;
+		}
+	}
 
 
 	Custom_Msg::Custom_Msg()
@@ -331,6 +343,13 @@ namespace Valkyria::SDT
 			append_ptr += 4;
 			append_size += 4;
 		}
+
+		// sign sdt file
+		uint8_t* check_data_ptr = m_amSDT.GetPtr() + m_pInfo->uiCheckDataFOA;
+		size_t check_data_bytes = m_pInfo->uiHDRSize - m_pInfo->uiCheckDataFOA - 1;
+		size_t sdt_org_size = m_amSDT.GetSize();
+		size_t sdt_new_size = m_amSDT.GetSize() + append_mem.GetSize();
+		SignSDT(check_data_ptr, check_data_bytes, sdt_org_size, sdt_new_size);
 
 		return { m_amSDT, append_mem };
 	}

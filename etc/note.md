@@ -257,3 +257,67 @@ for ifs : match(data06-*)[data06-01,data06-02,data06-03,data06-04....]
   }
 }
 ```
+
+```
+VAL-0 ------ VAL-37 old version .odn
+VAL-0044 ----- VAL-66 new version .sdt .dat
+
+Tested:VAL-0039 VAH-0001 VAL-0040 VAL-0064 VAL-0017Re VAL-0065 VAL-0066(DL)
+(2017 - 2023)
+```
+
+
+
+## Encoding Key
+
+**Param**: Game Title Shit-Jis Encoding String    : `プレイ！プレイ！プレイ！ロック！`
+
+**Param**: Game Title Shit-Jis Encoding Length  : `0x20 ` (bytes count)
+
+**Param**: Key String ASCII: `VAL-0064`
+
+**Param**: Key String Hex  : `56 41 4C 2D 30 30 36 34`
+
+**Algorithm**:
+
+- Swap `Key String Hex` Byte Order: 
+
+  - low 4 bits and heigh 4bits swap
+
+  - `65 14 C4 D2 03 03 63 43`
+
+- Encode Both Ends Via `Game Title Shit-Jis Encoding Length` : 
+
+  - first byte add title len, last byte sub (0x2F * (nTitleLen / 0x2F) - nTitleLen)
+  - `85 14 C4 D2 03 03 63 63`
+
+**Encode Key Hex**: `85 14 C4 D2 03 03 63 63`
+
+
+
+## Make SDT Check Data
+
+**Param**: Game Title Shit-Jis Encoding String    : `プレイ！プレイ！プレイ！ロック！`
+
+**Param**: Game Title Shit-Jis Encoding Length  : `0x20`  (bytes count)
+
+**Param**: Key String ASCII: `VAL-0064`
+
+**Param**: Key String Hex  : `56 41 4C 2D 30 30 36 34`
+
+**Param**: SDT File Size: `0x3C`
+
+**Algorithm**:
+
+- Make Encode Key Hex: 
+
+  - `85 14 C4 D2 03 03 63 63`
+
+- Each Byte Add `SDT File Size`
+
+  - If file size greater than 0xFF truncate to uint8_t, so 0x3C and 0x43C have the same key data.
+
+  - `1C 50 00 0E 3F 3F 9F 9F`
+
+**Check Data**:  `1C 50 00 0E 3F 3F 9F 9F`
+

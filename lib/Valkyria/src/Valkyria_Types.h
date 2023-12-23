@@ -43,19 +43,19 @@ namespace Valkyria
 		char aCheckKey[260];
 	};
 
-	struct VAL_Pack_Entry
-	{
-		char aFileName[260];
-		uint32_t uiOffset; // after index
-		uint32_t uiSize;
-	};
-
 	struct VAL_VFS_Entry
 	{
 		char aFilePath[260];
 		uint32_t uiFOA;
 		uint32_t uiSize;
 		char aFileName[260];
+	};
+
+	struct VAL_Pack_Entry
+	{
+		char aFileName[260];
+		uint32_t uiOffset; // after index
+		uint32_t uiSize;
 	};
 
 	/*
