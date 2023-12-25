@@ -35,25 +35,25 @@ namespace Rut::RxJson
 	JValue::JValue(const wchar_t* sValue)
 	{
 		m_Type = JVALUE_STR;
-		m_Value.pStr = new JString(sValue);
+		m_Value.pData = new JString(sValue);
 	}
 
 	JValue::JValue(std::wstring_view sValue)
 	{
 		m_Type = JVALUE_STR;
-		m_Value.pStr = new JString(sValue);
+		m_Value.pData = new JString(sValue);
 	}
 
 	JValue::JValue(const std::wstring& sValue)
 	{
 		m_Type = JVALUE_STR;
-		m_Value.pStr = new JString(sValue);
+		m_Value.pData = new JString(sValue);
 	}
 
 	JValue::JValue(std::wstring&& sValue)
 	{
 		m_Type = JVALUE_STR;
-		m_Value.pStr = new JString(std::move(sValue));
+		m_Value.pData = new JString(std::move(sValue));
 	}
 
 	JValue::JValue(const JArray& aValue)
@@ -98,7 +98,7 @@ namespace Rut::RxJson
 		{
 		case Value_Type_T::JVALUE_STR:
 		{
-			delete m_Value.pStr;
+			delete m_Value.pData;
 		}
 		break;
 
@@ -125,7 +125,7 @@ namespace Rut::RxJson
 		switch (m_Type)
 		{
 		case Value_Type_T::JVALUE_STR:
-			this->m_Value.pStr = new JString(*(rfJValue.m_Value.pStr)); break;
+			this->m_Value.pData = new JString(*(rfJValue.m_Value.pData)); break;
 		case Value_Type_T::JVALUE_ARY:
 			this->m_Value.pAry = new JArray(*(rfJValue.m_Value.pAry)); break;
 		case Value_Type_T::JVALUE_OBJ:
@@ -258,7 +258,7 @@ namespace Rut::RxJson
 
 	JValue::operator JString& () const
 	{
-		if (m_Type == JVALUE_STR) { return *(m_Value.pStr); }
+		if (m_Type == JVALUE_STR) { return *(m_Value.pData); }
 		throw std::runtime_error("Error Json Type!");
 	}
 
@@ -307,12 +307,12 @@ namespace Rut::RxJson
 		return this->operator double();
 	}
 
-	const wchar_t* JValue::ToStringPtr() const
+	const wchar_t* JValue::ToStrPtr() const
 	{
 		return this->operator std::wstring_view().data();
 	}
 
-	std::wstring_view JValue::ToStringView() const
+	std::wstring_view JValue::ToStrView() const
 	{
 		return this->operator std::wstring_view();
 	}
@@ -351,7 +351,7 @@ namespace Rut::RxJson
 		case Value_Type_T::JVALUE_STR:
 		{
 			wsText.append(1, L'\"');
-			for (auto ch : *(m_Value.pStr))
+			for (auto ch : *(m_Value.pData))
 			{
 				switch (ch)
 				{

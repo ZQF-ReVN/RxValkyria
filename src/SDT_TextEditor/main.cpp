@@ -7,11 +7,11 @@
 static void Export(std::wstring_view wsSDT, std::wstring_view wsJson)
 {
 	Valkyria::SDT::Text_Parser text_parser;
-	text_parser.Init(wsSDT);
-	if (text_parser.GetMsgCountViaInfo() == 0) { return; }
-	text_parser.Parse();
-	if (text_parser.GetMsgCountViaScan() == 0) { return; }
-	Rut::RxJson::JValue json_text = text_parser.ToJson(932, true);
+	text_parser.Read(wsSDT);
+	if (text_parser.GetSdtFile().GetMsgCount() == 0) { return; }
+	text_parser.Scan();
+	if (text_parser.GetMsgCount() == 0) { return; }
+	Rut::RxJson::JValue json_text = text_parser.Make(932);
 	Rut::RxJson::Parser::Save(json_text, wsJson, true);
 }
 
@@ -21,9 +21,9 @@ static void Import(std::wstring_view wsSDT, std::wstring_view wsJson, std::wstri
 	Rut::RxJson::Parser parser(wsJson, json);
 
 	Valkyria::SDT::Text_Parser text_parser;
-	text_parser.Init(wsSDT);
-	text_parser.Parse();
-	text_parser.Load(json.ToAry(), 936);
+	text_parser.Read(wsSDT);
+	text_parser.Scan();
+	text_parser.Load(json, 936);
 	text_parser.Make().SaveData(wsNewSDT);
 }
 
@@ -61,9 +61,10 @@ static void DebugMain()
 
 int main()
 {
+	DebugMain();
 	try
 	{
-		DebugMain();
+		
 	}
 	catch (const std::runtime_error& err)
 	{

@@ -3,46 +3,38 @@
 
 namespace Valkyria::SDT
 {
-	
-	File_Parser::File_Parser()
+	const VAL_SDT_HDR_Info* File_Parser::GetInfoPtr() const noexcept
 	{
-
+		return m_pInfo;
 	}
 
-	File_Parser::File_Parser(std::wstring_view wsPath)
+	const Rut::RxMem::Auto& File_Parser::GetMem() const noexcept
 	{
-		this->Parse(wsPath);
+		return m_amSDT;
 	}
 
-	void File_Parser::Parse(std::wstring_view wsPath)
+	const size_t File_Parser::GetMsgCount() const noexcept
 	{
-		Rut::RxMem::Auto sdt_buffer(wsPath);
-		this->Parse(sdt_buffer);
+		return m_pInfo->uiMsgCount;
 	}
 
-	void File_Parser::Parse(Rut::RxMem::Auto& amSDT)
+	uint8_t* File_Parser::GetSdtPtr() const noexcept
 	{
-		m_HDR.Parse(amSDT.GetPtr());
-
-		size_t code_seg_size = amSDT.GetSize() - m_HDR.GetSize();
-		uint8_t* code_seg_ptr = amSDT.GetPtr() + m_HDR.GetSize();
-		m_amCode.SetSize(code_seg_size);
-
-		memcpy(m_amCode.GetPtr(), code_seg_ptr, code_seg_size);
+		return m_amSDT.GetPtr();
 	}
 
-	Rut::RxMem::Auto File_Parser::Make() const
+	uint8_t* File_Parser::GetCodePtr() const noexcept
 	{
-		return { m_HDR.Make(), m_amCode };
+		return m_amSDT.GetPtr() + m_pInfo->uiHDRSize;
 	}
 
-	Rut::RxMem::Auto& File_Parser::GetCodeMem()
+	const size_t File_Parser::GetSdtSize() const noexcept
 	{
-		return m_amCode;
+		return m_amSDT.GetSize();
 	}
 
-	const HDR& File_Parser::GetHDR()
+	const size_t File_Parser::GetCodeSize() const noexcept
 	{
-		return m_HDR;
+		return m_amSDT.GetSize() - m_pInfo->uiHDRSize;
 	}
 }

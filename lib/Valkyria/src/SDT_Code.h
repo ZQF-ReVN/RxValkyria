@@ -11,82 +11,84 @@ namespace Valkyria::SDT::Code
 	class MsgName
 	{
 	private:
-		uint16_t m_usOPCode = 0;
+		uint16_t m_usOP = 0;
 		std::string m_msText;
 
 	public:
 		MsgName();
-		MsgName(uint8_t* pData);
+		MsgName(uint8_t* const pData);
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* const pData);
+		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
+		void Make(Rut::RxMem::Auto& rfMem) const;
+		Rut::RxJson::JValue Make(size_t nCodePage) const;
 
 	public:
-		void SetText(std::string msText);
-		const std::string& GetText() const;
-		constexpr uint16_t GetOPCode() const;
+		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
 	};
 
 	class MsgText
 	{
 	private:
-		uint16_t m_usOPCode = 0;
-		uint16_t m_usUnValue = 0;
-		uint32_t m_uiLineNumer = 0;
+		uint16_t m_usOP = 0;
+		uint16_t m_usUnknow = 0;
+		uint32_t m_uiLineNumber = 0;
 		std::string m_msText;
 
 	public:
 		MsgText();
-		MsgText(uint8_t* pData);
+		MsgText(uint8_t* const pData);
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* const pData);
+		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
+		void Make(Rut::RxMem::Auto& rfMem) const;
+		Rut::RxJson::JValue Make(size_t nCodePage) const;
 
 	public:
-		void SetText(std::string msText);
-		const std::string& GetText() const;
-		constexpr uint16_t GetOPCode() const;
+		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
 	};
 
 	class MsgNewLine
 	{
 	private:
-		uint16_t m_usOPCode = 0;
-		uint16_t m_usUnValue = 0;
-		uint32_t m_uiLineNumer = 0;
+		uint16_t m_usOP = 0;
+		uint16_t m_usUnknow = 0;
+		uint32_t m_uiLineNumber = 0;
 
 	public:
 		MsgNewLine();
-		MsgNewLine(uint8_t* pData);
+		MsgNewLine(uint8_t* const pData);
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* const pData);
+		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
+		void Make(Rut::RxMem::Auto& rfMem) const;
+		Rut::RxJson::JValue Make(size_t nCodePage) const;
 
 	public:
-		constexpr uint16_t GetOPCode() const;
+		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
 	};
 
 	class SelectText
 	{
 	private:
-		uint16_t m_usOPCode = 0;
-		uint32_t m_usUnValue = 0;
+		uint16_t m_usOP = 0;
+		uint32_t m_usUnknow = 0;
 		std::vector<std::string> m_vcText;
 
 	public:
 		SelectText();
-		SelectText(uint8_t* pData);
+		SelectText(uint8_t* const pData);
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* const pData);
+		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
+		void Make(Rut::RxMem::Auto& rfMem) const;
+		Rut::RxJson::JValue Make(size_t nCodePage) const;
 
 	public:
-		void SetTexts(std::vector<std::string>& vcText);
-		const std::vector<std::string>& GetTexts() const;
-		constexpr uint16_t GetOPCode() const;
+		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
 	};
 }

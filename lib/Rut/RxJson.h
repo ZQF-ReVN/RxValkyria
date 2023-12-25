@@ -36,7 +36,7 @@ namespace Rut::RxJson
 			JBool Bool;
 			JInt Int;
 			JDouble Double;
-			JString* pStr;
+			JString* pData;
 			JArray* pAry;
 			JObject* pObj;
 		}Value_Union_T;
@@ -97,8 +97,8 @@ namespace Rut::RxJson
 		int ToInt() const;
 		bool ToBool() const;
 		double ToDouble() const;
-		const wchar_t* ToStringPtr() const;
-		std::wstring_view ToStringView() const;
+		const wchar_t* ToStrPtr() const;
+		std::wstring_view ToStrView() const;
 
 		void Dump(std::wstring& wsText, bool isFormat = true, bool isOrder = false) const;
 	};

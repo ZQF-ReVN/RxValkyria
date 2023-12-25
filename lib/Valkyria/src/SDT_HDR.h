@@ -19,16 +19,16 @@ namespace Valkyria::SDT
 	public:
 		HDR_Info();
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* pData);
+		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
-		constexpr size_t GetSize() const;
-		constexpr size_t GetHeaderSize() const;
-		constexpr size_t GetLabelCount() const;
-		constexpr size_t GetMsgCount() const;
-		constexpr size_t GetSelectCount() const;
-		constexpr size_t GetCheckDataSize() const;
+		constexpr size_t GetSize() const noexcept;
+		constexpr size_t GetHeaderSize() const noexcept;
+		constexpr size_t GetLabelCount() const noexcept;
+		constexpr size_t GetMsgCount() const noexcept;
+		constexpr size_t GetSelectCount() const noexcept;
+		constexpr size_t GetCheckDataSize() const noexcept;
 	};
 
 	class Label_Entry
@@ -40,8 +40,8 @@ namespace Valkyria::SDT
 	public:
 		Label_Entry();
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* pData);
+		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
 		constexpr size_t GetSize() const;
@@ -55,8 +55,8 @@ namespace Valkyria::SDT
 	public:
 		Label_Index();
 
-		void Parse(uint8_t* pData, size_t uiLabelCount);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* pData, size_t uiLabelCount);
+		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
 		constexpr size_t GetSize() const;
@@ -72,8 +72,8 @@ namespace Valkyria::SDT
 	public:
 		HDR();
 
-		void Parse(uint8_t* pData);
-		Rut::RxMem::Auto Make() const;
+		void Load(uint8_t* pData);
+		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
 		constexpr size_t GetSize() const;

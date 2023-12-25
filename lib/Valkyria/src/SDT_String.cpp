@@ -20,27 +20,28 @@ namespace Valkyria::SDT
 		return { buf, len };
 	}
 
-	std::string String::Decode(uint8_t* pStr)
+	void String::Encode(uint8_t* cpStr)
 	{
-		std::string str;
 		while (true)
 		{
-			uint8_t tmp_char = pStr++[0] ^ 0xFF;
-			if (tmp_char == '\0') { break; }
-			str.append(1, (char)tmp_char);
+			(*cpStr) ^= 0xFF;
+			if ((*cpStr) == 0xFF) { break; }
+			cpStr++;
 		}
-		return str;
 	}
 
-	void String::Encode(uint8_t* pStr)
+	std::string String::Decode(uint8_t* const pData)
 	{
+		std::string text;
+		uint8_t* data_ptr = pData;
 		while (true)
 		{
-			uint8_t tmp_char = pStr[0] ^ 0xFF;
-			pStr[0] = tmp_char;
-			if (tmp_char == 0xFF) { break; }
-			pStr++;
+			uint8_t tmp_char = (*data_ptr ^ 0xFF);
+			if (tmp_char == '\0') { break; }
+			text.append(1, tmp_char);
+			data_ptr++;
 		}
+		return text;
 	}
 
 	std::string String::MakeText(std::wstring_view wsText, size_t nCodePage)
@@ -49,7 +50,6 @@ namespace Valkyria::SDT
 
 		if (nCodePage == 1200)
 		{
-
 			for (size_t ite_unit = 0; ite_unit < wsText.size(); ite_unit++)
 			{
 				wchar_t unit = wsText[ite_unit];
@@ -92,7 +92,7 @@ namespace Valkyria::SDT
 				}
 			}
 		}
-		else
+		else if (nCodePage == 936)
 		{
 			std::wstring format_text;
 			for (auto& unit : wsText)
@@ -105,8 +105,35 @@ namespace Valkyria::SDT
 			}
 			str_bytes = Rut::RxStr::ToMBCS(format_text, nCodePage);
 		}
+		else
+		{
+			str_bytes = Rut::RxStr::ToMBCS(wsText, nCodePage);
+		}
 
-		if (str_bytes.size() >= 260) { throw std::runtime_error("EncodeString: exceeds buffer size limit"); }
+		if (str_bytes.size() >= 260) 
+		{ 
+			throw std::runtime_error("EncodeString: exceeds buffer size limit");
+		}
+
 		return str_bytes;
+	}
+
+	std::wstring String::LoadText(std::string_view msText, size_t nCodePage)
+	{
+		return Rut::RxStr::ToWCS(msText, nCodePage);
+	}
+
+	std::wstring String::NumToStr(const wchar_t* wpFormat, size_t nValue)
+	{
+		wchar_t buf[0x10];
+		size_t len = (size_t)swprintf_s(buf, 0x10, wpFormat, nValue);
+		return { buf, len };
+	}
+
+	size_t String::StrToNum(const wchar_t* wpFormat, std::wstring_view wsText)
+	{
+		size_t value = 0;
+		size_t len = (size_t)swscanf_s(wsText.data(), wpFormat, &value);
+		return value;
 	}
 }

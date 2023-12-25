@@ -1,10 +1,5 @@
 #pragma once
-#include <vector>
-#include <stdexcept>
-
-#include "SDT_HDR.h"
-#include "SDT_Code.h"
-
+#include "Valkyria_Types.h"
 #include "../../Rut/RxMem.h"
 
 
@@ -13,19 +8,33 @@ namespace Valkyria::SDT
 	class File_Parser
 	{
 	private:
-		HDR m_HDR;
-		Rut::RxMem::Auto m_amCode;
+		VAL_SDT_HDR_Info* m_pInfo = nullptr;
+		Rut::RxMem::Auto m_amSDT;
 
 	public:
-		File_Parser();
-		File_Parser(std::wstring_view wsPath);
+		File_Parser()
+		{
 
-		void Parse(std::wstring_view wsPath);
-		void Parse(Rut::RxMem::Auto& amSDT);
-		Rut::RxMem::Auto Make() const;
+		}
+
+		File_Parser(std::wstring_view wsPath)
+		{
+			
+		}
+
+		void Load(std::wstring_view wsPath)
+		{
+			m_amSDT.LoadFile(wsPath);
+			m_pInfo = (VAL_SDT_HDR_Info*)this->GetSdtPtr();
+		}
 
 	public:
-		Rut::RxMem::Auto& GetCodeMem();
-		const HDR& GetHDR();
+		const VAL_SDT_HDR_Info* GetInfoPtr() const noexcept;
+		const Rut::RxMem::Auto& GetMem() const noexcept;
+		const size_t GetMsgCount() const noexcept;
+		uint8_t* GetSdtPtr() const noexcept;
+		uint8_t* GetCodePtr() const noexcept;
+		const size_t GetSdtSize() const noexcept;
+		const size_t GetCodeSize() const noexcept;
 	};
 }

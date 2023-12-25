@@ -9,7 +9,7 @@ namespace Valkyria::SDT
 
 	}
 
-	void HDR_Info::Parse(uint8_t* pData)
+	void HDR_Info::Load(uint8_t* pData)
 	{
 		uint32_t* tmp_ptr = (uint32_t*)pData;
 		m_uiHeaderSize = tmp_ptr[0];
@@ -19,48 +19,44 @@ namespace Valkyria::SDT
 		m_uiCheckDataFOA = tmp_ptr[4];
 	}
 
-	Rut::RxMem::Auto HDR_Info::Make() const
+	void HDR_Info::Make(Rut::RxMem::Auto& rfMem) const
 	{
-		Rut::RxMem::Auto mem_data;
-		mem_data.SetSize(this->GetSize());
-		uint32_t* cur_ptr = (uint32_t*)mem_data.GetPtr();
-		{
-			cur_ptr[0] = m_uiHeaderSize;
-			cur_ptr[1] = m_uiMsgCount;
-			cur_ptr[2] = m_uiSelectCount;
-			cur_ptr[3] = m_uiLabelCount;
-			cur_ptr[4] = m_uiCheckDataFOA;
-		}
-		return mem_data;
+		rfMem.SetSize(this->GetSize());
+		uint32_t* cur_ptr = (uint32_t*)rfMem.GetPtr();
+		cur_ptr[0] = m_uiHeaderSize;
+		cur_ptr[1] = m_uiMsgCount;
+		cur_ptr[2] = m_uiSelectCount;
+		cur_ptr[3] = m_uiLabelCount;
+		cur_ptr[4] = m_uiCheckDataFOA;
 	}
 
-	constexpr size_t HDR_Info::GetSize() const
+	constexpr size_t HDR_Info::GetSize() const noexcept
 	{
 		return sizeof(m_uiHeaderSize) + sizeof(m_uiMsgCount) + sizeof(m_uiSelectCount) + sizeof(m_uiLabelCount) + sizeof(m_uiCheckDataFOA);
 	}
 
-	constexpr size_t HDR_Info::GetHeaderSize() const
+	constexpr size_t HDR_Info::GetHeaderSize() const noexcept
 	{
 		return m_uiHeaderSize;
 	}
 
-	constexpr size_t HDR_Info::GetLabelCount() const
+	constexpr size_t HDR_Info::GetLabelCount() const noexcept
 	{
 		return m_uiLabelCount;
 	}
 
-	constexpr size_t HDR_Info::GetMsgCount() const
+	constexpr size_t HDR_Info::GetMsgCount() const noexcept
 	{
 		return m_uiMsgCount;
 	}
 
-	constexpr size_t HDR_Info::GetSelectCount() const
+	constexpr size_t HDR_Info::GetSelectCount() const noexcept
 	{
 		return m_uiSelectCount;
 	}
 
 	// check data size include null char
-	constexpr size_t HDR_Info::GetCheckDataSize() const
+	constexpr size_t HDR_Info::GetCheckDataSize() const noexcept
 	{
 		return m_uiHeaderSize - m_uiCheckDataFOA;
 	}
@@ -71,24 +67,22 @@ namespace Valkyria::SDT
 
 	}
 
-	void Label_Entry::Parse(uint8_t* pData)
+	void Label_Entry::Load(uint8_t* pData)
 	{
 		m_msLabelName = String::Decode(pData);
 		m_uiLableInCodeOffset = *(uint32_t*)(pData + m_msLabelName.size() + 1);
 	}
 
-	Rut::RxMem::Auto Label_Entry::Make() const
+	void Label_Entry::Make(Rut::RxMem::Auto& rfMem) const
 	{
-		Rut::RxMem::Auto mem_data;
-		mem_data.SetSize(this->GetSize());
-		uint8_t* cur_ptr = mem_data.GetPtr();
-		{
-			memcpy(cur_ptr, m_msLabelName.data(), m_msLabelName.size() + 1);
-			String::Encode(cur_ptr);
-			cur_ptr += m_msLabelName.size() + 1;
-			*(uint32_t*)cur_ptr = m_uiLableInCodeOffset;
-		}
-		return mem_data;
+		rfMem.SetSize(this->GetSize());
+		uint8_t* cur_ptr = rfMem.GetPtr();
+
+		memcpy(cur_ptr, m_msLabelName.data(), m_msLabelName.size() + 1);
+		String::Encode(cur_ptr);
+
+		cur_ptr += m_msLabelName.size() + 1;
+		*(uint32_t*)cur_ptr = m_uiLableInCodeOffset;
 	}
 
 	constexpr size_t Label_Entry::GetSize() const
@@ -102,33 +96,31 @@ namespace Valkyria::SDT
 
 	}
 
-	void Label_Index::Parse(uint8_t* pData, size_t uiLabelCount)
+	void Label_Index::Load(uint8_t* pData, size_t uiLabelCount)
 	{
 		uint8_t* cur_ptr = pData;
 
 		for (size_t ite_label = 0; ite_label < uiLabelCount; ite_label++)
 		{
 			Label_Entry label;
-			label.Parse(cur_ptr);
+			label.Load(cur_ptr);
 			cur_ptr += label.GetSize();
 			m_vcLabels.emplace_back(std::move(label));
 		}
 	}
 
-	Rut::RxMem::Auto Label_Index::Make() const
+	void Label_Index::Make(Rut::RxMem::Auto& rfMem) const
 	{
-		Rut::RxMem::Auto mem_data;
-		mem_data.SetSize(this->GetSize());
-		uint8_t* cur_ptr = mem_data.GetPtr();
+		rfMem.SetSize(this->GetSize());
+
+		size_t write_size = 0;
+		Rut::RxMem::Auto buffer;
+		for (auto& label : m_vcLabels)
 		{
-			for (auto& label : m_vcLabels)
-			{
-				Rut::RxMem::Auto label_mem = label.Make();
-				memcpy(cur_ptr, label_mem.GetPtr(), label_mem.GetSize());
-				cur_ptr += label_mem.GetSize();
-			}
+			label.Make(buffer);
+			memcpy(rfMem.GetPtr() + write_size, buffer.GetPtr(), buffer.GetSize());
+			write_size += buffer.GetSize();
 		}
-		return mem_data;
 	}
 
 	constexpr size_t Label_Index::GetSize() const
@@ -147,36 +139,35 @@ namespace Valkyria::SDT
 
 	}
 
-	void HDR::Parse(uint8_t* pData)
+	void HDR::Load(uint8_t* pData)
 	{
 		uint8_t* cur_ptr = pData;
 
-		m_Info.Parse(cur_ptr);
+		m_Info.Load(cur_ptr);
 		cur_ptr += m_Info.GetSize();
 
-		m_Labels.Parse(cur_ptr, m_Info.GetLabelCount());
+		m_Labels.Load(cur_ptr, m_Info.GetLabelCount());
 		cur_ptr += m_Labels.GetSize();
 
 		m_msCheckData = { (char*)cur_ptr,m_Info.GetCheckDataSize() - 1 };
 	}
 
-	Rut::RxMem::Auto HDR::Make() const
+	void HDR::Make(Rut::RxMem::Auto& rfMem) const
 	{
-		Rut::RxMem::Auto mem_data;
-		mem_data.SetSize(this->GetSize());
-		uint8_t* cur_ptr = mem_data.GetPtr();
+		rfMem.SetSize(this->GetSize());
 
-		Rut::RxMem::Auto info_mem = m_Info.Make();
-		memcpy(cur_ptr, info_mem.GetPtr(), info_mem.GetSize());
-		cur_ptr += info_mem.GetSize();
+		size_t write_size = 0;
+		Rut::RxMem::Auto buffer;
 
-		Rut::RxMem::Auto labels_mem = m_Labels.Make();
-		memcpy(cur_ptr, labels_mem.GetPtr(), labels_mem.GetSize());
-		cur_ptr += labels_mem.GetSize();
+		m_Info.Make(buffer);
+		memcpy(rfMem.GetPtr() + write_size, buffer.GetPtr(), buffer.GetSize());
+		write_size += buffer.GetSize();
 
-		memcpy(cur_ptr, m_msCheckData.data(), m_msCheckData.size() + 1);
+		m_Labels.Make(buffer);
+		memcpy(rfMem.GetPtr(), buffer.GetPtr(), buffer.GetSize());
+		write_size += buffer.GetSize();
 
-		return mem_data;
+		memcpy(rfMem.GetPtr(), m_msCheckData.data(), m_msCheckData.size() + 1);
 	}
 
 	constexpr size_t HDR::GetSize() const
