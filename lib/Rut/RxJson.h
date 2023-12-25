@@ -36,7 +36,7 @@ namespace Rut::RxJson
 			JBool Bool;
 			JInt Int;
 			JDouble Double;
-			JString* pData;
+			JString* pStr;
 			JArray* pAry;
 			JObject* pObj;
 		}Value_Union_T;
