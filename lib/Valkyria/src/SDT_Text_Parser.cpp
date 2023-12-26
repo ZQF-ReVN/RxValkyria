@@ -29,12 +29,13 @@ namespace Valkyria::SDT
 		size_t code_size = m_Sdt.GetCodeSize();
 		size_t max_search_size = code_size - 4;
 
-		constexpr uint8_t const search_mask[4][4] =
+		constexpr uint8_t const search_mask[][4] =
 		{
 			{ 0x01, 0x0E, 0x11, 0x11 }, // msg
 			{ 0x04, 0x0E ,0x11, 0x11 }, // new line
 			{ 0x00, 0x0E, 0x7E, 0x86 }, // msg name
 			{ 0x1C, 0x0E, 0x00, 0x00 }, // select 
+			{ 0x17, 0x0B, 0x09, 0x00 }, // setStr 
 		};
 
 		for (size_t ite_byte = 0; ite_byte < max_search_size;)
@@ -43,7 +44,8 @@ namespace Valkyria::SDT
 			if ((memcmp(cur_ptr, search_mask[0], sizeof(search_mask[0])) == 0) ||
 				(memcmp(cur_ptr, search_mask[1], sizeof(search_mask[1])) == 0) ||
 				(memcmp(cur_ptr, search_mask[2], sizeof(search_mask[2])) == 0) ||
-				(memcmp(cur_ptr, search_mask[3], sizeof(search_mask[3])) == 0))
+				(memcmp(cur_ptr, search_mask[3], sizeof(search_mask[3])) == 0) ||
+				(memcmp(cur_ptr, search_mask[4], sizeof(search_mask[4])) == 0))
 			{
 				Text_Code msg(code_ptr, ite_byte);
 				ite_byte += msg.GetSize();
@@ -60,7 +62,7 @@ namespace Valkyria::SDT
 	{
 		Rut::RxJson::JArray& json_array = rfJarray.ToAry();
 
-		if (m_vcMsg.size() != json_array.size())
+		if ((m_vcMsg.size() != json_array.size()))
 		{
 			throw std::runtime_error("STD_Text::LoadViaJson Json Error!");
 		}

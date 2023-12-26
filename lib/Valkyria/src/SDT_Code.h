@@ -91,4 +91,27 @@ namespace Valkyria::SDT::Code
 		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
 	};
+
+	class SetStr
+	{
+	private:
+		uint16_t m_usOP = 0;
+		uint8_t m_ucStrType = 0;
+		uint32_t m_uiUnknow = 0;
+		uint8_t m_ucStrDataType = 0;
+		std::string m_msText;
+
+	public:
+		SetStr();
+		SetStr(uint8_t* const pData);
+
+		void Load(uint8_t* const pData);
+		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
+		void Make(Rut::RxMem::Auto& rfMem) const;
+		Rut::RxJson::JValue Make(size_t nCodePage) const;
+
+	public:
+		constexpr uint16_t GetOP() const;
+		const size_t GetSize() const;
+	};
 }

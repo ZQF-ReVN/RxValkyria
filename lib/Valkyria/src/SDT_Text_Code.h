@@ -6,7 +6,7 @@
 
 namespace Valkyria::SDT
 {
-	using Text_Code_Variant = std::variant<Code::MsgName, Code::MsgText, Code::MsgNewLine, Code::SelectText>;
+	using Text_Code_Variant = std::variant<Code::MsgName, Code::MsgText, Code::MsgNewLine, Code::SelectText, Code::SetStr>;
 
 	class Text_Code
 	{

@@ -215,6 +215,13 @@ Name: R
 Address: 
 Formate: [word:op][wdord:un][dword:line_number]
 Example: 040E 1111 D2000000
+
+// 设置字符串
+OP: 0x0B17
+Name: SetStr
+Address: 0x00467FF1
+Formate: [word:op][byte:type][dwdord:un][byte:str_type][str(xor(0xFF))]
+Example: 170B 09 000000000 87C897C727C727EA47CB07E7C7D9F7DAF7E7BFF
 ```
 
 

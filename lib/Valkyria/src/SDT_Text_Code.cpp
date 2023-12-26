@@ -25,6 +25,7 @@ namespace Valkyria::SDT
 		case 0x0E01: m_vaCode = SDT::Code::MsgText{}; break;
 		case 0x0E04: m_vaCode = SDT::Code::MsgNewLine{}; break;
 		case 0x0E1C: m_vaCode = SDT::Code::SelectText{}; break;
+		case 0x0B17: m_vaCode = SDT::Code::SetStr{}; break;
 		}
 
 		std::visit([&cur_ptr](auto&& obj) {obj.Load(cur_ptr); cur_ptr += obj.GetSize(); }, m_vaCode);

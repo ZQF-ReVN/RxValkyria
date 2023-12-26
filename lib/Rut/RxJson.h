@@ -36,9 +36,9 @@ namespace Rut::RxJson
 			JBool Bool;
 			JInt Int;
 			JDouble Double;
-			JString* pStr;
-			JArray* pAry;
-			JObject* pObj;
+			JString* StrPtr;
+			JArray* AryPtr;
+			JObject* ObjPtr;
 		}Value_Union_T;
 
 		Value_Type_T m_Type;
@@ -73,18 +73,21 @@ namespace Rut::RxJson
 		void Append(JValue&& rfJValue);
 
 		// Obj
-		JValue& operator[](const wchar_t* wpKey);
 		void SureObject();
+		JValue& operator[](const wchar_t* wpKey);
+		JValue& operator[](bool) = delete;
+		JValue& operator[](size_t) = delete;
 		void AddKey(std::wstring_view wsKey);
 		void AddKey(std::wstring_view wsKey, const JValue& rfJValue);
 		void AddKey(std::wstring_view wsKey, JValue&& rfJValue);
-		JObject::iterator FindKey(std::wstring_view wsKey);
-		JObject::iterator EndKey();
-		JValue& GetValue(JObject::iterator itObj);
+		JObject::iterator FindKey(std::wstring_view wsKey) const;
+		JObject::iterator EndKey() const noexcept;
+		JValue& GetValue(JObject::iterator itObj) const;
 
 		Value_Type_T GetType() const noexcept;
 
 		operator bool() const;
+		operator size_t() const;
 		operator int() const;
 		operator double() const;
 		operator JString& () const;
@@ -141,9 +144,10 @@ namespace Rut::RxJson
 		void ParseValue(JValue& rfJValue);
 
 	public:
-		void Open(std::wstring_view wsJson);
+		void Open(std::wstring_view wsJsonPath);
 		bool Read(JValue& rfJValue);
-		bool Load(std::wstring_view wsJson, JValue& rfJValue);
-		static void Save(JValue& rfJVaue, std::wstring_view wsFileName, bool isFormat = false, bool isOrder = false);
+		bool Load(std::wstring_view wsJsonPath, JValue& rfJValue);
+		JValue Load(std::wstring_view wsJsonPath);
+		static void Save(const JValue& rfJVaue, std::wstring_view wsFileName, bool isFormat = false, bool isOrder = false);
 	};
 }
