@@ -2,6 +2,7 @@
 #include "Valkyria_Types.h"
 #include "../../Rut/RxStr.h"
 #include "../../Rut/RxFile.h"
+#include "../../Rut/RxMem.h"
 
 
 namespace Valkyria::DAT
@@ -10,10 +11,10 @@ namespace Valkyria::DAT
 	{
 		Rut::RxFile::Binary pack_ifs = { phPack.wstring(), Rut::RIO_READ };
 
-		uint32_t index_size = pack_ifs;
+		uint32_t index_size = pack_ifs.Get<uint32_t>();
 
 		Rut::RxMem::Auto index_mem(index_size);
-		pack_ifs >> index_mem;
+		index_mem.ReadData(pack_ifs);
 
 		Rut::RxMem::Auto buffer;
 		uint32_t entry_count = index_size / sizeof(VAL_Pack_Entry);
@@ -26,10 +27,7 @@ namespace Valkyria::DAT
 			size_t file_foa = entry.uiOffset + index_size + sizeof(index_size);
 			std::filesystem::path file_save_path = phExtract / Rut::RxStr::ToWCS(entry.aFileName, 932);
 
-			buffer.SetSize(file_size);
-			pack_ifs.SetPos(file_foa);
-			pack_ifs >> buffer;
-
+			buffer.ReadData(pack_ifs, file_size, file_foa);
 			buffer.SaveData(file_save_path.wstring());
 		}
 
@@ -72,13 +70,13 @@ namespace Valkyria::DAT
 			cur_pos += entry.uiSize;
 		}
 
-		pack_ofs << index_mem;
+		index_mem.WriteData(pack_ofs);
 
 		Rut::RxMem::Auto buffer;
 		for (auto& file_path : file_list)
 		{
 			buffer.LoadFile(file_path.wstring());
-			pack_ofs << buffer;
+			buffer.WriteData(pack_ofs);
 		}
 
 		return true;

@@ -159,7 +159,7 @@ namespace Valkyria::SDT
 			size_t check_data_bytes = (size_t)(m_Sdt.GetInfoPtr()->uiHDRSize - m_Sdt.GetInfoPtr()->uiCheckDataFOA - 1);
 			size_t sdt_org_size = m_Sdt.GetSdtSize();
 			size_t sdt_new_size = m_Sdt.GetSdtSize() + append_mem.GetSize();
-			SDT::Signer::Sign(check_data_ptr, check_data_bytes, sdt_org_size, sdt_new_size);
+			SDT::Signer::Sign({ check_data_ptr, check_data_bytes }, sdt_org_size, sdt_new_size);
 		}
 
 		return { m_Sdt.GetMem(), append_mem};

@@ -1,13 +1,10 @@
-﻿# Value Define
-set(PROJECT_NAME SDT_Parser)
-
-# Cpp Standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Add Library
-link_libraries(Valkyria Rut)
+﻿# Project Name
+project(SDT_Parser)
 
 # Current Project
-project("${PROJECT_NAME}")
-add_executable(${PROJECT_NAME} "main.cpp")
+add_executable("${PROJECT_NAME}" "main.cpp")
+target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_23)
+target_compile_options("${PROJECT_NAME}" PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
+
+# Add Library
+target_link_libraries("${PROJECT_NAME}" PRIVATE Rut Valkyria)
