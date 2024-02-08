@@ -1,5 +1,6 @@
 ﻿#include <iostream>
-#include "../../lib/Valkyria/DAT.h"
+
+#include <Valkyria/DAT_Editor.h>
 
 
 int main()

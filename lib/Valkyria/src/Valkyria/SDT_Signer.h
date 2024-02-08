@@ -2,7 +2,7 @@
 #include <span>
 #include <string>
 
-#include "../../Rut/RxMem.h"
+#include <Rut/RxMem.h>
 
 
 namespace Valkyria::SDT

@@ -2,8 +2,8 @@
 #include <vector>
 #include <stdexcept>
 
-#include "../../Rut/RxMem.h"
-#include "../../Rut/RxJson.h"
+#include <Rut/RxMem.h>
+#include <Rut/RxJson.h>
 
 
 namespace Valkyria::SDT::Code

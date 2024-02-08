@@ -1,8 +1,8 @@
 ﻿#include <Windows.h>
 
-#include "../../lib/Valkyria/VFS.h"
-#include "../../lib/Rut/RxConsole.h"
-#include "../../lib/RxHook/RxHook.h"
+#include <Rut/RxCmd.h>
+#include <RxHook/API.h>
+#include <Valkyria/VFS_Hook.h>
 
 
 static DWORD g_dwExeBase = (DWORD)GetModuleHandleW(NULL);
@@ -10,7 +10,7 @@ static DWORD g_dwExeBase = (DWORD)GetModuleHandleW(NULL);
 
 void StartHook()
 {
-	Rut::RxConsole::Alloc(L"Valkyria_FileHook");
+	Rut::RxCmd::Alloc(L"Valkyria_FileHook");
 
 	// プレイ！プレイ！プレイ！ロック！ PKG
 	Valkyria::VFS::HookScriptRead(0x0041DA10, true);

@@ -1,9 +1,9 @@
 ﻿#include <iostream>
 
-#include "../../lib/Rut/RxMem.h"
-#include "../../lib/Rut/RxStr.h"
-#include "../../lib/Rut/RxPath.h"
-#include "../../lib/Rut/RxConsole.h"
+#include <lib/Rut/RxMem.h>
+#include <lib/Rut/RxStr.h>
+#include <lib/Rut/RxPath.h>
+#include <lib/Rut/RxCmd.h>
 
 
 static std::string ValkyrisReadString(uint8_t* pStr)

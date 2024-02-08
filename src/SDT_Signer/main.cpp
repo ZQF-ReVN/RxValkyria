@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <filesystem>
-#include "../../lib/Valkyria/SDT.h"
+
+#include <Valkyria/SDT_Signer.h>
 
 
 static void UserMain()

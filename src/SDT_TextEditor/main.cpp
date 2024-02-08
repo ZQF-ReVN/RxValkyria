@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <filesystem>
 
-#include "../../lib/Valkyria/SDT.h"
+#include <Valkyria/SDT_Text_Parser.h>
 
 
 static bool ParseSdtText(Valkyria::SDT::Text_Parser& text_parser, std::wstring_view wsSdtPath)

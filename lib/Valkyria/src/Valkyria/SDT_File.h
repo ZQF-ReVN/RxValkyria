@@ -1,6 +1,6 @@
 #pragma once
 #include "Valkyria_Types.h"
-#include "../../Rut/RxMem.h"
+#include <Rut/RxMem.h>
 
 
 namespace Valkyria::SDT

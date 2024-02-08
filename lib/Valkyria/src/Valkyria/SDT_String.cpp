@@ -1,5 +1,5 @@
 ﻿#include "SDT_String.h"
-#include "../../Rut/RxStr.h"
+#include <Rut/RxStr.h>
 
 #include <stdexcept>
 
@@ -9,14 +9,14 @@ namespace Valkyria::SDT
 	static std::string MakeUnicodeStrA(size_t wChar)
 	{
 		char buf[0x10];
-		size_t len = (size_t)sprintf_s(buf, 0x10, "\\u%04x", wChar);
+		size_t len = (size_t)sprintf_s(buf, 0x10, "\\u%04x", (int)wChar);
 		return { buf, len };
 	}
 
 	static std::wstring MakeUnicodeStrW(size_t wChar)
 	{
 		wchar_t buf[0x10];
-		size_t len = (size_t)swprintf_s(buf, 0x10, L"\\u%04x", wChar);
+		size_t len = (size_t)swprintf_s(buf, 0x10, L"\\u%04x", (int)wChar);
 		return { buf, len };
 	}
 

@@ -1,6 +1,6 @@
 #include "SDT_Signer.h"
 #include "Valkyria_Types.h"
-#include "../../Rut/RxMem.h"
+#include <Rut/RxMem.h>
 
 #include <stdexcept>
 

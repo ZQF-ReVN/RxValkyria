@@ -1,8 +1,8 @@
 #include "DAT_Editor.h"
 #include "Valkyria_Types.h"
-#include "../../Rut/RxStr.h"
-#include "../../Rut/RxFile.h"
-#include "../../Rut/RxMem.h"
+#include <Rut/RxStr.h>
+#include <Rut/RxMem.h>
+#include <Rut/RxFile.h>
 
 
 namespace Valkyria::DAT

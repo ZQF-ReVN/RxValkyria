@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "../../Rut/RxMem.h"
+#include <Rut/RxMem.h>
 
 
 namespace Valkyria::SDT
