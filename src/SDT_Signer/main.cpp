@@ -31,12 +31,5 @@ static void DebugMain()
 
 int main()
 {
-	try
-	{
-		DebugMain();
-	}
-	catch (const std::runtime_error& err)
-	{
-		std::cerr << err.what() << std::endl;
-	}
+
 }

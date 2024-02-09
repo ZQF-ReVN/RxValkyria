@@ -21,7 +21,6 @@ namespace Valkyria::SDT::Code
 		m_usOP = *((uint16_t*)pData + 0);
 		assert(m_usOP == 0x0E00);
 		m_msText = String::Decode(pData + sizeof(m_usOP));
-		assert(*(uint32_t*)(pData + sizeof(m_usOP) + m_msText.size() + 1) == 0x11110E01);
 	}
 
 	void MsgName::Load(Rut::RxJson::JValue& rfJson, size_t nCodePage)
@@ -60,6 +59,16 @@ namespace Valkyria::SDT::Code
 	{
 		assert(m_usOP != 0);
 		return sizeof(m_usOP) + m_msText.size() + 1;
+	}
+
+	std::wstring MsgName::GetText(size_t nCodePage) const
+	{
+		return String::LoadText(m_msText, nCodePage);
+	}
+
+	void MsgName::SetText(std::wstring_view wsText, size_t nCodePage)
+	{
+		m_msText = String::MakeText(wsText, nCodePage);
 	}
 
 
@@ -126,6 +135,16 @@ namespace Valkyria::SDT::Code
 	{
 		assert(m_usOP != 0);
 		return sizeof(m_usOP) + sizeof(m_usUnknow) + sizeof(m_uiLineNumber) + (m_msText.size() + 1);
+	}
+
+	std::wstring MsgText::GetText(size_t nCodePage) const
+	{
+		return String::LoadText(m_msText, nCodePage);
+	}
+
+	void MsgText::SetText(std::wstring_view wsText, size_t nCodePage)
+	{
+		m_msText = String::MakeText(wsText, nCodePage);
 	}
 
 
@@ -344,7 +363,7 @@ namespace Valkyria::SDT::Code
 		cur_ptr += 1;
 		*((uint32_t*)cur_ptr) = m_uiUnknow;
 		cur_ptr += 4;
-		*((uint8_t*)cur_ptr) = m_ucStrType;
+		*((uint8_t*)cur_ptr) = m_ucStrDataType;
 		cur_ptr += 1;
 		memcpy(cur_ptr, m_msText.data(), m_msText.size() + 1);
 		String::Encode(cur_ptr);
@@ -373,4 +392,13 @@ namespace Valkyria::SDT::Code
 		return sizeof(m_usOP) + sizeof(m_ucStrType) + sizeof(m_uiUnknow) + sizeof(m_ucStrDataType) + m_msText.size() + 1;
 	}
 
+	std::wstring SetStr::GetText(size_t nCodePage) const
+	{
+		return String::LoadText(m_msText, nCodePage);
+	}
+
+	void SetStr::SetText(std::wstring_view wsText, size_t nCodePage)
+	{
+		m_msText = String::MakeText(wsText, nCodePage);
+	}
 }

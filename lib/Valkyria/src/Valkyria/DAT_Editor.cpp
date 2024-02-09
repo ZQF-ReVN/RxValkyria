@@ -35,7 +35,7 @@ namespace Valkyria::DAT
 	}
 
 
-	bool Pack(const std::filesystem::path& phFolder, const std::filesystem::path& phNewPack)
+	bool Repack(const std::filesystem::path& phFolder, const std::filesystem::path& phNewPack)
 	{
 		std::vector<std::filesystem::path> file_list;
 		for (auto& dir_entry : std::filesystem::directory_iterator(phFolder))

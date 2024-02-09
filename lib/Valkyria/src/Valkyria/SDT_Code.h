@@ -26,6 +26,8 @@ namespace Valkyria::SDT::Code
 	public:
 		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
+		std::wstring GetText(size_t nCodePage) const;
+		void SetText(std::wstring_view wsText, size_t nCodePage);
 	};
 
 	class MsgText
@@ -48,6 +50,8 @@ namespace Valkyria::SDT::Code
 	public:
 		constexpr uint16_t GetOP() const;
 		constexpr size_t GetSize() const;
+		std::wstring GetText(size_t nCodePage) const;
+		void SetText(std::wstring_view wsText, size_t nCodePage);
 	};
 
 	class MsgNewLine
@@ -113,5 +117,7 @@ namespace Valkyria::SDT::Code
 	public:
 		constexpr uint16_t GetOP() const;
 		const size_t GetSize() const;
+		std::wstring GetText(size_t nCodePage) const;
+		void SetText(std::wstring_view wsText, size_t nCodePage);
 	};
 }

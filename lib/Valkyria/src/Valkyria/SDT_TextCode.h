@@ -8,7 +8,7 @@ namespace Valkyria::SDT
 {
 	using Text_Code_Variant = std::variant<Code::MsgName, Code::MsgText, Code::MsgNewLine, Code::SelectText, Code::SetStr>;
 
-	class Text_Code
+	class TextCode
 	{
 	private:
 		size_t m_uiBegOffset = 0;
@@ -16,8 +16,8 @@ namespace Valkyria::SDT
 		Text_Code_Variant m_vaCode;
 
 	public:
-		Text_Code();
-		Text_Code(uint8_t* const pCodeSeg, size_t uiCodeOffset);
+		TextCode();
+		TextCode(uint8_t* const pCodeSeg, size_t uiCodeOffset);
 		void Load(uint8_t* pCodeSeg, size_t uiCodeOffset);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
@@ -38,9 +38,9 @@ namespace Valkyria::SDT
 
 	public:
 		Text_Code_Block();
-		Text_Code_Block(std::vector<Text_Code>& vcCodeList);
+		Text_Code_Block(std::vector<TextCode>& vcCodeList);
 
-		void Load(std::vector<Text_Code>& vcCodeList);
+		void Load(std::vector<TextCode>& vcCodeList);
 
 	public:
 		uint8_t* GetPtr() const noexcept;

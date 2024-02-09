@@ -9,8 +9,8 @@ list(APPEND "${PROJECT_NAME}_SRC_FILE"
     "src/Valkyria/SDT_HDR.cpp"
     "src/Valkyria/SDT_Code.cpp"
     "src/Valkyria/SDT_String.cpp"
-    "src/Valkyria/SDT_Text_Code.cpp"
-    "src/Valkyria/SDT_Text_Parser.cpp")
+    "src/Valkyria/SDT_TextCode.cpp"
+    "src/Valkyria/SDT_TextParser.cpp")
 
 # Source File Only x32
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)

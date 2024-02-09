@@ -1,40 +1,47 @@
 #pragma once
+#include <ranges>
+#include <filesystem>
 #include <algorithm>
 
 #include "SDT_File.h"
-#include "SDT_Text_Code.h"
+#include "SDT_TextCode.h"
 #include "Valkyria_Types.h"
 
 
 namespace Valkyria::SDT
 {
-	class Text_Parser
+	class TextParser
 	{
 	private:
 		SDT::File_Parser m_Sdt;
-		std::vector<Text_Code> m_vcMsg;
+		std::vector<TextCode> m_vcMsg;
 
 	private:
-
 		void WriteCodeBlock(Text_Code_Block& rfBlock, uint8_t* pAppend, size_t& nAppendWriteSize) const;
 
 	public:
-		Text_Parser();
-		Text_Parser(std::wstring_view wsPath);
+		TextParser();
+		TextParser(const std::filesystem::path& phSdt);
 
+	public:
 		void Scan();
-		void Read(std::wstring_view wsPath);
-		void Load(Rut::RxJson::JValue& rfJarray, size_t nCodePage);
+		void Read(const std::filesystem::path& phSdt);
+		void Load(Rut::RxJson::JArray& rfJarray, size_t nCodePage);
 		Rut::RxMem::Auto Make();
-		Rut::RxJson::JValue Make(size_t nCodePage) const;
+		Rut::RxJson::JArray Make(size_t nCodePage) const;
+
+	public:
+		bool ParseText();
+		Rut::RxJson::JArray ReadText(size_t nCodePage) const;
+		void LoadText(const std::filesystem::path& phTextJson, size_t nCodePage);
 
 	public:
 		const size_t GetMsgCount() const noexcept;
 		const SDT::File_Parser& GetSdtFile() const noexcept;
 	};
 
-	template<typename SDT_OBJ_T>
-	static void CheckMakeData(uint8_t* pOrg, SDT_OBJ_T& rfOBJ)
+	template<typename T>
+	static void CheckMakeData(uint8_t* pOrg, T& rfOBJ)
 	{
 		Rut::RxMem::Auto mem;
 		rfOBJ.Make(mem);

@@ -1,26 +1,26 @@
-﻿#include "SDT_Text_Parser.h"
+﻿#include "SDT_TextParser.h"
 #include "SDT_String.h"
 #include "SDT_Signer.h"
 
 
 namespace Valkyria::SDT
 {
-	Text_Parser::Text_Parser()
+	TextParser::TextParser()
 	{
 
 	}
 
-	Text_Parser::Text_Parser(std::wstring_view wsPath)
+	TextParser::TextParser(const std::filesystem::path& phSdt)
 	{
-		this->Read(wsPath);
+		this->Read(phSdt);
 	}
 
-	void Text_Parser::Read(std::wstring_view wsPath)
+	void TextParser::Read(const std::filesystem::path& phSdt)
 	{
-		this->m_Sdt.Load(wsPath);
+		this->m_Sdt.Load(phSdt);
 	}
 
-	void Text_Parser::Scan()
+	void TextParser::Scan()
 	{
 		if (m_vcMsg.size()) { m_vcMsg.clear(); }
 		if (m_Sdt.GetSdtSize() < 0x10) { return; }
@@ -47,7 +47,7 @@ namespace Valkyria::SDT
 				(memcmp(cur_ptr, search_mask[3], sizeof(search_mask[3])) == 0) ||
 				(memcmp(cur_ptr, search_mask[4], sizeof(search_mask[4])) == 0))
 			{
-				Text_Code msg(code_ptr, ite_byte);
+				TextCode msg(code_ptr, ite_byte);
 				ite_byte += msg.GetSize();
 				m_vcMsg.push_back(std::move(msg));
 			}
@@ -58,23 +58,21 @@ namespace Valkyria::SDT
 		}
 	}
 
-	void Text_Parser::Load(Rut::RxJson::JValue& rfJarray, size_t nCodePage)
+	void TextParser::Load(Rut::RxJson::JArray& rfJarray, size_t nCodePage)
 	{
-		Rut::RxJson::JArray& json_array = rfJarray.ToAry();
-
-		if ((m_vcMsg.size() != json_array.size()))
+		if ((m_vcMsg.size() != rfJarray.size()))
 		{
 			throw std::runtime_error("STD_Text::LoadViaJson Json Error!");
 		}
 
 		for (size_t ite = 0; ite < m_vcMsg.size(); ite++)
 		{
-			m_vcMsg[ite].Load(json_array[ite], nCodePage);
+			m_vcMsg[ite].Load(rfJarray[ite], nCodePage);
 		}
 	}
 
 
-	void Text_Parser::WriteCodeBlock(Text_Code_Block& rfBlock, uint8_t* pAppend, size_t& nAppendWriteSize) const
+	void TextParser::WriteCodeBlock(Text_Code_Block& rfBlock, uint8_t* pAppend, size_t& nAppendWriteSize) const
 	{
 		// Check if there is enough space to write goto commnad
 		(rfBlock.GetEndOffset() - rfBlock.GetBegOffset()) < (sizeof(uint16_t) + sizeof(uint32_t)) ? (throw std::runtime_error("Not enough space to write goto commnad")) : (void)(0);
@@ -101,16 +99,16 @@ namespace Valkyria::SDT
 		nAppendWriteSize += sizeof(uint32_t);
 	}
 
-	Rut::RxMem::Auto Text_Parser::Make()
+	Rut::RxMem::Auto TextParser::Make()
 	{
 		// Merge Adjacent Code
 		std::vector<Text_Code_Block> code_mem_list;
 		{
 			size_t end_offset = m_vcMsg.front().GetBegOffset();
-			std::vector<Text_Code> code_block;
+			std::vector<TextCode> code_block;
 			for (auto ite = m_vcMsg.begin(); ite != m_vcMsg.end(); ite++)
 			{
-				Text_Code& unit = *ite;
+				TextCode& unit = *ite;
 				if (end_offset == unit.GetBegOffset())
 				{
 					end_offset = unit.GetEndOffset();
@@ -165,24 +163,86 @@ namespace Valkyria::SDT
 		return { m_Sdt.GetMem(), append_mem};
 	}
 
-	Rut::RxJson::JValue Text_Parser::Make(size_t nCodePage) const
+	Rut::RxJson::JArray TextParser::Make(size_t nCodePage) const
 	{
-		Rut::RxJson::JValue json;
+		Rut::RxJson::JArray obj_list_json;
 
 		for (auto& msg : m_vcMsg) 
 		{ 
-			json.Append(msg.Make(nCodePage));
+			obj_list_json.emplace_back(msg.Make(nCodePage));
 		}
 
-		return json;
+		return obj_list_json;
 	}
 
-	const size_t Text_Parser::GetMsgCount() const noexcept
+	bool TextParser::ParseText()
+	{
+		if (this->GetSdtFile().GetMsgCount())
+		{
+			this->Scan();
+			if (this->GetMsgCount())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	Rut::RxJson::JArray TextParser::ReadText(size_t nCodePage) const
+	{
+		Rut::RxJson::JArray text_list, index_list;
+		Rut::RxJson::JArray obj_json_list = this->Make(nCodePage);
+		for (auto ite : std::views::iota(0u, obj_json_list.size()))
+		{
+			Rut::RxJson::JValue& obj_json = obj_json_list[ite];
+			std::wstring_view obj_name = obj_json[L"Name"];
+
+			if (obj_name == L"MsgText" || obj_name == L"MsgName" || obj_name == L"SelectText" || obj_name == L"StrSet")
+			{
+				Rut::RxJson::JValue text_json_entry;
+				text_json_entry[L"org"] = obj_json[L"Text"];
+				text_json_entry[L"tra"] = obj_json[L"Text"];
+				text_list.push_back(std::move(text_json_entry));
+				index_list.push_back((int)ite);
+			}
+		}
+
+		Rut::RxJson::JArray text_json;
+		text_json.push_back(std::move(text_list));
+		text_json.push_back(std::move(index_list));
+		return text_json;
+	}
+
+	void TextParser::LoadText(const std::filesystem::path& phTextJson, size_t nCodePage)
+	{
+		Rut::RxJson::JValue txt_json = Rut::RxJson::Parser{}.Load(phTextJson);
+		Rut::RxJson::JArray obj_json_list = this->Make(nCodePage);
+		Rut::RxJson::JArray& txt_json_list = txt_json.ToAry();
+		Rut::RxJson::JArray& text_list = txt_json_list[0];
+		Rut::RxJson::JArray& index_list = txt_json_list[1];
+
+		if (text_list.size() != index_list.size())
+		{
+			throw std::runtime_error("Merge Text Json Mismatching!");
+		}
+
+		size_t text_count = text_list.size();
+		for (size_t ite = 0; ite < text_count; ite++)
+		{
+			size_t index = (size_t)index_list[ite].ToInt();
+			auto& text_entry = text_list[ite];
+			obj_json_list[index][L"Text"] = text_entry[L"tra"];
+		}
+
+		this->Load(obj_json_list, nCodePage);
+	}
+
+	const size_t TextParser::GetMsgCount() const noexcept
 	{
 		return m_vcMsg.size();
 	}
 
-	const SDT::File_Parser& Text_Parser::GetSdtFile() const noexcept
+	const SDT::File_Parser& TextParser::GetSdtFile() const noexcept
 	{
 		return m_Sdt;
 	}

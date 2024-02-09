@@ -77,6 +77,6 @@ add_subdirectory("src")
 
 # Test
 if(UVAR_BUILD_TEST)
-    # add_subdirectory("test")
+    add_subdirectory("test")
 endif()
 

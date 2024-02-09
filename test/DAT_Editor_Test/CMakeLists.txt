@@ -1,5 +1,5 @@
 ﻿# Project Name
-project(DAT_Editor)
+project(DAT_Editor_Test)
 
 # Current Project
 add_executable("${PROJECT_NAME}" "main.cpp")

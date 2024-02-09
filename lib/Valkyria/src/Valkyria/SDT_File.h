@@ -1,6 +1,8 @@
 #pragma once
-#include "Valkyria_Types.h"
+#include <filesystem>
+
 #include <Rut/RxMem.h>
+#include "Valkyria_Types.h"
 
 
 namespace Valkyria::SDT
@@ -12,21 +14,10 @@ namespace Valkyria::SDT
 		Rut::RxMem::Auto m_amSDT;
 
 	public:
-		File_Parser()
-		{
+		File_Parser();
+		File_Parser(const std::filesystem::path& phSdt);
 
-		}
-
-		File_Parser(std::wstring_view wsPath)
-		{
-			
-		}
-
-		void Load(std::wstring_view wsPath)
-		{
-			m_amSDT.LoadFile(wsPath);
-			m_pInfo = (VAL_SDT_HDR_Info*)this->GetSdtPtr();
-		}
+		void Load(const std::filesystem::path& phSdt);
 
 	public:
 		const VAL_SDT_HDR_Info* GetInfoPtr() const noexcept;

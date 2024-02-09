@@ -3,6 +3,22 @@
 
 namespace Valkyria::SDT
 {
+	File_Parser::File_Parser()
+	{
+
+	}
+
+	File_Parser::File_Parser(const std::filesystem::path& phSdt)
+	{
+
+	}
+
+	void File_Parser::Load(const std::filesystem::path& phSdt)
+	{
+		m_amSDT.LoadFile(phSdt);
+		m_pInfo = (VAL_SDT_HDR_Info*)this->GetSdtPtr();
+	}
+
 	const VAL_SDT_HDR_Info* File_Parser::GetInfoPtr() const noexcept
 	{
 		return m_pInfo;
