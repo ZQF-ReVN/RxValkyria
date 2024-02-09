@@ -6,7 +6,7 @@ Tools For Valkyria's Engine, .sdt .dat .mg2
  - export text from `.sdt` to json
  - import text from json to `.sdt`
 > Q: ***Can it be longer than the original text?***  
-> A: yes, but the maximum engine text buffer is 256 bytes.
+> A: yes, but the maximum text buffer size of this engine is 256 bytes.
 
 ### DAT_Editor
  - unpack `.dat`
