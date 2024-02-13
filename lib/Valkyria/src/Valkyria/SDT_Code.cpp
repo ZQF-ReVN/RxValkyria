@@ -288,10 +288,10 @@ namespace Valkyria::SDT::Code
 		json[L"OP"] = String::NumToStr(L"0x%04x", m_usOP);
 		json[L"Unknow"] = String::NumToStr(L"0x%04x", m_usUnknow);
 
-		Rut::RxJson::JValue& j_text_array = json[L"Text"];
+		Rut::RxJson::JArray& j_text_array = json[L"Text"].ToAry();
 		for (auto& text : m_vcText) 
 		{ 
-			j_text_array.Append(String::LoadText(text, nCodePage));
+			j_text_array.emplace_back(String::LoadText(text, nCodePage));
 		}
 
 		return json;
