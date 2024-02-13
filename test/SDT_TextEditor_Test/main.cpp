@@ -34,7 +34,7 @@ static bool Import(const std::filesystem::path& phSdt, const std::filesystem::pa
 static void DebugMain()
 {
 	size_t export_code_page = 932;
-	size_t import_code_page = 932;
+	size_t import_code_page = 936;
 	std::filesystem::path sdt_files_org_dir = L"sdt_org/";
 	std::filesystem::path sdt_files_export_dir = L"sdt_export/";
 	std::filesystem::path sdt_files_import_dir = L"sdt_import/";

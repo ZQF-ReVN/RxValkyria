@@ -99,7 +99,7 @@ namespace Valkyria::SDT
 			{
 				switch (unit)
 				{
-				case L'・':case L'≪':case L'≫':case L'♪':format_text.append(MakeUnicodeStrW(unit)); break;
+				case L'・':case L'≪':case L'≫':case L'♪':case L'⇒': format_text.append(MakeUnicodeStrW(unit)); break;
 				default: format_text.append(1, unit);
 				}
 			}

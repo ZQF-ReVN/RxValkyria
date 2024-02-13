@@ -92,6 +92,8 @@ static void UserMain(int argc, wchar_t* argv[])
 				::Import(arg[L"-sdt"], arg[L"-json"], arg[L"-new"], arg[L"-code"]);
 			}
 		}
+
+		std::cout << "\n\tAll Done!\n";
 	}
 	catch (const std::exception& err)
 	{
