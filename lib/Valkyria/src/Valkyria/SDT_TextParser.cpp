@@ -177,13 +177,10 @@ namespace Valkyria::SDT
 
 	bool TextParser::ParseText()
 	{
-		if (this->GetSdtFile().GetMsgCount())
+		this->Scan();
+		if (this->GetMsgCount())
 		{
-			this->Scan();
-			if (this->GetMsgCount())
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
