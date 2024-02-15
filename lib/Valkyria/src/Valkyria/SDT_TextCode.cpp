@@ -8,16 +8,16 @@ namespace Valkyria::SDT
 
 	}
 
-	TextCode::TextCode(uint8_t* pCodeSeg, size_t uiCodeOffset)
+	TextCode::TextCode(const uint8_t* const pCodeSeg, size_t uiCodeOffset)
 	{
 		this->Load(pCodeSeg, uiCodeOffset);
 	}
 
-	void TextCode::Load(uint8_t* const pCodeSeg, size_t uiCodeOffset)
+	void TextCode::Load(const uint8_t* const pCodeSeg, size_t uiCodeOffset)
 	{
-		uint8_t* cur_ptr = pCodeSeg + uiCodeOffset;
+		const uint8_t* cur_ptr = pCodeSeg + uiCodeOffset;
 
-		uint16_t op_code = *((uint16_t*)cur_ptr);
+		const uint16_t op_code = *((uint16_t*)cur_ptr);
 
 		switch (op_code)
 		{

@@ -16,9 +16,9 @@ namespace Valkyria::SDT::Code
 
 	public:
 		MsgName();
-		MsgName(uint8_t* const pData);
+		MsgName(const uint8_t* const pData);
 
-		void Load(uint8_t* const pData);
+		void Load(const uint8_t* const pData);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;
@@ -40,9 +40,9 @@ namespace Valkyria::SDT::Code
 
 	public:
 		MsgText();
-		MsgText(uint8_t* const pData);
+		MsgText(const uint8_t* const pData);
 
-		void Load(uint8_t* const pData);
+		void Load(const uint8_t* const pData);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;
@@ -63,9 +63,9 @@ namespace Valkyria::SDT::Code
 
 	public:
 		MsgNewLine();
-		MsgNewLine(uint8_t* const pData);
+		MsgNewLine(const uint8_t* const pData);
 
-		void Load(uint8_t* const pData);
+		void Load(const uint8_t* const pData);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;
@@ -84,9 +84,9 @@ namespace Valkyria::SDT::Code
 
 	public:
 		SelectText();
-		SelectText(uint8_t* const pData);
+		SelectText(const uint8_t* const pData);
 
-		void Load(uint8_t* const pData);
+		void Load(const uint8_t* const pData);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;
@@ -107,9 +107,9 @@ namespace Valkyria::SDT::Code
 
 	public:
 		SetStr();
-		SetStr(uint8_t* const pData);
+		SetStr(const uint8_t* const pData);
 
-		void Load(uint8_t* const pData);
+		void Load(const uint8_t* const pData);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;

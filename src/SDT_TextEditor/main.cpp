@@ -6,7 +6,7 @@
 #include <Valkyria/SDT_TextParser.h>
 
 
-static void Export(const std::filesystem::path& phSdt, const std::filesystem::path& phTextJson, size_t nCodePage)
+static void Export(const std::filesystem::path& phSdt, const std::filesystem::path& phTextJson, const size_t nCodePage)
 {
 	Valkyria::SDT::TextParser text_parser(phSdt);
 	if (text_parser.ParseText())
@@ -20,7 +20,7 @@ static void Export(const std::filesystem::path& phSdt, const std::filesystem::pa
 	}
 }
 
-static void Import(const std::filesystem::path& phSdt, const std::filesystem::path& phTextJson, const std::filesystem::path& phNewSdt, size_t nCodePage)
+static void Import(const std::filesystem::path& phSdt, const std::filesystem::path& phTextJson, const std::filesystem::path& phNewSdt, const size_t nCodePage)
 {
 	Valkyria::SDT::TextParser text_parser(phSdt);
 	if (text_parser.ParseText())
@@ -53,17 +53,17 @@ static void UserMain(int argc, wchar_t* argv[])
 
 		if (arg[L"-mode"] == L"batch")
 		{
-			size_t code_page = arg[L"-code"];
-			std::filesystem::path sdt_files_dir = arg[L"-sdt"];
-			std::filesystem::path json_files_dir = arg[L"-json"];
+			const size_t code_page = arg[L"-code"];
+			const std::filesystem::path sdt_files_dir = arg[L"-sdt"];
+			const std::filesystem::path json_files_dir = arg[L"-json"];
 			if (arg[L"-way"] == L"export")
 			{
 				std::filesystem::create_directories(json_files_dir);
-				for (auto& path_entry : std::filesystem::directory_iterator(sdt_files_dir))
+				for (const auto& path_entry : std::filesystem::directory_iterator(sdt_files_dir))
 				{
 					if (path_entry.is_regular_file() == false) { continue; }
 					const std::filesystem::path& sdt_path = path_entry.path();
-					std::filesystem::path json_path = json_files_dir / sdt_path.filename().replace_extension(L".json");
+					const std::filesystem::path json_path = json_files_dir / sdt_path.filename().replace_extension(L".json");
 					::Export(sdt_path, json_path, code_page);
 				}
 			}
@@ -71,12 +71,12 @@ static void UserMain(int argc, wchar_t* argv[])
 			{
 				std::filesystem::path sdt_files_new_dir = arg[L"-new"];
 				std::filesystem::create_directories(sdt_files_new_dir);
-				for (auto& path_entry : std::filesystem::directory_iterator(json_files_dir))
+				for (const auto& path_entry : std::filesystem::directory_iterator(json_files_dir))
 				{
 					if (path_entry.is_regular_file() == false) { continue; }
 					const std::filesystem::path& json_path = path_entry.path();
-					std::filesystem::path sdt_path = sdt_files_dir / json_path.filename().replace_extension(L".sdt");
-					std::filesystem::path sdt_new_path = sdt_files_new_dir / json_path.filename().replace_extension(L".sdt");
+					const std::filesystem::path sdt_path = sdt_files_dir / json_path.filename().replace_extension(L".sdt");
+					const std::filesystem::path sdt_new_path = sdt_files_new_dir / json_path.filename().replace_extension(L".sdt");
 					::Import(sdt_path, json_path, sdt_new_path, code_page);
 				}
 			}

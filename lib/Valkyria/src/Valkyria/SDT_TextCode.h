@@ -17,8 +17,8 @@ namespace Valkyria::SDT
 
 	public:
 		TextCode();
-		TextCode(uint8_t* const pCodeSeg, size_t uiCodeOffset);
-		void Load(uint8_t* pCodeSeg, size_t uiCodeOffset);
+		TextCode(const uint8_t* const pCodeSeg, size_t uiCodeOffset);
+		void Load(const uint8_t* const pCodeSeg, size_t uiCodeOffset);
 		void Load(Rut::RxJson::JValue& rfJson, size_t nCodePage);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 		Rut::RxJson::JValue Make(size_t nCodePage) const;

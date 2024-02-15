@@ -25,6 +25,7 @@ namespace Valkyria::SDT
 
 	public:
 		void Scan();
+		bool CheckTargetCode(const uint8_t* pMem);
 		void Read(const std::filesystem::path& phSdt);
 		void Load(Rut::RxJson::JArray& rfJarray, size_t nCodePage);
 		Rut::RxMem::Auto Make();
@@ -38,29 +39,5 @@ namespace Valkyria::SDT
 	public:
 		const size_t GetMsgCount() const noexcept;
 		const SDT::File_Parser& GetSdtFile() const noexcept;
-	};
-
-	template<typename T>
-	static void CheckMakeData(uint8_t* pOrg, T& rfOBJ)
-	{
-		Rut::RxMem::Auto mem;
-		rfOBJ.Make(mem);
-		if (memcmp(pOrg, mem.GetPtr(), mem.GetSize()))
-		{
-			throw std::runtime_error("Dump Data Mismatched!");
-		}
-	}
-
-	class Text_Test
-	{
-	private:
-		std::vector<SDT::Code::MsgName> m_vcMsgNameCodes;
-		std::vector<SDT::Code::MsgText> m_vcMsgTextCodes;
-		std::vector<SDT::Code::MsgNewLine> m_vcMsgNewLineCodes;
-		std::vector<SDT::Code::SelectText> m_vcSelectTextCode;
-
-	public:
-		Text_Test();
-		void Parse(Rut::RxMem::Auto& amCode);
 	};
 }

@@ -28,7 +28,7 @@ namespace Valkyria::SDT
 		Rut::RxMem::Auto MakeCheckData(size_t nScriptSize) const;
 		void Sign(Rut::RxMem::Auto& amSDT) const;
 		static std::string DecodeKey(std::span<uint8_t> spKeyData, size_t nGameTitleLen);
-		static void Sign(std::span<uint8_t> spCheckData, size_t nOrgFileSize, size_t nNewFileSize);
+		static void Sign(std::span<uint8_t> spCheckData, const size_t nOrgFileSize, const size_t nNewFileSize);
 
 	public:
 		const std::string& GetKeyStr() const;

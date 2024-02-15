@@ -11,15 +11,14 @@ namespace Valkyria::SDT::Code
 
 	}
 
-	MsgName::MsgName(uint8_t* const pData)
+	MsgName::MsgName(const uint8_t* const pData)
 	{
 		this->Load(pData);
 	}
 
-	void MsgName::Load(uint8_t* const pData)
+	void MsgName::Load(const uint8_t* const pData)
 	{
-		m_usOP = *((uint16_t*)pData + 0);
-		assert(m_usOP == 0x0E00);
+		m_usOP = *((uint16_t*)pData + 0); assert(m_usOP == 0x0E00);
 		m_msText = String::Decode(pData + sizeof(m_usOP));
 	}
 
@@ -77,12 +76,12 @@ namespace Valkyria::SDT::Code
 
 	}
 
-	MsgText::MsgText(uint8_t* const pData)
+	MsgText::MsgText(const uint8_t* const pData)
 	{
 		this->Load(pData);
 	}
 
-	void MsgText::Load(uint8_t* const pData)
+	void MsgText::Load(const uint8_t* const pData)
 	{
 		m_usOP = *((uint16_t*)pData + 0); assert(m_usOP == 0x0E01);
 		m_usUnknow = *((uint16_t*)pData + 1); assert(m_usUnknow == 0x1111);
@@ -153,18 +152,16 @@ namespace Valkyria::SDT::Code
 
 	}
 
-	MsgNewLine::MsgNewLine(uint8_t* const pData)
+	MsgNewLine::MsgNewLine(const uint8_t* const pData)
 	{
 		this->Load(pData);
 	}
 
-	void MsgNewLine::Load(uint8_t* const pData)
+	void MsgNewLine::Load(const uint8_t* const pData)
 	{
-		m_usOP = *((uint16_t*)pData + 0);
-		assert(m_usOP == 0x0E04);
-		m_usUnknow = *((uint16_t*)pData + 1);
-		assert(m_usUnknow == 0x1111);
-		m_uiLineNumber = *((uint32_t*)pData + 1);
+		m_usOP = *((uint16_t*)(pData + 0)); assert(m_usOP == 0x0E04);
+		m_usUnknow = *((uint16_t*)(pData + 2)); assert(m_usUnknow == 0x1111);
+		m_uiLineNumber = *((uint32_t*)(pData + 4));
 	}
 
 	void MsgNewLine::Load(Rut::RxJson::JValue& rfJson, size_t nCodePage)
@@ -215,19 +212,17 @@ namespace Valkyria::SDT::Code
 
 	}
 
-	SelectText::SelectText(uint8_t* const pData)
+	SelectText::SelectText(const uint8_t* const pData)
 	{
 		this->Load(pData);
 	}
 
-	void SelectText::Load(uint8_t* const pData)
+	void SelectText::Load(const uint8_t* const pData)
 	{
-		m_usOP = *((uint16_t*)pData + 0);
-		assert(m_usOP == 0x0E1C);
-		m_usUnknow = *((uint16_t*)pData + 1);
-		assert(m_usUnknow == 0x00000000);
+		m_usOP = *((uint16_t*)(pData + 0)); assert(m_usOP == 0x0E1C);
+		m_usUnknow = *((uint32_t*)(pData + 2)); assert(m_usUnknow == 0x00000000);
 
-		uint8_t* text_array_ptr = pData + 6;
+		const uint8_t* text_array_ptr = pData + 6;
 		while (true)
 		{
 			uint8_t type = text_array_ptr[0];
@@ -252,7 +247,7 @@ namespace Valkyria::SDT::Code
 	{
 		assert(rfJson[L"Name"].ToStrView() == L"SelectText");
 		m_usOP = (uint16_t)String::StrToNum(L"0x%04x", rfJson[L"OP"]);
-		m_usUnknow = (uint16_t)String::StrToNum(L"0x%04x", rfJson[L"Unknow"]);
+		m_usUnknow = (uint32_t)String::StrToNum(L"0x%08x", rfJson[L"Unknow"]);
 
 		m_vcText.clear();
 		Rut::RxJson::JArray& text_list = rfJson[L"Text"].ToAry();
@@ -286,7 +281,7 @@ namespace Valkyria::SDT::Code
 		Rut::RxJson::JValue json;
 		json[L"Name"] = L"SelectText";
 		json[L"OP"] = String::NumToStr(L"0x%04x", m_usOP);
-		json[L"Unknow"] = String::NumToStr(L"0x%04x", m_usUnknow);
+		json[L"Unknow"] = String::NumToStr(L"0x%08x", m_usUnknow);
 
 		Rut::RxJson::JArray& j_text_array = json[L"Text"].ToAry();
 		for (auto& text : m_vcText) 
@@ -318,26 +313,22 @@ namespace Valkyria::SDT::Code
 
 	}
 
-	SetStr::SetStr(uint8_t* const pData)
+	SetStr::SetStr(const uint8_t* const pData)
 	{
 		this->Load(pData);
 	}
 
-	void SetStr::Load(uint8_t* const pData)
+	void SetStr::Load(const uint8_t* const pData)
 	{
-		uint8_t* cur_ptr = pData;
+		const uint8_t* cur_ptr = pData;
 
-		m_usOP = *((uint16_t*)cur_ptr);
-		assert(m_usOP == 0x0B17);
+		m_usOP = *((uint16_t*)cur_ptr); assert(m_usOP == 0x0B17);
 		cur_ptr += 2;
-		m_ucStrType = *((uint8_t*)cur_ptr);
-		assert(m_ucStrType == 0x9);
+		m_ucStrType = *((uint8_t*)cur_ptr); assert(m_ucStrType == 0x9);
 		cur_ptr += 1;
-		m_uiUnknow = *((uint32_t*)cur_ptr);
-		assert(m_uiUnknow == 0x00000000);
+		m_uiUnknow = *((uint32_t*)cur_ptr); assert(m_uiUnknow == 0x00000000);
 		cur_ptr += 4;
-		m_ucStrDataType = *((uint8_t*)cur_ptr);
-		assert(m_ucStrDataType == 0x8);
+		m_ucStrDataType = *((uint8_t*)cur_ptr); assert(m_ucStrDataType == 0x8);
 		cur_ptr += 1;
 		m_msText = String::Decode(cur_ptr);
 	}

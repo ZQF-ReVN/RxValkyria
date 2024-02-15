@@ -30,10 +30,10 @@ namespace Valkyria::SDT
 		}
 	}
 
-	std::string String::Decode(uint8_t* const pData)
+	std::string String::Decode(const uint8_t* const pData)
 	{
 		std::string text;
-		uint8_t* data_ptr = pData;
+		const uint8_t* data_ptr = pData;
 		while (true)
 		{
 			uint8_t tmp_char = (*data_ptr ^ 0xFF);

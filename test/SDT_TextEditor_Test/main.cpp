@@ -43,7 +43,7 @@ static void DebugMain()
 	std::filesystem::create_directories(sdt_files_export_dir);
 	std::filesystem::create_directories(sdt_files_import_dir);
 
-	for (auto& path_entry : std::filesystem::directory_iterator(sdt_files_org_dir))
+	for (const auto& path_entry : std::filesystem::directory_iterator(sdt_files_org_dir))
 	{
 		if (path_entry.is_regular_file() == false) { continue; }
 

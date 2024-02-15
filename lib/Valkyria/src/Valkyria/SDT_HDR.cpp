@@ -9,9 +9,9 @@ namespace Valkyria::SDT
 
 	}
 
-	void HDR_Info::Load(uint8_t* pData)
+	void HDR_Info::Load(const uint8_t* const pData)
 	{
-		uint32_t* tmp_ptr = (uint32_t*)pData;
+		const uint32_t* tmp_ptr = (uint32_t*)pData;
 		m_uiHeaderSize = tmp_ptr[0];
 		m_uiMsgCount = tmp_ptr[1];
 		m_uiSelectCount = tmp_ptr[2];
@@ -67,7 +67,7 @@ namespace Valkyria::SDT
 
 	}
 
-	void Label_Entry::Load(uint8_t* pData)
+	void Label_Entry::Load(const uint8_t* const pData)
 	{
 		m_msLabelName = String::Decode(pData);
 		m_uiLableInCodeOffset = *(uint32_t*)(pData + m_msLabelName.size() + 1);
@@ -96,9 +96,9 @@ namespace Valkyria::SDT
 
 	}
 
-	void Label_Index::Load(uint8_t* pData, size_t uiLabelCount)
+	void Label_Index::Load(const uint8_t* const pData, size_t uiLabelCount)
 	{
-		uint8_t* cur_ptr = pData;
+		const uint8_t* cur_ptr = pData;
 
 		for (size_t ite_label = 0; ite_label < uiLabelCount; ite_label++)
 		{
@@ -139,9 +139,9 @@ namespace Valkyria::SDT
 
 	}
 
-	void HDR::Load(uint8_t* pData)
+	void HDR::Load(const uint8_t* const pData)
 	{
-		uint8_t* cur_ptr = pData;
+		const uint8_t* cur_ptr = pData;
 
 		m_Info.Load(cur_ptr);
 		cur_ptr += m_Info.GetSize();

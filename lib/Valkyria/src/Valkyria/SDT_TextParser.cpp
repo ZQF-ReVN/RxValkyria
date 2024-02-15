@@ -20,41 +20,47 @@ namespace Valkyria::SDT
 		this->m_Sdt.Load(phSdt);
 	}
 
+	bool TextParser::CheckTargetCode(const uint8_t* pMem)
+	{
+		constexpr uint8_t const msg_text_code_search_mask[] = { 0x01, 0x0E, 0x11, 0x11 }; // msg
+		constexpr uint8_t const new_line_code_search_mask[] = { 0x04, 0x0E ,0x11, 0x11 }; // new line
+		constexpr uint8_t const msg_name_code_search_mask[] = { 0x00, 0x0E, 0x7E, 0x86 }; // msg name
+		constexpr uint8_t const select_code_search_mask[] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 }; // select 
+		constexpr uint8_t const set_str_code_search_mask[] = { 0x17, 0x0B, 0x09, 0x00 }; // setStr 
+
+		if ((memcmp(pMem, msg_text_code_search_mask, sizeof(msg_text_code_search_mask)) == 0) ||
+			(memcmp(pMem, new_line_code_search_mask, sizeof(new_line_code_search_mask)) == 0) ||
+			(memcmp(pMem, msg_name_code_search_mask, sizeof(msg_name_code_search_mask)) == 0) ||
+			(memcmp(pMem, select_code_search_mask, sizeof(select_code_search_mask)) == 0) ||
+			(memcmp(pMem, set_str_code_search_mask, sizeof(set_str_code_search_mask)) == 0))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	void TextParser::Scan()
 	{
 		if (m_vcMsg.size()) { m_vcMsg.clear(); }
 		if (m_Sdt.GetSdtSize() < 0x10) { return; }
 
-		uint8_t* code_ptr = m_Sdt.GetCodePtr();
-		size_t code_size = m_Sdt.GetCodeSize();
-		size_t max_search_size = code_size - 4;
-
-		constexpr uint8_t const search_mask[][4] =
-		{
-			{ 0x01, 0x0E, 0x11, 0x11 }, // msg
-			{ 0x04, 0x0E ,0x11, 0x11 }, // new line
-			{ 0x00, 0x0E, 0x7E, 0x86 }, // msg name
-			{ 0x1C, 0x0E, 0x00, 0x00 }, // select 
-			{ 0x17, 0x0B, 0x09, 0x00 }, // setStr 
-		};
+		const uint8_t* code_ptr = m_Sdt.GetCodePtr();
+		const size_t max_search_size = m_Sdt.GetCodeSize() - 4;
 
 		for (size_t ite_byte = 0; ite_byte < max_search_size;)
 		{
-			uint8_t* cur_ptr = code_ptr + ite_byte;
-			if ((memcmp(cur_ptr, search_mask[0], sizeof(search_mask[0])) == 0) ||
-				(memcmp(cur_ptr, search_mask[1], sizeof(search_mask[1])) == 0) ||
-				(memcmp(cur_ptr, search_mask[2], sizeof(search_mask[2])) == 0) ||
-				(memcmp(cur_ptr, search_mask[3], sizeof(search_mask[3])) == 0) ||
-				(memcmp(cur_ptr, search_mask[4], sizeof(search_mask[4])) == 0))
+			const uint8_t* cur_ptr = code_ptr + ite_byte;
+			if (this->CheckTargetCode(cur_ptr))
 			{
 				TextCode msg(code_ptr, ite_byte);
 				ite_byte += msg.GetSize();
 				m_vcMsg.push_back(std::move(msg));
+				continue;
 			}
-			else
-			{
-				ite_byte++;
-			}
+			ite_byte++;
 		}
 	}
 
@@ -75,7 +81,10 @@ namespace Valkyria::SDT
 	void TextParser::WriteCodeBlock(Text_Code_Block& rfBlock, uint8_t* pAppend, size_t& nAppendWriteSize) const
 	{
 		// Check if there is enough space to write goto commnad
-		(rfBlock.GetEndOffset() - rfBlock.GetBegOffset()) < (sizeof(uint16_t) + sizeof(uint32_t)) ? (throw std::runtime_error("Not enough space to write goto commnad")) : (void)(0);
+		if ((rfBlock.GetEndOffset() - rfBlock.GetBegOffset()) < (sizeof(uint16_t) + sizeof(uint32_t)))
+		{
+			throw std::runtime_error("Not enough space to write goto commnad");
+		}
 
 		// write jmp [goto command]
 		*(uint16_t*)(m_Sdt.GetCodePtr() + rfBlock.GetBegOffset()) = 0x0A42;
@@ -154,35 +163,29 @@ namespace Valkyria::SDT
 		// sign sdt file
 		{
 			uint8_t* check_data_ptr = m_Sdt.GetSdtPtr() + m_Sdt.GetInfoPtr()->uiCheckDataFOA;
-			size_t check_data_bytes = (size_t)(m_Sdt.GetInfoPtr()->uiHDRSize - m_Sdt.GetInfoPtr()->uiCheckDataFOA - 1);
-			size_t sdt_org_size = m_Sdt.GetSdtSize();
-			size_t sdt_new_size = m_Sdt.GetSdtSize() + append_mem.GetSize();
+			const size_t check_data_bytes = (size_t)(m_Sdt.GetInfoPtr()->uiHDRSize - m_Sdt.GetInfoPtr()->uiCheckDataFOA - 1);
+			const size_t sdt_org_size = m_Sdt.GetSdtSize();
+			const size_t sdt_new_size = m_Sdt.GetSdtSize() + append_mem.GetSize();
 			SDT::Signer::Sign({ check_data_ptr, check_data_bytes }, sdt_org_size, sdt_new_size);
 		}
 
-		return { m_Sdt.GetMem(), append_mem};
+		return { m_Sdt.GetMem(), append_mem };
 	}
 
 	Rut::RxJson::JArray TextParser::Make(size_t nCodePage) const
 	{
 		Rut::RxJson::JArray obj_list_json;
-
-		for (auto& msg : m_vcMsg) 
-		{ 
+		for (auto& msg : m_vcMsg)
+		{
 			obj_list_json.emplace_back(msg.Make(nCodePage));
 		}
-
 		return obj_list_json;
 	}
 
 	bool TextParser::ParseText()
 	{
 		this->Scan();
-		if (this->GetMsgCount())
-		{
-			return true;
-		}
-		return false;
+		return this->GetMsgCount() ? true : false;
 	}
 
 	Rut::RxJson::JArray TextParser::ReadText(size_t nCodePage) const
@@ -192,7 +195,7 @@ namespace Valkyria::SDT
 		for (auto ite : std::views::iota(0u, obj_json_list.size()))
 		{
 			Rut::RxJson::JValue& obj_json = obj_json_list[ite];
-			std::wstring_view obj_name = obj_json[L"Name"];
+			const std::wstring_view obj_name = obj_json[L"Name"];
 
 			if (obj_name == L"MsgText" || obj_name == L"MsgName" || obj_name == L"SelectText" || obj_name == L"StrSet")
 			{
@@ -223,7 +226,7 @@ namespace Valkyria::SDT
 			throw std::runtime_error("Merge Text Json Mismatching!");
 		}
 
-		size_t text_count = text_list.size();
+		const size_t text_count = text_list.size();
 		for (size_t ite = 0; ite < text_count; ite++)
 		{
 			size_t index = (size_t)index_list[ite].ToInt();
@@ -242,72 +245,5 @@ namespace Valkyria::SDT
 	const SDT::File_Parser& TextParser::GetSdtFile() const noexcept
 	{
 		return m_Sdt;
-	}
-
-
-	Text_Test::Text_Test()
-	{
-
-	}
-
-	void Text_Test::Parse(Rut::RxMem::Auto& amCode)
-	{
-		if (amCode.GetSize() < 0x10) { return; }
-
-		uint8_t search_msg_text_code[4] = { 0x01, 0x0E, 0x11, 0x11 };
-		uint8_t search_msg_name_code[4] = { 0x00, 0x0E, 0x7E, 0x86 };
-		uint8_t search_select_text_code[6] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 };
-		uint8_t* code_ptr = amCode.GetPtr();
-		size_t max_search_size = amCode.GetSize() - sizeof(search_select_text_code);
-
-		for (size_t ite_byte = 0; ite_byte < max_search_size;)
-		{
-			uint8_t* cur_ptr = code_ptr + ite_byte;
-			if (memcmp(code_ptr + ite_byte, search_msg_name_code, sizeof(search_msg_name_code)) == 0)
-			{
-				SDT::Code::MsgName msg_name_code;
-				msg_name_code.Load(code_ptr + ite_byte);
-				{
-					CheckMakeData(code_ptr + ite_byte, msg_name_code);
-				}
-				ite_byte += msg_name_code.GetSize();
-				m_vcMsgNameCodes.push_back(std::move(msg_name_code));
-			}
-			else if (memcmp(code_ptr + ite_byte, search_msg_text_code, sizeof(search_msg_text_code)) == 0)
-			{
-				SDT::Code::MsgText msg_text_code;
-				msg_text_code.Load(code_ptr + ite_byte);
-				{
-					CheckMakeData(code_ptr + ite_byte, msg_text_code);
-				}
-				ite_byte += msg_text_code.GetSize();
-				m_vcMsgTextCodes.emplace_back(std::move(msg_text_code));
-
-				if (*(uint16_t*)(code_ptr + ite_byte) == 0x0E04)
-				{
-					SDT::Code::MsgNewLine msg_newline_code;
-					msg_newline_code.Load(code_ptr + ite_byte);
-					{
-						CheckMakeData(code_ptr + ite_byte, msg_newline_code);
-					}
-					ite_byte += msg_newline_code.GetSize();
-					m_vcMsgNewLineCodes.push_back(std::move(msg_newline_code));
-				}
-			}
-			else if (memcmp(code_ptr + ite_byte, search_select_text_code, sizeof(search_select_text_code)) == 0)
-			{
-				SDT::Code::SelectText select_text_code;
-				select_text_code.Load(code_ptr + ite_byte);
-				{
-					CheckMakeData(code_ptr + ite_byte, select_text_code);
-				}
-				ite_byte += select_text_code.GetSize();
-				m_vcSelectTextCode.push_back(std::move(select_text_code));
-			}
-			else
-			{
-				ite_byte++;
-			}
-		}
 	}
 }

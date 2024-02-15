@@ -97,7 +97,7 @@ namespace Valkyria::SDT
 		return { (char*)dec_key_mem.GetPtr(), dec_key_mem.GetSize() };
 	}
 
-	void Signer::Sign(std::span<uint8_t> spCheckData, size_t nOrgFileSize, size_t nNewFileSize)
+	void Signer::Sign(std::span<uint8_t> spCheckData, const size_t nOrgFileSize, const size_t nNewFileSize)
 	{
 		for (auto& byte : spCheckData)
 		{

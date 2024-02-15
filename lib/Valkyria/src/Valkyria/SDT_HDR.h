@@ -19,7 +19,7 @@ namespace Valkyria::SDT
 	public:
 		HDR_Info();
 
-		void Load(uint8_t* pData);
+		void Load(const uint8_t* const pData);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
@@ -40,7 +40,7 @@ namespace Valkyria::SDT
 	public:
 		Label_Entry();
 
-		void Load(uint8_t* pData);
+		void Load(const uint8_t* const pData);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
@@ -55,7 +55,7 @@ namespace Valkyria::SDT
 	public:
 		Label_Index();
 
-		void Load(uint8_t* pData, size_t uiLabelCount);
+		void Load(const uint8_t* const pData, size_t uiLabelCount);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
@@ -72,7 +72,7 @@ namespace Valkyria::SDT
 	public:
 		HDR();
 
-		void Load(uint8_t* pData);
+		void Load(const uint8_t* const pData);
 		void Make(Rut::RxMem::Auto& rfMem) const;
 
 	public:
