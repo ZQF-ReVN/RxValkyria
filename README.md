@@ -15,4 +15,4 @@ Tools For Valkyria's Engine, .sdt .dat .mg2
 > A: if the original .dat file name is `data06-00.dat`, just pack the files that need to replace as new pack name `data06-01.dat` or `data06-02.dat` etc.
 
 ## More
-- [note](/etc)
+Check the details of reverse analysis [note](/etc)
