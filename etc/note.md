@@ -2,7 +2,7 @@
 ```C
 struct SDT_Label
 {
-	uint8_t[??] aLabelName; // end with '\0', enc-> xor 0xFF
+	uint8_t aLabelName[??]; // end with '\0', enc-> xor 0xFF
 	uint32_t uiLableRVA; // FOA = uiHeaderSize + uiLableRVA :004521B7
 };
 
@@ -26,7 +26,7 @@ struct SDT
 {
 	SDT_HDR
 	// Code
-}
+};
 
 
 entry_ptr = [this + 4] -> the first sdt entry
@@ -206,7 +206,7 @@ Example: 000E 7E86716167B17E85FF
 OP: 0x0E1C
 Name: SelEXSet
 Address: 0x0046E612
-Formate: [word:op][dword:un(always 0x00000000)][byte:type][str(xor(0xFF)):select_text][byte:type][str(xor(0xFF)):select_text][byte:end_flag]
+Formate: [word:op][dword:SIIndex(always 0x00000000)][byte:type][str(xor(0xFF)):select_text][byte:type][str(xor(0xFF)):select_text][byte:end_flag]
 Example: 1C0E 00000000 08 7E8A7CBE7C747C927D336A1D724D7D367D377D167E89FF 08 7E8A7CBE7C747C927D336A1D724D7D367D377D187D377D5D7E89FF FF
 
 // 换行，停留在文本框，等待用户输入事件
@@ -220,8 +220,8 @@ Example: 040E 1111 D2000000
 OP: 0x0B17
 Name: SetStr
 Address: 0x00467FF1
-Formate: [word:op][byte:type][dwdord:un][byte:str_type][str(xor(0xFF))]
-Example: 170B 09 000000000 87C897C727C727EA47CB07E7C7D9F7DAF7E7BFF
+Formate: [word:op][byte:type][dwdord:SIIndex][byte:str_type][str(xor(0xFF))]
+Example: 170B 09 00000000 08 87C897C727C727EA47CB07E7C7D9F7DAF7E7BFF
 ```
 
 

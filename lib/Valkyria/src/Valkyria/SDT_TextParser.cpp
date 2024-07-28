@@ -26,7 +26,7 @@ namespace Valkyria::SDT
 		constexpr uint8_t const new_line_code_search_mask[] = { 0x04, 0x0E ,0x11, 0x11 }; // new line
 		constexpr uint8_t const msg_name_code_search_mask[] = { 0x00, 0x0E, 0x7E, 0x86 }; // msg name
 		constexpr uint8_t const select_code_search_mask[] = { 0x1C, 0x0E, 0x00, 0x00, 0x00, 0x00 }; // select 
-		constexpr uint8_t const set_str_code_search_mask[] = { 0x17, 0x0B, 0x09, 0x00 }; // setStr 
+		constexpr uint8_t const set_str_code_search_mask[] = { 0x17, 0x0B, 0x09, 0x00, 0x00, 0x00, 0x00, 0x08 }; // setStr 
 
 		if ((memcmp(pMem, msg_text_code_search_mask, sizeof(msg_text_code_search_mask)) == 0) ||
 			(memcmp(pMem, new_line_code_search_mask, sizeof(new_line_code_search_mask)) == 0) ||

@@ -101,7 +101,7 @@ namespace Valkyria::SDT::Code
 	private:
 		uint16_t m_usOP = 0;
 		uint8_t m_ucStrType = 0;
-		uint32_t m_uiUnknow = 0;
+		uint32_t m_uiSPIndex = 0;
 		uint8_t m_ucStrDataType = 0;
 		std::string m_msText;
 

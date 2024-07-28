@@ -53,7 +53,7 @@ static void DebugMain()
 
 		if (::Export(sdt_org_path, sdt_export_path, export_code_page))
 		{
-			::Import(sdt_org_path, sdt_export_path, sdt_import_path, import_code_page);
+			// ::Import(sdt_org_path, sdt_export_path, sdt_import_path, import_code_page);
 		}
 		else
 		{

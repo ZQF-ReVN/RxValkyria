@@ -326,7 +326,7 @@ namespace Valkyria::SDT::Code
 		cur_ptr += 2;
 		m_ucStrType = *((uint8_t*)cur_ptr); assert(m_ucStrType == 0x9);
 		cur_ptr += 1;
-		m_uiUnknow = *((uint32_t*)cur_ptr); assert(m_uiUnknow == 0x00000000);
+		m_uiSPIndex = *((uint32_t*)cur_ptr); assert(m_uiSPIndex == 0x00000000);
 		cur_ptr += 4;
 		m_ucStrDataType = *((uint8_t*)cur_ptr); assert(m_ucStrDataType == 0x8);
 		cur_ptr += 1;
@@ -338,7 +338,7 @@ namespace Valkyria::SDT::Code
 		assert(rfJson[L"Name"].ToStrView() == L"SetStr");
 		m_usOP = (uint16_t)String::StrToNum(L"0x%04x", rfJson[L"OP"]);
 		m_ucStrType = (uint8_t)String::StrToNum(L"0x%02x", rfJson[L"StrType"]);
-		m_uiUnknow = (uint32_t)String::StrToNum(L"0x%08x", rfJson[L"Unknow"]);
+		m_uiSPIndex = (uint32_t)String::StrToNum(L"0x%08x", rfJson[L"SPIndex"]);
 		m_ucStrDataType = (uint8_t)String::StrToNum(L"0x%02x", rfJson[L"StrDataType"]);
 		m_msText = String::MakeText(rfJson[L"Text"], nCodePage);
 	}
@@ -352,7 +352,7 @@ namespace Valkyria::SDT::Code
 		cur_ptr += 2;
 		*((uint8_t*)cur_ptr) = m_ucStrType;
 		cur_ptr += 1;
-		*((uint32_t*)cur_ptr) = m_uiUnknow;
+		*((uint32_t*)cur_ptr) = m_uiSPIndex;
 		cur_ptr += 4;
 		*((uint8_t*)cur_ptr) = m_ucStrDataType;
 		cur_ptr += 1;
@@ -366,7 +366,7 @@ namespace Valkyria::SDT::Code
 		json[L"Name"] = L"SetStr";
 		json[L"OP"] = String::NumToStr(L"0x%04x", m_usOP);
 		json[L"StrType"] = String::NumToStr(L"0x%02x", m_ucStrType);
-		json[L"Unknow"] = String::NumToStr(L"0x%08x", m_uiUnknow);
+		json[L"SPIndex"] = String::NumToStr(L"0x%08x", m_uiSPIndex);
 		json[L"StrDataType"] = String::NumToStr(L"0x%02x", m_ucStrDataType);
 		json[L"Text"] = String::LoadText(m_msText, nCodePage);
 		return json;
@@ -380,7 +380,7 @@ namespace Valkyria::SDT::Code
 	const size_t SetStr::GetSize() const
 	{
 		assert(m_usOP != 0);
-		return sizeof(m_usOP) + sizeof(m_ucStrType) + sizeof(m_uiUnknow) + sizeof(m_ucStrDataType) + m_msText.size() + 1;
+		return sizeof(m_usOP) + sizeof(m_ucStrType) + sizeof(m_uiSPIndex) + sizeof(m_ucStrDataType) + m_msText.size() + 1;
 	}
 
 	std::wstring SetStr::GetText(size_t nCodePage) const

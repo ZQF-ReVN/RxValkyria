@@ -58,7 +58,7 @@ namespace Valkyria::DAT
 		Rut::RxMem::Auto index_mem(index_size);
 
 		size_t cur_pos = 0;
-		VAL_Pack_Entry* entry_array_ptr = index_mem.GetPtr<VAL_Pack_Entry*>();
+		VAL_Pack_Entry* const entry_array_ptr = index_mem.GetPtr<VAL_Pack_Entry*>();
 		for (size_t ite_entry = 0; ite_entry < file_list.size(); ite_entry++)
 		{
 			VAL_Pack_Entry& entry = entry_array_ptr[ite_entry];
