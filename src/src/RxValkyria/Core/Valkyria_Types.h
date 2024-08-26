@@ -2,8 +2,9 @@
 #include <cstdint>
 
 
-namespace Valkyria
+namespace ZQF::RxValkyria
 {
+#pragma pack(push,1)
 	struct VAL_SysData_Seg_0
 	{
 		uint32_t uiTimestamp;
@@ -42,7 +43,9 @@ namespace Valkyria
 		uint8_t aUn1[4092];
 		char aCheckKey[260];
 	};
+#pragma pack(pop)
 
+#pragma pack(push,1)
 	struct VAL_VFS_Entry
 	{
 		char aFilePath[260];
@@ -50,13 +53,21 @@ namespace Valkyria
 		uint32_t uiSize;
 		char aFileName[260];
 	};
+#pragma pack(pop)
 
+#pragma pack(push,1)
 	struct VAL_Pack_Entry
 	{
 		char aFileName[260];
-		uint32_t uiOffset; // after index
-		uint32_t uiSize;
+		std::uint32_t nOffset; // after index
+		std::uint32_t nSize;
+
+		static auto SizeBytes() -> std::size_t
+		{
+			return sizeof(aFileName) + sizeof(nOffset) + sizeof(nSize);
+		}
 	};
+#pragma pack(pop)
 
 	/*
 	struct VAL_Pack
@@ -75,6 +86,7 @@ namespace Valkyria
 	};
 	*/
 
+#pragma pack(push,1)
 	struct VAL_SDT_HDR_Info
 	{
 		uint32_t uiHDRSize;
@@ -83,6 +95,7 @@ namespace Valkyria
 		uint32_t uiLabelCount;
 		uint32_t uiCheckDataFOA;
 	};
+#pragma pack(pop)
 
 	/*
 	struct VAL_SDT_HDR
@@ -101,6 +114,7 @@ namespace Valkyria
 	}
 	*/
 
+#pragma pack(push,1)
 	struct VAL_Script_Entry
 	{
 		VAL_Script_Entry* pNext;
@@ -116,7 +130,9 @@ namespace Valkyria
 		uint32_t* pSeletCount;
 		uint32_t* pSelectBuffer;
 	};
+#pragma pack(pop)
 
+#pragma pack(push,1)
 	struct VAL_Context
 	{
 		uint16_t usScriptID;
@@ -126,14 +142,18 @@ namespace Valkyria
 		uint32_t uiLine;
 		uint32_t uiUn0;
 	};
+#pragma pack(pop)
 
+#pragma pack(push,1)
 	struct VAL_Context_Ptr
 	{
 		VAL_Context* Ptr;
 		uint32_t Un0;
 		uint32_t Un1;
 	};
+#pragma pack(pop)
 
+#pragma pack(push,1)
 	struct VAL_VM
 	{
 		uint32_t uiUn0;
@@ -146,4 +166,5 @@ namespace Valkyria
 		uint8_t aUn2[262];
 		VAL_Context_Ptr aContextPtr[255];
 	};
+#pragma pack(pop)
 }

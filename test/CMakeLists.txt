@@ -1,2 +1,3 @@
-add_subdirectory("DAT_Editor_Test")
-add_subdirectory("SDT_TextEditor_Test")
+add_subdirectory("Pack_Test")
+add_subdirectory("Script_Test")
+
