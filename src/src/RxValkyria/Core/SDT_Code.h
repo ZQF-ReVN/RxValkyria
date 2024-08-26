@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <ZxMem/ZxMem.h>
-#include <ZxJson/JParser.h>
+#include <ZxJson/JValue.h>
 
 
 namespace ZQF::RxValkyria::SDT::Code

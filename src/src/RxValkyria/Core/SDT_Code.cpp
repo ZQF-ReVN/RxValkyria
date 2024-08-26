@@ -1,6 +1,5 @@
 #include <RxValkyria/Core/SDT_Code.h>
 #include <RxValkyria/Core/SDT_String.h>
-
 #include <cassert>
 
 
