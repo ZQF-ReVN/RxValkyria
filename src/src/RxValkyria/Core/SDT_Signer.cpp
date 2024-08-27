@@ -66,7 +66,7 @@ namespace ZQF::RxValkyria::SDT
 		ZxMem check_mem{ this->MakeCheckData(amSDT.SizeBytes()) };
 
 		const auto info_ptr = amSDT.PtrCur<VAL_SDT_HDR_Info*>();
-		const auto check_data_size = static_cast<std::size_t>(info_ptr->uiHDRSize - info_ptr->uiCheckDataFOA);
+		const auto check_data_size = static_cast<std::size_t>(info_ptr->uiHDRSize - info_ptr->uiCheckDataFOA - 1);
 		if (check_data_size != check_mem.SizeBytes()) { throw std::runtime_error("Signer::Sign: check data size mismatched!"); }
 
 		amSDT
