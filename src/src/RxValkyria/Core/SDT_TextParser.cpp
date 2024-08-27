@@ -84,11 +84,6 @@ namespace ZQF::RxValkyria::SDT
 
 	auto TextParser::MakeBin() const -> ZxMem
 	{
-		auto fn_write_code_block = [](SDT::View& vSdt, TextCodeBlock& rfBlock, std::uint8_t* pAppend, std::size_t& nAppendWriteSize) -> void
-			{
-
-			};
-
 		// merge adjacent code
 		std::size_t append_mem_bytes{};
 		std::vector<TextCodeBlock> text_code_block_vec;
