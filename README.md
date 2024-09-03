@@ -1,3 +1,5 @@
+**⚠This repository is for developers only, if you just want to use the tools, please go to [ReVN](https://github.com/Dir-A/ReVN)!⚠**
+
 # Valkyria_Tools
 Tools For Valkyria's Engine, .sdt .dat .mg2
 
