@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Project Name
-project(Rvn_RxValkyria_Main)
+project(ReVN_RxValkyria_Main)
 
 # On Test Preset
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
