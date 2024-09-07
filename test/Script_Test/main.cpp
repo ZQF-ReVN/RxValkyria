@@ -33,7 +33,7 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 	return false;
 }
 
-static auto TestHDRParser() -> void
+[[maybe_unused]] static auto TestHDRParser() -> void
 {
 	std::string_view sdt_files_org_dir{ "sdt_org/" };
 	ZQF::ZxFS::DirMake(sdt_files_org_dir, false);
@@ -84,7 +84,7 @@ static auto TestSdtTextParser() -> void
 
 // tested: 2024.8.27 : VAL-0065	プレイ！プレイ！プレイ！アンロック！
 // tested: 2024.8.27 : VAL-0064
-static auto TestTextEditor() -> void
+[[maybe_unused]] static auto TestTextEditor() -> void
 {
 	std::size_t export_code_page{ 932 };
 	std::size_t import_code_page{ 936 };
