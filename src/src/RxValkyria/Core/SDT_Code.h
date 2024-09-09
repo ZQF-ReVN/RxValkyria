@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
-#include <ZxMem/ZxMem.h>
-#include <ZxJson/JValue.h>
+#include <Zut/ZxMem.h>
+#include <Zut/ZxJson.h>
 
 
 namespace ZQF::RxValkyria::SDT::Code

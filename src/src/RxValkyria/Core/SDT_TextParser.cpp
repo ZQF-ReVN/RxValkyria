@@ -1,7 +1,7 @@
 ﻿#include <RxValkyria/Core/SDT_TextParser.h>
 #include <RxValkyria/Core/SDT_String.h>
 #include <RxValkyria/Core/SDT_Signer.h>
-#include <ZxJson/JIO.h>
+#include <Zut/ZxJson.h>
 #include <ranges>
 
 
@@ -230,8 +230,8 @@ namespace ZQF::RxValkyria::SDT
 
 	auto TextParserJsonManager::Export(const std::string_view msJsonPath, const std::size_t nCodePage) const -> void
 	{
-		ZQF::ZxJson::JValue text_json{ this->Export(nCodePage) };
-		ZQF::ZxJson::StoreViaFile(msJsonPath, text_json, true, true);
+		ZxJson::JValue text_json{ this->Export(nCodePage) };
+		ZxJson::StoreViaFile(msJsonPath, text_json, true, true);
 	}
 
 	auto TextParserJsonManager::Import(const std::string_view msJsonPath, const std::size_t nCodePage) -> void

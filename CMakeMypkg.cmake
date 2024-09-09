@@ -3,35 +3,35 @@ include(FetchContent)
 FetchContent_Declare(
   ZxFile
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxFile.git
-  GIT_TAG 6ed88873eca2ac9a533ca0322eb363a94f551d2e)
+  GIT_TAG fe4912736343c69bedd77b4ca0c10e9e4b962bec)
 
 FetchContent_MakeAvailable(ZxFile)
 
 FetchContent_Declare(
   ZxMem
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxMem.git
-  GIT_TAG bd607ae77e978e72cea44fe8c497aedfd266ff7d)
+  GIT_TAG 7714f41d625acc017b9aa083024d526eef769345)
 
 FetchContent_MakeAvailable(ZxMem)
 
 FetchContent_Declare(
   ZxCvt
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxCvt.git
-  GIT_TAG 4e6ddaab9b88d1ea848b7b1cbab0d46462b6ccff)
+  GIT_TAG cd5d3967a1c7552fdd054215a2961e3cb43d1312)
 
 FetchContent_MakeAvailable(ZxCvt)
 
 FetchContent_Declare(
   ZxJson
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxJson.git
-  GIT_TAG 5eaa04d284b49d3e950effde6b059c3928ad7719)
+  GIT_TAG aedb35f5182ef89e526f7b20f323995e00e11d47)
 
 FetchContent_MakeAvailable(ZxJson)
 
 FetchContent_Declare(
   ZxFS
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxFS.git
-  GIT_TAG 90b835542d0edd434db428cc930ddeac109c24bd)
+  GIT_TAG 03af1d6bcf5b541f0e32936b56eed7801b9f8794)
 
 FetchContent_MakeAvailable(ZxFS)
 

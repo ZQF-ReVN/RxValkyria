@@ -1,8 +1,7 @@
 ﻿#include <print>
 #include <iostream>
 #include <string_view>
-#include <ZxFS/Core.h>
-#include <ZxFS/Walker.h>
+#include <Zut/ZxFS.h>
 #include <RxValkyria/Core/Pack.h>
 
 // the oldest tested: VAL-045	[2018-05-25] プレイ！プレイ！プレイ！GO！ DL
@@ -16,16 +15,16 @@ auto main(void) -> int
 		std::string_view dat_files_import_dir{ "dat_import/" };
 		std::string_view dat_files_export_dir{ "dat_export/" };
 
-		ZQF::ZxFS::DirMake(dat_files_org_dir, false);
-		ZQF::ZxFS::DirMake(dat_files_import_dir, false);
-		ZQF::ZxFS::DirMake(dat_files_export_dir, false);
+		ZxFS::DirMake(dat_files_org_dir, false);
+		ZxFS::DirMake(dat_files_import_dir, false);
+		ZxFS::DirMake(dat_files_export_dir, false);
 
-		for (ZQF::ZxFS::Walker walk{ dat_files_org_dir }; walk.NextFile();)
+		for (ZxFS::Walker walk{ dat_files_org_dir }; walk.NextFile();)
 		{
 			const auto pack_path = walk.GetPath();
 
 			std::string export_dir{ dat_files_export_dir };
-			export_dir.append(ZQF::ZxFS::FileNameStem(walk.GetName()));
+			export_dir.append(ZxFS::FileNameStem(walk.GetName()));
 			export_dir.append(1, '/');
 
 			std::string new_pack_path{ dat_files_import_dir };

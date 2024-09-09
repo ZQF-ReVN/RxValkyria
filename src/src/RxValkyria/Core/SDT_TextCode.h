@@ -1,7 +1,7 @@
 #pragma once
 #include <variant>
-#include <ZxMem/ZxMem.h>
-#include <ZxJson/JValue.h>
+#include <Zut/ZxMem.h>
+#include <Zut/ZxJson.h>
 #include <RxValkyria/Core/SDT_Code.h>
 
 

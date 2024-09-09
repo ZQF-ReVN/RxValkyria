@@ -2,10 +2,8 @@
 #include <print>
 #include <iostream>
 #include <string_view>
-#include <ZxFS/Core.h>
-#include <ZxFS/Walker.h>
-#include <ZxJson/JIO.h>
-#include <ZxJson/JValue.h>
+#include <Zut/ZxFS.h>
+#include <Zut/ZxJson.h>
 #include <RxValkyria/Core/SDT_HDR.h>
 #include <RxValkyria/Core/SDT_TextParser.h>
 
@@ -36,17 +34,17 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 [[maybe_unused]] static auto TestHDRParser() -> void
 {
 	std::string_view sdt_files_org_dir{ "sdt_org/" };
-	ZQF::ZxFS::DirMake(sdt_files_org_dir, false);
-	for (ZQF::ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
+	ZxFS::DirMake(sdt_files_org_dir, false);
+	for (ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
 	{
-		ZQF::ZxMem sdt_mem{ walk.GetPath() };
+		ZxMem sdt_mem{ walk.GetPath() };
 
 		ZQF::RxValkyria::SDT::HDR hdr;
 		hdr.Load(sdt_mem.Ptr());
 
 		const auto hdr_size_bytes = hdr.SizeBytes();
 
-		ZQF::ZxMem hdr_mem{ hdr_size_bytes };
+		ZxMem hdr_mem{ hdr_size_bytes };
 		hdr.Make(hdr_mem);
 
 		if (std::memcmp(hdr_mem.Ptr(), sdt_mem.PtrCur(), hdr_size_bytes != 0))
@@ -64,19 +62,19 @@ static auto TestSdtTextParser() -> void
 	std::string_view sdt_files_org_dir{ "sdt_org/" };
 	std::string_view sdt_files_export_dir{ "sdt_textobj/" };
 
-	ZQF::ZxFS::DirMake(sdt_files_org_dir, false);
-	ZQF::ZxFS::DirMake(sdt_files_export_dir, false);
+	ZxFS::DirMake(sdt_files_org_dir, false);
+	ZxFS::DirMake(sdt_files_export_dir, false);
 
-	for (ZQF::ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
+	for (ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
 	{
 		const auto sdt_org_path = walk.GetPath();
 
 		std::string sdt_export_path{ sdt_files_export_dir };
-		sdt_export_path.append(ZQF::ZxFS::FileSuffixDel(walk.GetName())).append(".json");
+		sdt_export_path.append(ZxFS::FileSuffixDel(walk.GetName())).append(".json");
 
 		ZQF::RxValkyria::SDT::TextParser parser{ sdt_org_path };
-		ZQF::ZxJson::JValue obj_json = parser.MakeJson(export_code_page);
-		ZQF::ZxJson::StoreViaFile(sdt_export_path, obj_json, true, true);
+		ZxJson::JValue obj_json = parser.MakeJson(export_code_page);
+		ZxJson::StoreViaFile(sdt_export_path, obj_json, true, true);
 	}
 
 	std::println("Passed -> TextParser");
@@ -92,16 +90,16 @@ static auto TestSdtTextParser() -> void
 	std::string_view sdt_files_export_dir{ "sdt_export/" };
 	std::string_view sdt_files_import_dir{ "sdt_import/" };
 
-	ZQF::ZxFS::DirMake(sdt_files_org_dir, false);
-	ZQF::ZxFS::DirMake(sdt_files_export_dir, false);
-	ZQF::ZxFS::DirMake(sdt_files_import_dir, false);
+	ZxFS::DirMake(sdt_files_org_dir, false);
+	ZxFS::DirMake(sdt_files_export_dir, false);
+	ZxFS::DirMake(sdt_files_import_dir, false);
 
-	for (ZQF::ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
+	for (ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
 	{
 		const auto sdt_org_path = walk.GetPath();
 
 		std::string sdt_export_path{ sdt_files_export_dir };
-		sdt_export_path.append(ZQF::ZxFS::FileSuffixDel(walk.GetName())).append(".json");
+		sdt_export_path.append(ZxFS::FileSuffixDel(walk.GetName())).append(".json");
 
 		std::string sdt_import_path{ sdt_files_import_dir };
 		sdt_import_path.append(walk.GetName());
