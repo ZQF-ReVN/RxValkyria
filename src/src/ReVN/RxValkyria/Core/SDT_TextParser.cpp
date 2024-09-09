@@ -1,11 +1,11 @@
-﻿#include <RxValkyria/Core/SDT_TextParser.h>
-#include <RxValkyria/Core/SDT_String.h>
-#include <RxValkyria/Core/SDT_Signer.h>
+﻿#include "SDT_TextParser.h"
+#include "SDT_String.h"
+#include "SDT_Signer.h"
 #include <Zut/ZxJson.h>
 #include <ranges>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	TextParser::TextParser()
 	{
@@ -148,7 +148,7 @@ namespace ZQF::RxValkyria::SDT
 				// write jmp GOTO command
 				*reinterpret_cast<std::uint16_t*>(cur_sdt_code_ptr) = 0x0A42;
 				// write jmp GOTO command (target offset) offset
-				*reinterpret_cast<std::uint32_t*>(cur_sdt_code_ptr + sizeof(std::uint16_t)) = static_cast<std::uint32_t>(sdt_org_size - sizeof(VAL_SDT_HDR_Info) + append_mem.PosCur());
+				*reinterpret_cast<std::uint32_t*>(cur_sdt_code_ptr + sizeof(std::uint16_t)) = static_cast<std::uint32_t>(sdt_org_size - Struct::SDT_HDR_Info::SizeBytes + append_mem.PosCur());
 				// write jmp GOTO command target offset
 				append_mem << static_cast<std::uint32_t>(sdt_code_bytes + append_mem.PosCur() + 4);
 
@@ -158,7 +158,7 @@ namespace ZQF::RxValkyria::SDT
 				// write ret GOTO command
 				append_mem << static_cast<std::uint16_t>(0x0A42);
 				// write ret GOTO command (target offset) offset
-				append_mem << static_cast<std::uint32_t>(sdt_org_size - sizeof(VAL_SDT_HDR_Info) + (append_mem.PosCur() - sizeof(std::uint16_t)) + goto_cmd_bytes);
+				append_mem << static_cast<std::uint32_t>(sdt_org_size - Struct::SDT_HDR_Info::SizeBytes + (append_mem.PosCur() - sizeof(std::uint16_t)) + goto_cmd_bytes);
 				// write ret GOTO command target offset
 				append_mem << static_cast<std::uint32_t>(code_block.GetEndOffset());
 			}
@@ -169,7 +169,7 @@ namespace ZQF::RxValkyria::SDT
 
 		// sign sdt file
 		{
-			const auto hdr_info_ptr = sdt_mem.Ptr<VAL_SDT_HDR_Info*>();
+			const auto hdr_info_ptr = sdt_mem.Ptr<Struct::SDT_HDR_Info*>();
 			const auto check_data_ptr = sdt_mem.Ptr() + hdr_info_ptr->uiCheckDataFOA;
 			const auto check_data_bytes = static_cast<std::size_t>(hdr_info_ptr->uiHDRSize - hdr_info_ptr->uiCheckDataFOA - 1);
 			SDT::Signer::Sign({ check_data_ptr, check_data_bytes }, sdt_org_size, sdt_new_size);

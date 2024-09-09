@@ -1,12 +1,12 @@
 #pragma once
 #include <ranges>
 #include <algorithm>
-#include <RxValkyria/Core/SDT_View.h>
-#include <RxValkyria/Core/SDT_TextCode.h>
-#include <RxValkyria/Core/Valkyria_Types.h>
+#include <ReVN/RxValkyria/Core/SDT_View.h>
+#include <ReVN/RxValkyria/Core/SDT_TextCode.h>
+#include <ReVN/RxValkyria/Core/Valkyria_Struct.h>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	class TextParser
 	{

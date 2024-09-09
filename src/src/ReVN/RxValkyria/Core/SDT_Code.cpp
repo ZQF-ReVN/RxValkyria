@@ -1,9 +1,9 @@
-#include <RxValkyria/Core/SDT_Code.h>
-#include <RxValkyria/Core/SDT_String.h>
+#include "SDT_Code.h"
+#include "SDT_String.h"
 #include <cassert>
 
 
-namespace ZQF::RxValkyria::SDT::Code
+namespace ZQF::ReVN::RxValkyria::SDT::Code
 {
 	MsgName::MsgName()
 	{

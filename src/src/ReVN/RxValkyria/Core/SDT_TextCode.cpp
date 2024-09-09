@@ -1,7 +1,7 @@
-#include <RxValkyria/Core/SDT_TextCode.h>
+#include "SDT_TextCode.h"
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	TextCode::TextCode()
 	{

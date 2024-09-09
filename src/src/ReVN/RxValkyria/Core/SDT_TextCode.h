@@ -2,10 +2,10 @@
 #include <variant>
 #include <Zut/ZxMem.h>
 #include <Zut/ZxJson.h>
-#include <RxValkyria/Core/SDT_Code.h>
+#include <ReVN/RxValkyria/Core/SDT_Code.h>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	class TextCode
 	{

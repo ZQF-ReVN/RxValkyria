@@ -1,7 +1,7 @@
-#include <RxValkyria/Core/SDT_View.h>
+#include "SDT_View.h"
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	View::View()
 	{
@@ -19,9 +19,9 @@ namespace ZQF::RxValkyria::SDT
 		m_spSdt = spSdt;
 	}
 
-	auto View::GetHDRInfo() const noexcept -> VAL_SDT_HDR_Info&
+	auto View::GetHDRInfo() const noexcept -> Struct::SDT_HDR_Info&
 	{
-		return *reinterpret_cast<VAL_SDT_HDR_Info*>(this->GetPtr());
+		return *reinterpret_cast<Struct::SDT_HDR_Info*>(this->GetPtr());
 	}
 
 	auto View::GetMsgCnt() const noexcept -> std::size_t

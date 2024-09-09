@@ -1,10 +1,10 @@
 #pragma once
 #include <string_view>
 #include <Zut/ZxMem.h>
-#include <RxValkyria/Core/Valkyria_Types.h>
+#include <ReVN/RxValkyria/Core/Valkyria_Struct.h>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	class View
 	{
@@ -19,7 +19,7 @@ namespace ZQF::RxValkyria::SDT
 		auto Assign(const std::span<std::uint8_t> spSdt) -> void;
 
 	public:
-		auto GetHDRInfo() const noexcept -> VAL_SDT_HDR_Info&;
+		auto GetHDRInfo() const noexcept -> Struct::SDT_HDR_Info&;
 		auto GetMsgCnt() const noexcept -> std::size_t;
 		auto GetCodePtr() const noexcept -> std::uint8_t*;
 		auto GetCodeBytes() const noexcept -> std::size_t;

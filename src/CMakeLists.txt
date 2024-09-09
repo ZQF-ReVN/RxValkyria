@@ -11,14 +11,14 @@ endif()
 
 # Set Source File Path
 list(APPEND ReVN_RxValkyria_Core_Src_Files
-    "src/RxValkyria/Core/Pack.cpp"
-    "src/RxValkyria/Core/SDT_Code.cpp"
-    "src/RxValkyria/Core/SDT_View.cpp"
-    "src/RxValkyria/Core/SDT_HDR.cpp"
-    "src/RxValkyria/Core/SDT_Signer.cpp"
-    "src/RxValkyria/Core/SDT_String.cpp"
-    "src/RxValkyria/Core/SDT_TextCode.cpp"
-    "src/RxValkyria/Core/SDT_TextParser.cpp")
+    "src/ReVN/RxValkyria/Core/Pack.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_Code.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_View.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_HDR.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_Signer.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_String.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_TextCode.cpp"
+    "src/ReVN/RxValkyria/Core/SDT_TextParser.cpp")
 
 # Set Library
 add_library(ReVN_RxValkyria_Core ${ReVN_RxValkyria_Core_Src_Files})

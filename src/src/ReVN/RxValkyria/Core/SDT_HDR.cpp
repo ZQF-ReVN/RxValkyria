@@ -1,8 +1,8 @@
-#include <RxValkyria/Core/SDT_HDR.h>
-#include <RxValkyria/Core/SDT_String.h>
+#include "SDT_HDR.h"
+#include "SDT_String.h"
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	HDR_Info::HDR_Info()
 	{

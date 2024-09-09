@@ -1,10 +1,10 @@
-#include <RxValkyria/Core/SDT_Signer.h>
-#include <RxValkyria/Core/Valkyria_Types.h>
+#include "SDT_Signer.h"
+#include "Valkyria_Struct.h"
 #include <Zut/ZxMem.h>
 #include <stdexcept>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	Signer::Signer()
 	{
@@ -21,7 +21,7 @@ namespace ZQF::RxValkyria::SDT
 	auto Signer::InitViaSysData(const std::string_view msSysDataPath) -> void
 	{
 		ZxMem sys_data{ msSysDataPath };
-		auto seg_0_ptr = sys_data.Ptr<VAL_SysData_Seg_0*>();
+		auto seg_0_ptr = sys_data.Ptr<Struct::SysData_Seg_0*>();
 		m_uiGameTitleLen = std::strlen(seg_0_ptr->aGameTitle);
 		m_msKey = this->DecodeKey({ reinterpret_cast<std::uint8_t*>(seg_0_ptr->aCheckKey), std::strlen(seg_0_ptr->aCheckKey) }, m_uiGameTitleLen);
 	}
@@ -65,7 +65,7 @@ namespace ZQF::RxValkyria::SDT
 	{
 		ZxMem check_mem{ this->MakeCheckData(amSDT.SizeBytes()) };
 
-		const auto info_ptr = amSDT.PtrCur<VAL_SDT_HDR_Info*>();
+		const auto info_ptr = amSDT.PtrCur<Struct::SDT_HDR_Info*>();
 		const auto check_data_size = static_cast<std::size_t>(info_ptr->uiHDRSize - info_ptr->uiCheckDataFOA - 1);
 		if (check_data_size != check_mem.SizeBytes()) { throw std::runtime_error("Signer::Sign: check data size mismatched!"); }
 

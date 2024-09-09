@@ -4,7 +4,7 @@
 #include <Zut/ZxMem.h>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	class Signer
 	{

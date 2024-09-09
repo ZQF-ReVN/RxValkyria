@@ -5,7 +5,7 @@
 #include <Zut/ZxJson.h>
 
 
-namespace ZQF::RxValkyria::SDT::Code
+namespace ZQF::ReVN::RxValkyria::SDT::Code
 {
 	class MsgName
 	{

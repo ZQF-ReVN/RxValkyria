@@ -4,13 +4,15 @@
 #include <string_view>
 #include <Zut/ZxFS.h>
 #include <Zut/ZxJson.h>
-#include <RxValkyria/Core/SDT_HDR.h>
-#include <RxValkyria/Core/SDT_TextParser.h>
+#include <ReVN/RxValkyria/Core/SDT_HDR.h>
+#include <ReVN/RxValkyria/Core/SDT_TextParser.h>
+
+namespace RxValkyria { using namespace ZQF::ReVN::RxValkyria; }
 
 
 static auto Export(const std::string_view msSdtPath, const std::string_view msSavePath, const std::size_t nCodePage) -> bool
 {
-	ZQF::RxValkyria::SDT::TextParserJsonManager text_parser{ msSdtPath };
+	RxValkyria::SDT::TextParserJsonManager text_parser{ msSdtPath };
 	if (text_parser.Parse())
 	{
 		text_parser.Export(msSavePath,nCodePage);
@@ -21,7 +23,7 @@ static auto Export(const std::string_view msSdtPath, const std::string_view msSa
 
 static auto Import(const std::string_view msSdtPath, const std::string_view msJsonPath, const std::string_view msNewSdtPath, const std::size_t nCodePage) -> bool
 {
-	ZQF::RxValkyria::SDT::TextParserJsonManager text_parser{ msSdtPath };
+	RxValkyria::SDT::TextParserJsonManager text_parser{ msSdtPath };
 	if (text_parser.Parse())
 	{
 		text_parser.Import(msNewSdtPath, msJsonPath, nCodePage);
@@ -39,7 +41,7 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 	{
 		ZxMem sdt_mem{ walk.GetPath() };
 
-		ZQF::RxValkyria::SDT::HDR hdr;
+		RxValkyria::SDT::HDR hdr;
 		hdr.Load(sdt_mem.Ptr());
 
 		const auto hdr_size_bytes = hdr.SizeBytes();
@@ -72,7 +74,7 @@ static auto TestSdtTextParser() -> void
 		std::string sdt_export_path{ sdt_files_export_dir };
 		sdt_export_path.append(ZxFS::FileSuffixDel(walk.GetName())).append(".json");
 
-		ZQF::RxValkyria::SDT::TextParser parser{ sdt_org_path };
+		RxValkyria::SDT::TextParser parser{ sdt_org_path };
 		ZxJson::JValue obj_json = parser.MakeJson(export_code_page);
 		ZxJson::StoreViaFile(sdt_export_path, obj_json, true, true);
 	}

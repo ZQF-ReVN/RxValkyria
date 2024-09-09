@@ -2,7 +2,7 @@
 #include <string_view>
 
 
-namespace ZQF::RxValkyria
+namespace ZQF::ReVN::RxValkyria
 {
 	class Pack
 	{

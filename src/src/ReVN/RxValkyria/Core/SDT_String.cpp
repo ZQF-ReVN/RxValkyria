@@ -1,9 +1,9 @@
-﻿#include <RxValkyria/Core/SDT_String.h>
+﻿#include "SDT_String.h"
 #include <Zut/ZxCvt.h>
 #include <stdexcept>
 
 
-namespace ZQF::RxValkyria::SDT
+namespace ZQF::ReVN::RxValkyria::SDT
 {
 	auto String::Encode(std::uint8_t* cpStr) -> void
 	{
