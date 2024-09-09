@@ -2,8 +2,13 @@
 #include <cstdint>
 
 
-namespace Valkyria::VFS
+namespace ZQF::ReVN::RxValkyria
 {
-	void HookScriptRead(uint32_t fnPackReadScript, bool isDebugInfo = false);
-	void HookMediasRead(uint32_t fnPackReadMedias, bool isDebugInfo = false);
+	class VFSHook
+	{
+	public:
+		static auto HookScriptRead(const std::uint32_t vaFnPackReadScript) -> void;
+		static auto HookMediasRead(const std::uint32_t vaFnPackReadMedias) -> void;
+
+	};
 }
