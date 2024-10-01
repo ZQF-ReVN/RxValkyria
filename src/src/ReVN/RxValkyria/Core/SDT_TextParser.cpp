@@ -211,7 +211,7 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		for (const auto [idx, obj_json] : std::views::enumerate(obj_json_vector))
 		{
 			const auto obj_name = obj_json.At("Name").GetStrView();
-			if (!(obj_name == "MsgText" || obj_name == "MsgName" || obj_name == "SelectText" || obj_name == "StrSet")) { continue; }
+			if (!(obj_name == "MsgText" || obj_name == "MsgName" || obj_name == "SelectText" || obj_name == "SetStr")) { continue; }
 
 			const auto& text_json = obj_json.At("Text");
 			text_list.emplace_back(ZxJson::JObject_t{ { "org", text_json }, { "tra", text_json } });

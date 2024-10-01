@@ -143,7 +143,7 @@ auto main(void) -> int
 		// TestHDRParser();
 		// TestSdtTextParser();
 		TestTextExport();
-		TestTextImport();
+		// TestTextImport();
 	}
 	catch (const std::exception& err)
 	{
