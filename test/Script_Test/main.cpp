@@ -58,7 +58,7 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 	std::println("Passed -> HDR Parser");
 }
 
-static auto TestSdtTextParser() -> void
+[[maybe_unused]] static auto TestSdtTextParser() -> void
 {
 	std::size_t export_code_page{ 932 };
 	std::string_view sdt_files_org_dir{ "sdt_org/" };
@@ -84,17 +84,13 @@ static auto TestSdtTextParser() -> void
 
 // tested: 2024.8.27 : VAL-0065	プレイ！プレイ！プレイ！アンロック！
 // tested: 2024.8.27 : VAL-0064
-[[maybe_unused]] static auto TestTextEditor() -> void
+[[maybe_unused]] static auto TestTextExport() -> void
 {
 	std::size_t export_code_page{ 932 };
-	std::size_t import_code_page{ 936 };
 	std::string_view sdt_files_org_dir{ "sdt_org/" };
-	std::string_view sdt_files_export_dir{ "sdt_export/" };
-	std::string_view sdt_files_import_dir{ "sdt_import/" };
+	std::string_view sdt_files_export_dir{ "sdt_text_export/" };
 
-	ZxFS::DirMake(sdt_files_org_dir, false);
 	ZxFS::DirMake(sdt_files_export_dir, false);
-	ZxFS::DirMake(sdt_files_import_dir, false);
 
 	for (ZxFS::Walker walk{ sdt_files_org_dir }; walk.NextFile(); )
 	{
@@ -103,20 +99,40 @@ static auto TestSdtTextParser() -> void
 		std::string sdt_export_path{ sdt_files_export_dir };
 		sdt_export_path.append(ZxFS::FileSuffixDel(walk.GetName())).append(".json");
 
-		std::string sdt_import_path{ sdt_files_import_dir };
-		sdt_import_path.append(walk.GetName());
-
-		if (::Export(sdt_org_path, sdt_export_path, export_code_page))
-		{
-			::Import(sdt_org_path, sdt_export_path, sdt_import_path, import_code_page);
-		}
-		else
+		if (::Export(sdt_org_path, sdt_export_path, export_code_page) == false)
 		{
 			std::println("Not Find Text: {}", sdt_org_path);
 		}
 	}
 
-	std::println("Passed -> TextEditor");
+	std::println("Passed -> TestTextExport");
+}
+
+[[maybe_unused]] static auto TestTextImport() -> void
+{
+	std::size_t import_code_page{ 936 };
+	std::string_view sdt_files_org_dir{ "sdt_org/" };
+	std::string_view sdt_files_export_dir{ "sdt_text_export/" };
+	std::string_view sdt_files_import_dir{ "sdt_text_import/" };
+
+	ZxFS::DirMake(sdt_files_import_dir, false);
+
+	for (ZxFS::Walker walk{ sdt_files_export_dir }; walk.NextFile(); )
+	{
+		const auto sdt_export_path{ walk.GetPath() };
+
+		const auto sdt_file_name_stem{ ZxFS::FileNameStem(walk.GetName()) };
+
+		std::string sdt_org_path{ sdt_files_org_dir };
+		sdt_org_path.append(sdt_file_name_stem).append(".sdt");
+
+		std::string sdt_import_path{ sdt_files_import_dir };
+		sdt_import_path.append(sdt_file_name_stem).append(".sdt");
+
+		::Import(sdt_org_path, sdt_export_path, sdt_import_path, import_code_page);
+	}
+
+	std::println("Passed -> TestTextImport");
 }
 
 
@@ -126,7 +142,8 @@ auto main(void) -> int
 	{
 		// TestHDRParser();
 		// TestSdtTextParser();
-		TestTextEditor();
+		TestTextExport();
+		TestTextImport();
 	}
 	catch (const std::exception& err)
 	{
