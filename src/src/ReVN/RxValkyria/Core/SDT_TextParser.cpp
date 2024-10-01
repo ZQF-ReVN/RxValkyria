@@ -46,21 +46,14 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		if (m_mSdt.SizeBytes() < 0x10) { return; }
 
 		SDT::View sdt_view{ m_mSdt.Span() };
-
-		const std::uint8_t* code_ptr = sdt_view.GetCodePtr();
-		const std::size_t max_search_size = sdt_view.GetCodeBytes() - 4;
-
-		for (std::size_t ite_byte = 0; ite_byte < max_search_size;)
+		const auto code_ptr{ sdt_view.GetCodePtr() };
+		for (std::size_t idx{}; idx < std::min(sdt_view.GetCodeBytes(), sdt_view.GetCodeBytes() - 8);)
 		{
-			const std::uint8_t* cur_ptr = code_ptr + ite_byte;
-			if (fn_check_target_code(cur_ptr))
-			{
-				SDT::TextCode msg{ code_ptr, ite_byte };
-				ite_byte += msg.SizeBytes();
-				m_vcMsg.push_back(std::move(msg));
-				continue;
-			}
-			ite_byte++;
+			const auto cur_ptr{ code_ptr + idx };
+			if (fn_check_target_code(cur_ptr) == false) { idx++; continue; }
+			SDT::TextCode msg{ code_ptr, idx };
+			idx += msg.SizeBytes();
+			m_vcMsg.push_back(std::move(msg));
 		}
 	}
 

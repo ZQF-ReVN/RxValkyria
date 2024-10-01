@@ -125,8 +125,8 @@ auto main(void) -> int
 	try
 	{
 		// TestHDRParser();
-		TestSdtTextParser();
-		// TestTextEditor();
+		// TestSdtTextParser();
+		TestTextEditor();
 	}
 	catch (const std::exception& err)
 	{
