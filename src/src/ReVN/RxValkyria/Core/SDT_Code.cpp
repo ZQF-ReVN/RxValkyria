@@ -12,23 +12,23 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 
 	MsgName::MsgName(const std::uint8_t* const pData)
 	{
-		this->Load(pData);
+		this->BinaryLoad(pData);
 	}
 
-	auto MsgName::Load(const std::uint8_t* const pData) -> void
+	auto MsgName::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		m_usOP = *((uint16_t*)pData + 0); assert(m_usOP == 0x0E00);
 		m_msText = String::Decode(pData + sizeof(m_usOP));
 	}
 
-	auto MsgName::Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
+	auto MsgName::MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
 	{
 		assert(rfJson.At("Name").GetStrView() == "MsgName");
 		m_usOP = (uint16_t)String::StrToNum("0x%04x", rfJson.At("OP").GetStrView());
 		m_msText = String::MakeText(rfJson.At("Text").GetStrView(), nCodePage);
 	}
 
-	auto MsgName::Make(ZxMem& rfMem) const -> void
+	auto MsgName::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem << static_cast<std::uint16_t>(m_usOP);
 
@@ -37,7 +37,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		String::Encode(text_ptr);
 	}
 
-	auto MsgName::Make(std::size_t nCodePage) const -> ZxJson::JValue
+	auto MsgName::MetaStore(std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		return ZxJson::JObject_t
 		{
@@ -76,10 +76,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 
 	MsgText::MsgText(const std::uint8_t* const pData)
 	{
-		this->Load(pData);
+		this->BinaryLoad(pData);
 	}
 
-	auto MsgText::Load(const std::uint8_t* const pData) -> void
+	auto MsgText::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		m_usOP = *((uint16_t*)pData + 0); assert(m_usOP == 0x0E01);
 		m_usUnknow = *((uint16_t*)pData + 1); assert(m_usUnknow == 0x1111);
@@ -88,7 +88,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 	}
 
 
-	auto MsgText::Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
+	auto MsgText::MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
 	{
 		assert(rfJson.At("Name").GetStrView() == "MsgText");
 		m_usOP = (uint16_t)String::StrToNum("0x%04x", rfJson.At("OP").GetStrView());
@@ -97,7 +97,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		m_msText = String::MakeText(rfJson.At("Text").GetStrView(), nCodePage);
 	}
 
-	auto MsgText::Make(ZxMem& rfMem) const -> void
+	auto MsgText::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem << static_cast<std::uint16_t>(m_usOP);
 		rfMem << static_cast<std::uint16_t>(m_usUnknow);
@@ -108,7 +108,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		String::Encode(text_ptr);
 	}
 
-	auto MsgText::Make(std::size_t nCodePage) const -> ZxJson::JValue
+	auto MsgText::MetaStore(std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		return ZxJson::JObject_t
 		{
@@ -149,17 +149,17 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 
 	MsgNewLine::MsgNewLine(const std::uint8_t* const pData)
 	{
-		this->Load(pData);
+		this->BinaryLoad(pData);
 	}
 
-	auto MsgNewLine::Load(const std::uint8_t* const pData) -> void
+	auto MsgNewLine::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		m_usOP = *((uint16_t*)(pData + 0)); assert(m_usOP == 0x0E04);
 		m_usUnknow = *((uint16_t*)(pData + 2)); assert(m_usUnknow == 0x1111);
 		m_uiLineNumber = *((uint32_t*)(pData + 4));
 	}
 
-	auto MsgNewLine::Load(const ZxJson::JValue& rfJson, std::size_t /*nCodePage*/) -> void
+	auto MsgNewLine::MetaLoad(const ZxJson::JValue& rfJson, std::size_t /*nCodePage*/) -> void
 	{
 		assert(rfJson.At("Name").GetStrView() == "MsgNewLine");
 		m_usOP = (uint16_t)String::StrToNum("0x%04x", rfJson.At("OP").GetStrView());
@@ -167,14 +167,14 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		m_uiLineNumber = (uint32_t)String::StrToNum("0x%08x", rfJson.At("LineNumber").GetStrView());
 	}
 
-	auto MsgNewLine::Make(ZxMem& rfMem) const -> void
+	auto MsgNewLine::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem << static_cast<std::uint16_t>(m_usOP);
 		rfMem << static_cast<std::uint16_t>(m_usUnknow);
 		rfMem << static_cast<std::uint32_t>(m_uiLineNumber);
 	}
 
-	auto MsgNewLine::Make(std::size_t /*nCodePage*/) const -> ZxJson::JValue
+	auto MsgNewLine::MetaStore(std::size_t /*nCodePage*/) const -> ZxJson::JValue
 	{
 		return ZxJson::JObject_t
 		{
@@ -204,10 +204,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 
 	SelectText::SelectText(const std::uint8_t* const pData)
 	{
-		this->Load(pData);
+		this->BinaryLoad(pData);
 	}
 
-	auto SelectText::Load(const std::uint8_t* const pData) -> void
+	auto SelectText::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		m_usOP = *((uint16_t*)(pData + 0)); assert(m_usOP == 0x0E1C);
 		m_usUnknow = *((uint32_t*)(pData + 2)); assert(m_usUnknow == 0x00000000);
@@ -233,7 +233,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		}
 	}
 
-	auto SelectText::Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
+	auto SelectText::MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
 	{
 		assert(rfJson.At("Name").GetStrView() == "SelectText");
 		m_usOP = (uint16_t)String::StrToNum("0x%04x", rfJson.At("OP").GetStrView());
@@ -246,7 +246,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		}
 	}
 
-	auto SelectText::Make(ZxMem& rfMem) const -> void
+	auto SelectText::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem
 			<< static_cast<std::uint16_t>(m_usOP)
@@ -264,7 +264,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		rfMem << static_cast<std::uint8_t>(0xFF); // End Array
 	}
 
-	auto SelectText::Make(std::size_t nCodePage) const -> ZxJson::JValue
+	auto SelectText::MetaStore(std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		ZxJson::JArray_t text_vec;
 		for (auto& text : m_vcText)
@@ -304,10 +304,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 
 	SetStr::SetStr(const std::uint8_t* const pData)
 	{
-		this->Load(pData);
+		this->BinaryLoad(pData);
 	}
 
-	auto SetStr::Load(const std::uint8_t* const pData) -> void
+	auto SetStr::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		const uint8_t* cur_ptr = pData;
 
@@ -322,7 +322,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		m_msText = String::Decode(cur_ptr);
 	}
 
-	auto SetStr::Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
+	auto SetStr::MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void
 	{
 		assert(rfJson.At("Name").GetStrView() == "SetStr");
 		m_usOP = (uint16_t)String::StrToNum("0x%04x", rfJson.At("OP").GetStrView());
@@ -332,7 +332,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		m_msText = String::MakeText(rfJson.At("Text").GetStrView(), nCodePage);
 	}
 
-	auto SetStr::Make(ZxMem& rfMem) const -> void
+	auto SetStr::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem
 			<< static_cast<std::uint16_t>(m_usOP)
@@ -345,7 +345,7 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		String::Encode(text_ptr);
 	}
 
-	auto SetStr::Make(std::size_t nCodePage) const -> ZxJson::JValue
+	auto SetStr::MetaStore(std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		return ZxJson::JObject_t
 		{

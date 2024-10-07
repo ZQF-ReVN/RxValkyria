@@ -14,7 +14,7 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	TextParser::TextParser(const std::string_view msSdtPath)
 	{
-		this->LoadViaFile(msSdtPath);
+		this->BinaryLoad(msSdtPath);
 		this->Scan();
 	}
 
@@ -57,25 +57,12 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		}
 	}
 
-	auto TextParser::LoadViaFile(const std::string_view msSdtPath) -> void
+	auto TextParser::BinaryLoad(const std::string_view msSdtPath) -> void
 	{
 		m_mSdt.Load(msSdtPath);
 	}
 
-	auto TextParser::LoadViaJson(const ZxJson::JArray_t& rfMsgJson, const std::size_t nCodePage) -> void
-	{
-		if (m_vcMsg.size() != rfMsgJson.size())
-		{
-			throw std::runtime_error("RxValkyria::SDT::TextParser::Load(): json error!");
-		}
-
-		for (const auto&[msg, json] : std::views::zip(m_vcMsg, rfMsgJson))
-		{
-			msg.Load(json, nCodePage);
-		}
-	}
-
-	auto TextParser::MakeBin() const -> ZxMem
+	auto TextParser::BinaryStore() const -> ZxMem
 	{
 		// merge adjacent code
 		std::size_t append_mem_bytes{};
@@ -171,14 +158,29 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		return sdt_mem;
 	}
 
-	auto TextParser::MakeJson(const std::size_t nCodePage) const -> ZxJson::JArray_t
+	auto TextParser::MetaStore(const std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		ZxJson::JArray_t obj_list_json;
 		for (auto& msg : m_vcMsg)
 		{
-			obj_list_json.emplace_back(msg.Make(nCodePage));
+			obj_list_json.emplace_back(msg.MetaStore(nCodePage));
 		}
 		return obj_list_json;
+	}
+
+	auto TextParser::MetaLoad(const ZxJson::JValue& rfMsgJson, const std::size_t nCodePage) -> void
+	{
+		const auto msg_json_vec{ rfMsgJson.GetArray() };
+
+		if (m_vcMsg.size() != msg_json_vec.size()) 
+		{ 
+			throw std::runtime_error("RxValkyria::SDT::TextParser::Load(): json error!");
+		}
+
+		for (auto&& [msg, json] : std::views::zip(m_vcMsg, msg_json_vec))
+		{
+			msg.MetaLoad(json, nCodePage);
+		}
 	}
 
 	auto TextParser::GetMsgCnt() const noexcept -> std::size_t
@@ -207,13 +209,13 @@ namespace ZQF::ReVN::RxValkyria::SDT
 	auto TextParserJsonManager::Export(const std::size_t nCodePage) const -> ZxJson::JArray_t
 	{
 		ZxJson::JArray_t text_list, index_list;
-		const auto obj_json_vector = this->TextParser::MakeJson(nCodePage);
-		for (const auto [idx, obj_json] : std::views::enumerate(obj_json_vector))
+		const auto text_json_vec{ this->TextParser::MetaStore(nCodePage) };
+		for (auto&& [idx, obj_json] : std::views::enumerate(text_json_vec.GetArray()))
 		{
-			const auto obj_name = obj_json.At("Name").GetStrView();
+			const auto obj_name{ obj_json.At("Name").GetStrView() };
 			if (!(obj_name == "MsgText" || obj_name == "MsgName" || obj_name == "SelectText" || obj_name == "SetStr")) { continue; }
 
-			const auto& text_json = obj_json.At("Text");
+			const auto& text_json{ obj_json.At("Text") };
 			text_list.emplace_back(ZxJson::JObject_t{ { "org", text_json }, { "tra", text_json } });
 			index_list.emplace_back(static_cast<std::size_t>(idx));
 		}
@@ -229,29 +231,30 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	auto TextParserJsonManager::Import(const std::string_view msJsonPath, const std::size_t nCodePage) -> void
 	{
-		const auto msg_json = ZxJson::LoadViaFile(msJsonPath);
-		const auto& msg_text_vec = msg_json[0].GetArray();
-		const auto& msg_obj_idx_vec = msg_json[1].GetArray();
+		const auto msg_json{ ZxJson::LoadViaFile(msJsonPath) };
+		const auto& msg_text_vec{ msg_json[0].GetArray() };
+		const auto& msg_obj_idx_vec{ msg_json[1].GetArray() };
 		if (msg_text_vec.size() != msg_obj_idx_vec.size())
 		{
 			throw std::runtime_error("RxValkyria::SDT::TextParser::LoadText(): text Json mismatching!");
 		}
 
-		auto obj_json_vec = this->TextParser::MakeJson(nCodePage);
+		auto text_json_obj{ this->TextParser::MetaStore(nCodePage) };
 
-		const auto text_count = msg_text_vec.size();
+		const auto text_count{ msg_text_vec.size() };
+		auto text_json_vec{ text_json_obj.GetArray() };
 		for (std::size_t msg_idx{}; msg_idx < text_count; msg_idx++)
 		{
 			const auto obj_idx = msg_obj_idx_vec[msg_idx].GetNum<std::size_t>();
-			obj_json_vec[obj_idx].At("Text") = msg_text_vec[msg_idx].At("tra");
+			text_json_vec[obj_idx].At("Text") = msg_text_vec[msg_idx].At("tra");
 		}
 
-		this->TextParser::LoadViaJson(obj_json_vec, nCodePage);
+		this->TextParser::MetaLoad(text_json_obj, nCodePage);
 	}
 
 	auto TextParserJsonManager::Import(const std::string_view msSdtPath, const std::string_view msJsonPath, const std::size_t nCodePage) -> void
 	{
 		this->Import(msJsonPath, nCodePage);
-		this->TextParser::MakeBin().Save(msSdtPath);
+		this->TextParser::BinaryStore().Save(msSdtPath);
 	}
 }

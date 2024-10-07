@@ -22,11 +22,11 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		auto Scan() -> void;
 
 	public:
-		auto LoadViaFile(const std::string_view msSdtPath) -> void;
-		auto LoadViaJson(const ZxJson::JArray_t& rfMsgJson, const std::size_t nCodePage) -> void;
-		auto MakeBin() const -> ZxMem;
-		auto MakeJson(const std::size_t nCodePage) const -> ZxJson::JArray_t;
-
+		auto BinaryStore() const -> ZxMem;
+		auto BinaryLoad(const std::string_view msSdtPath) -> void;
+		auto MetaStore(const std::size_t nCodePage) const -> ZxJson::JValue;
+		auto MetaLoad(const ZxJson::JValue& rfMsgJson, const std::size_t nCodePage) -> void;
+	
 	public:
 		auto GetMsgCnt() const noexcept -> std::size_t;
 		auto GetSdtFile() const noexcept -> const ZxMem&;

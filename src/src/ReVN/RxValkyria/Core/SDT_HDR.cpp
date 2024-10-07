@@ -9,7 +9,7 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	}
 
-	auto HDR_Info::Load(const std::uint8_t* const pData) -> void
+	auto HDR_Info::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		const uint32_t* tmp_ptr = (uint32_t*)pData;
 		m_uiHeaderSize = tmp_ptr[0];
@@ -19,7 +19,7 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		m_uiCheckDataFOA = tmp_ptr[4];
 	}
 
-	auto HDR_Info::Make(ZxMem& rfMem) const -> void
+	auto HDR_Info::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		rfMem
 			<< static_cast<std::uint32_t>(m_uiHeaderSize)
@@ -66,13 +66,13 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	}
 
-	auto Label_Entry::Load(const std::uint8_t* const pData) -> void
+	auto Label_Entry::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		m_msLabelName = String::Decode(pData);
 		m_uiLableInCodeOffset = *(uint32_t*)(pData + m_msLabelName.size() + 1);
 	}
 
-	auto Label_Entry::Make(ZxMem& rfMem) const -> void
+	auto Label_Entry::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		auto label_name_ptr = rfMem.PtrCur<uint8_t*>();
 		rfMem << std::span{ m_msLabelName.data(), m_msLabelName.size() + 1 };
@@ -92,24 +92,24 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	}
 
-	auto Label_Index::Load(const std::uint8_t* const pData, const std::size_t uiLabelCount) -> void
+	auto Label_Index::BinaryLoad(const std::uint8_t* const pData, const std::size_t uiLabelCount) -> void
 	{
 		const uint8_t* cur_ptr = pData;
 
 		for (size_t ite_label = 0; ite_label < uiLabelCount; ite_label++)
 		{
 			Label_Entry label;
-			label.Load(cur_ptr);
+			label.BinaryLoad(cur_ptr);
 			cur_ptr += label.SizeBytes();
 			m_vcLabels.emplace_back(std::move(label));
 		}
 	}
 
-	auto Label_Index::Make(ZxMem& rfMem) const -> void
+	auto Label_Index::BinaryStore(ZxMem& rfMem) const -> void
 	{
 		for (auto& label : m_vcLabels)
 		{
-			label.Make(rfMem);
+			label.BinaryStore(rfMem);
 		}
 	}
 
@@ -129,23 +129,23 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	}
 
-	auto HDR::Load(const std::uint8_t* const pData) -> void
+	auto HDR::BinaryLoad(const std::uint8_t* const pData) -> void
 	{
 		const uint8_t* cur_ptr = pData;
 
-		m_Info.Load(cur_ptr);
+		m_Info.BinaryLoad(cur_ptr);
 		cur_ptr += m_Info.SizeBytes();
 
-		m_Labels.Load(cur_ptr, m_Info.GetLabelCount());
+		m_Labels.BinaryLoad(cur_ptr, m_Info.GetLabelCount());
 		cur_ptr += m_Labels.SizeBytes();
 
 		m_msCheckData = { (char*)cur_ptr,m_Info.GetCheckDataSize() - 1 };
 	}
 
-	auto HDR::Make(ZxMem& rfMem) const -> void
+	auto HDR::BinaryStore(ZxMem& rfMem) const -> void
 	{
-		m_Info.Make(rfMem);
-		m_Labels.Make(rfMem);
+		m_Info.BinaryStore(rfMem);
+		m_Labels.BinaryStore(rfMem);
 		rfMem << std::span{ m_msCheckData.data(), m_msCheckData.size() + 1 };
 	}
 

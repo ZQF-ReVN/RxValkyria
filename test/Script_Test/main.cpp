@@ -42,12 +42,12 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 		ZxMem sdt_mem{ walk.GetPath() };
 
 		RxValkyria::SDT::HDR hdr;
-		hdr.Load(sdt_mem.Ptr());
+		hdr.BinaryLoad(sdt_mem.Ptr());
 
 		const auto hdr_size_bytes = hdr.SizeBytes();
 
 		ZxMem hdr_mem{ hdr_size_bytes };
-		hdr.Make(hdr_mem);
+		hdr.BinaryStore(hdr_mem);
 
 		if (std::memcmp(hdr_mem.Ptr(), sdt_mem.PtrCur(), hdr_size_bytes != 0))
 		{
@@ -75,7 +75,7 @@ static auto Import(const std::string_view msSdtPath, const std::string_view msJs
 		sdt_export_path.append(ZxFS::FileSuffixDel(walk.GetName())).append(".json");
 
 		RxValkyria::SDT::TextParser parser{ sdt_org_path };
-		ZxJson::JValue obj_json = parser.MakeJson(export_code_page);
+		ZxJson::JValue obj_json = parser.MetaStore(export_code_page);
 		ZxJson::StoreViaFile(sdt_export_path, obj_json, true, true);
 	}
 

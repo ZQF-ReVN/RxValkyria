@@ -19,8 +19,8 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		HDR_Info();
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
 
 	public:
 		auto SizeBytes() const noexcept -> std::size_t;
@@ -43,8 +43,8 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		Label_Entry();
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
 
 	public:
 		auto SizeBytes() const -> std::size_t;
@@ -58,8 +58,8 @@ namespace ZQF::ReVN::RxValkyria::SDT
 	public:
 		Label_Index();
 
-		auto Load(const std::uint8_t* const pData, const std::size_t uiLabelCount) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
+		auto BinaryLoad(const std::uint8_t* const pData, const std::size_t uiLabelCount) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
 
 	public:
 		auto SizeBytes() const -> std::size_t;
@@ -76,8 +76,8 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		HDR();
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
 
 	public:
 		auto SizeBytes() const -> std::size_t;

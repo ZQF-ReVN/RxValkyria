@@ -10,7 +10,7 @@ FetchContent_MakeAvailable(ZxFile)
 FetchContent_Declare(
   ZxMem
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxMem.git
-  GIT_TAG 873edf0a29e0c54c1003d3544a02010769cea7b8)
+  GIT_TAG f7b27add1b13d4905d3c3d6d5c00e6a1ebf14496)
 
 FetchContent_MakeAvailable(ZxMem)
 

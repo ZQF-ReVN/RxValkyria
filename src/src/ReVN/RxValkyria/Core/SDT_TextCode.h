@@ -22,10 +22,10 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		TextCode(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset);
 
 	public:
-		auto Load(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset) -> void;
-		auto Load(const ZxJson::JValue& rfJson, const std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(const std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, const std::size_t nCodePage) -> void;
+		auto MetaStore(const std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetBegOffset() const noexcept -> std::size_t;

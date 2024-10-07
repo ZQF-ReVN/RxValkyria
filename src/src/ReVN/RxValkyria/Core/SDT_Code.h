@@ -18,10 +18,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		MsgName(const std::uint8_t* const pData);
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
+		auto MetaStore(std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetOP() const -> std::uint16_t;
@@ -47,10 +47,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		MsgText(const std::uint8_t* const pData);
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
+		auto MetaStore(std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetOP() const -> std::uint16_t;
@@ -75,10 +75,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		MsgNewLine(const std::uint8_t* const pData);
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
+		auto MetaStore(std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetOP() const -> std::uint16_t;
@@ -99,10 +99,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		SelectText(const std::uint8_t* const pData);
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
+		auto MetaStore(std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetOP() const->std::uint16_t;
@@ -125,10 +125,10 @@ namespace ZQF::ReVN::RxValkyria::SDT::Code
 		SetStr(const std::uint8_t* const pData);
 
 	public:
-		auto Load(const std::uint8_t* const pData) -> void;
-		auto Load(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
-		auto Make(ZxMem& rfMem) const -> void;
-		auto Make(std::size_t nCodePage) const -> ZxJson::JValue;
+		auto BinaryLoad(const std::uint8_t* const pData) -> void;
+		auto BinaryStore(ZxMem& rfMem) const -> void;
+		auto MetaLoad(const ZxJson::JValue& rfJson, std::size_t nCodePage) -> void;
+		auto MetaStore(std::size_t nCodePage) const -> ZxJson::JValue;
 
 	public:
 		auto GetOP() const -> std::uint16_t;

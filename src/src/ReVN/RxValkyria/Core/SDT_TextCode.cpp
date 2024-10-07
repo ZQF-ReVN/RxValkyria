@@ -10,14 +10,14 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 	TextCode::TextCode(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset)
 	{
-		this->Load(pCodeSeg, uiCodeOffset);
+		this->BinaryLoad(pCodeSeg, uiCodeOffset);
 	}
 
-	auto TextCode::Load(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset) -> void
+	auto TextCode::BinaryLoad(const uint8_t* const pCodeSeg, const std::size_t uiCodeOffset) -> void
 	{
 		auto cur_ptr = pCodeSeg + uiCodeOffset;
 
-		const auto op_code = *reinterpret_cast<const std::uint16_t*>(cur_ptr);
+		const auto op_code{ *reinterpret_cast<const std::uint16_t*>(cur_ptr) };
 		switch (op_code)
 		{
 		case 0x0E00: m_vaCode = SDT::Code::MsgName{}; break;
@@ -27,27 +27,26 @@ namespace ZQF::ReVN::RxValkyria::SDT
 		case 0x0B17: m_vaCode = SDT::Code::SetStr{}; break;
 		}
 
-		std::visit([&cur_ptr](auto&& obj) { obj.Load(cur_ptr); cur_ptr += obj.SizeBytes(); }, m_vaCode);
+		std::visit([&cur_ptr](auto&& obj) { obj.BinaryLoad(cur_ptr); cur_ptr += obj.SizeBytes(); }, m_vaCode);
 
 		m_uiBegOffset = uiCodeOffset;
 		m_uiEndOffset = static_cast<std::size_t>(cur_ptr - pCodeSeg);
 	}
 
-	auto TextCode::Load(const ZxJson::JValue& rfJson, const std::size_t nCodePage) -> void
+	auto TextCode::MetaLoad(const ZxJson::JValue& rfJson, const std::size_t nCodePage) -> void
 	{
-		std::visit([&rfJson, nCodePage](auto&& obj) { obj.Load(rfJson, nCodePage); }, m_vaCode);
+		std::visit([&rfJson, nCodePage](auto&& obj) { obj.MetaLoad(rfJson, nCodePage); }, m_vaCode);
 	}
 
-	auto TextCode::Make(ZxMem& rfMem) const -> void
+	auto TextCode::BinaryStore(ZxMem& rfMem) const -> void
 	{
-		std::visit([&rfMem](auto&& obj) { obj.Make(rfMem); }, m_vaCode);
+		std::visit([&rfMem](auto&& obj) { obj.BinaryStore(rfMem); }, m_vaCode);
 	}
 
-
-	auto TextCode::Make(const std::size_t nCodePage) const -> ZxJson::JValue
+	auto TextCode::MetaStore(const std::size_t nCodePage) const -> ZxJson::JValue
 	{
 		ZxJson::JValue jvalue;
-		std::visit([&jvalue, nCodePage](auto&& obj) { jvalue = obj.Make(nCodePage); }, m_vaCode);
+		std::visit([&jvalue, nCodePage](auto&& obj) { jvalue = obj.MetaStore(nCodePage); }, m_vaCode);
 		return jvalue;
 	}
 
@@ -90,7 +89,7 @@ namespace ZQF::ReVN::RxValkyria::SDT
 
 		for (auto& msg_code : vcCodeList)
 		{
-			msg_code.Make(m_amMem);
+			msg_code.BinaryStore(m_amMem);
 		}
 	}
 
